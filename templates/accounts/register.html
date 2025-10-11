@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | FranchiseHub</title>
+  <link rel="stylesheet" href="{% static 'accounts/register.css' %}">
+</head>
+<body>
+  <div class="navbar">
+    <div class="logo">🏢 <span>Franchise</span>Hub</div>
+    <div class="nav-links">
+      <a href="#">Browse Franchises</a>
+      <a href="/accounts/login/">Login</a>
+      <a href="/accounts/register/" class="btn">Get Started</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="register-box">
+      <h1>Welcome Back</h1>
+      <p>Create your account to get started</p>
+
+      {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      <form method="POST">
+        {% csrf_token %}
+        <label>Full Name</label>
+        <input type="text" name="username" placeholder="Enter your full name" required>
+
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="Enter your email" required>
+
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create a password" required>
+
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+
+        <label>I want to</label>
+        <select name="role" required>
+          <option value="franchisee">Franchisee</option>
+          <option value="franchisor">Franchisor</option>
+        </select>
+
+        <button type="submit" class="apply-btn">Apply Now</button>
+      </form>
+
+      <p class="signin-link">Already have an account? <a href="/accounts/login/">Sign in</a></p>
+    </div>
+  </div>
+</body>
+</html>
