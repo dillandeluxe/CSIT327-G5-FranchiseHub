@@ -9,7 +9,6 @@
 <body>
   <nav class="navbar">
     <div class="logo">
-      <img src="logo.png" alt="FranchiseHub" class="logo-img" />
       <span>Franchise</span>Hub
     </div>
     <div class="nav-links">
@@ -18,7 +17,6 @@
       <a href="#" class="get-started">Get Started</a>
     </div>
   </nav>
-
   <header class="hero-section">
     <div class="hero-overlay">
       <h1>
@@ -26,13 +24,22 @@
         <span class="highlighted">Franchise Success</span>
       </h1>
       <p>
-        Connect with proven franchise opportunities or expand your business reach. Join thousands of successful partnerships on FranchiseHub.
+        Connect with proven franchise opportunities or expand your business reach.<br>
+        Join thousands of successful partnerships on FranchiseHub.
       </p>
-      <div class="search-bar">
-        <input type="text" placeholder="Browse Franchises" />
-        <input type="text" placeholder="Location, Keyword..." />
-        <button class="search-btn">Search</button>
-      </div>
+      
+      <form class="search-bar" action="result.html" method="get">
+        <select name="category" class="search-category">
+          <option value="">All Categories</option>
+          <option value="food">Food & Beverage</option>
+          <option value="retail">Retail</option>
+          <option value="service">Services</option>
+          <option value="education">Education</option>
+        </select>
+        <input type="text" name="location" class="search-location" placeholder="Location (City, Province)" />
+        <input type="text" name="keyword" class="search-keyword" placeholder="Keyword or Franchise Name" />
+        <button class="search-btn" type="submit">Search</button>
+      </form>
       <div class="hero-tags">
         <div>
           <span class="hero-icon">🌱</span><br />
@@ -52,7 +59,6 @@
       </div>
     </div>
   </header>
-
   <section class="stats-section">
     <h2>Trusted by Thousands</h2>
     <p>Join a thriving community of successful franchise partners</p>
