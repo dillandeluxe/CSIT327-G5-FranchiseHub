@@ -79,7 +79,7 @@ Admin page: http://127.0.0.1:8000/admin/
 
 Note: The main homepage (/) is not yet implemented — use the routes above to access current features.
 
-👥 Team Members
+##👥 Team Members
 Lanz Roy Sumalpong      Product Owner       lanzroy.sumalpong@cit.edu
 Jethro Salindato        Business Analyst    jethro.salindato@cit.edu
 David Ryan Sia          Scrum Master        davidryan.sia@cit.edu
