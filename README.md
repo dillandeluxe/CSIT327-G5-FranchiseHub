@@ -49,7 +49,7 @@ env
 
 DB_NAME=postgres
 DB_USER=postgres
-DB_PASSWORD=dillanq123
+DB_PASSWORD=zJC1nH7t0DevHR8m
 DB_HOST=db.imtakkkdsincyjeszvi.supabase.co
 DB_PORT=5432
 
