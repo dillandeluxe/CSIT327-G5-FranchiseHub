@@ -1,12 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>FranchiseHub | Your Gateway to Franchise Success</title>
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="{% static 'accounts/home.css' %}">
 </head>
 <body>
+  <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">
       <span>Franchise</span>Hub
@@ -17,6 +19,8 @@
       <a href="#" class="get-started">Get Started</a>
     </div>
   </nav>
+
+  <!-- Hero Section -->
   <header class="hero-section">
     <div class="hero-overlay">
       <h1>
@@ -27,18 +31,7 @@
         Connect with proven franchise opportunities or expand your business reach.<br>
         Join thousands of successful partnerships on FranchiseHub.
       </p>
-      <form class="search-bar" action="result.html" method="get">
-        <select name="category" class="search-category">
-          <option value="">All Categories</option>
-          <option value="food">Food & Beverage</option>
-          <option value="retail">Retail</option>
-          <option value="service">Services</option>
-          <option value="education">Education</option>
-        </select>
-        <input type="text" name="location" class="search-location" placeholder="Location (City, Province)" />
-        <input type="text" name="keyword" class="search-keyword" placeholder="Keyword or Franchise Name" />
-        <button class="search-btn" type="submit">Search</button>
-      </form>
+      <a class="browse-btn" href="#">Browse Franchises</a>
       <div class="hero-tags">
         <div>
           <span class="hero-icon">🌱</span><br />
@@ -58,6 +51,8 @@
       </div>
     </div>
   </header>
+
+  <!-- Stats Section -->
   <section class="stats-section">
     <h2>Trusted by Thousands</h2>
     <p>Join a thriving community of successful franchise partners</p>
@@ -80,5 +75,92 @@
       </div>
     </div>
   </section>
+
+  <!-- How FranchiseHub Works -->
+  <section class="how-it-works">
+    <h2>How FranchiseHub Works</h2>
+    <p>Simple steps to connect with your perfect franchise opportunity</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">🔎</div>
+        <div class="step-title">1. Browse & Discover</div>
+        <div class="step-desc">Explore hundreds of franchise opportunities and filter by industry, investment, and location.</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔗</div>
+        <div class="step-title">2. Connect & Apply</div>
+        <div class="step-desc">Connect easily with suitable brands and submit your franchise application with guidance.</div>
+      </div>
+      <div class="step">
+        <div class="step-icon">🚀</div>
+        <div class="step-title">3. Launch & Succeed</div>
+        <div class="step-desc">Get support throughout your launch and access tools for business growth.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Opportunities -->
+  <section class="featured-opps">
+    <h2>Featured Opportunities</h2>
+    <p>Discover top-performing franchise opportunities</p>
+    <div class="franchise-cards">
+      <div class="franchise-card">
+        <div class="franchise-logo"></div>
+        <div class="franchise-title">Sample Franchise 1</div>
+        <div class="franchise-info">Industry: Retail | Investment: ₱500k+</div>
+        <a href="#" class="learn-btn">Learn More</a>
+      </div>
+      <div class="franchise-card">
+        <div class="franchise-logo"></div>
+        <div class="franchise-title">Sample Franchise 2</div>
+        <div class="franchise-info">Industry: Food | Investment: ₱1M+</div>
+        <a href="#" class="learn-btn">Learn More</a>
+      </div>
+      <div class="franchise-card">
+        <div class="franchise-logo"></div>
+        <div class="franchise-title">Sample Franchise 3</div>
+        <div class="franchise-info">Industry: Services | Investment: ₱750k+</div>
+        <a href="#" class="learn-btn">Learn More</a>
+      </div>
+    </div>
+    <a class="view-all-btn" href="#">View All Franchises</a>
+  </section>
+
+  <!-- Call to Action -->
+  <section class="cta-section">
+    <h2>Ready to Start Your Franchise Journey?</h2>
+    <p>Join thousands of successful franchise partners and start building your franchise story today.</p>
+    <a href="#" class="cta-btn">Get Started</a>
+    <a href="#" class="cta-secondary-btn">Browse Opportunities</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-main">
+      <div class="footer-logo">
+        <span>Franchise</span>Hub
+      </div>
+      <div class="footer-columns">
+        <div>
+          <h4>For Franchisors</h4>
+          <a href="#">List your Franchise</a><br>
+          <a href="#">Partner Solutions</a>
+        </div>
+        <div>
+          <h4>For Franchisees</h4>
+          <a href="#">Find Opportunities</a><br>
+          <a href="#">Success Stories</a>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="#">info@franchisehub.com</a><br>
+          <span>123 Franchise St, Manila, PH</span>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2025 FranchiseHub. All rights reserved.
+    </div>
+  </footer>
 </body>
 </html>
