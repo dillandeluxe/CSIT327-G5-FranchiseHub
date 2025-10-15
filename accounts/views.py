@@ -3,6 +3,10 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 
+def home_view(request):
+    return render(request, 'accounts/home.html')
+
+
 def register_view(request):
     if request.method == 'POST':
         username = request.POST.get('username').strip()

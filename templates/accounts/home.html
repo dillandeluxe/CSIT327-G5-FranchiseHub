@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+  {% load static %}
 <head>
   <meta charset="UTF-8">
   <title>FranchiseHub | Your Gateway to Franchise Success</title>
   <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="home.css">
+  <link rel="stylesheet" href="{% static 'accounts/home.css' %}">
 </head>
 <body>
+  <!-- ===== NAVBAR ===== -->
   <nav class="navbar">
-    <div class="logo">
-      <span>Franchise</span>Hub
-    </div>
+    <div class="logo"><span>Franchise</span>Hub</div>
     <div class="nav-links">
       <a href="#">Browse Franchises</a>
-      <a href="login.html">Login</a>
-      <a href="#" class="get-started">Get Started</a>
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}" class="get-started">Get Started</a>
     </div>
   </nav>
+
+  <!-- ===== HERO SECTION ===== -->
   <header class="hero-section">
     <div class="hero-overlay">
       <h1>
@@ -27,6 +29,7 @@
         Connect with proven franchise opportunities or expand your business reach.<br>
         Join thousands of successful partnerships on FranchiseHub.
       </p>
+
       <form class="search-bar" action="result.html" method="get">
         <select name="category" class="search-category">
           <option value="">All Categories</option>
@@ -35,10 +38,11 @@
           <option value="service">Services</option>
           <option value="education">Education</option>
         </select>
-        <input type="text" name="location" class="search-location" placeholder="Location (City, Province)" />
-        <input type="text" name="keyword" class="search-keyword" placeholder="Keyword or Franchise Name" />
+        <input type="text" name="location" placeholder="Location (City, Province)" />
+        <input type="text" name="keyword" placeholder="Keyword or Franchise Name" />
         <button class="search-btn" type="submit">Search</button>
       </form>
+
       <div class="hero-tags">
         <div>
           <span class="hero-icon">🌱</span><br />
@@ -58,9 +62,12 @@
       </div>
     </div>
   </header>
+
+  <!-- ===== STATS SECTION ===== -->
   <section class="stats-section">
     <h2>Trusted by Thousands</h2>
     <p>Join a thriving community of successful franchise partners</p>
+
     <div class="stats-bar">
       <div>
         <span class="stat-number">10,000+</span>
@@ -80,5 +87,19 @@
       </div>
     </div>
   </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-container">
+      <div class="footer-brand"><span>Franchise</span>Hub</div>
+      <p>Connecting entrepreneurs with proven franchise opportunities.</p>
+      <div class="footer-links">
+        <a href="#">About</a>
+        <a href="#">Support</a>
+        <a href="#">Privacy</a>
+      </div>
+      <div class="footer-copy">© FranchiseHub. All rights reserved.</div>
+    </div>
+  </footer>
 </body>
 </html>
