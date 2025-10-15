@@ -2,53 +2,57 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | FranchiseHub</title>
-    <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | FranchiseHub</title>
+    <link rel="stylesheet" href="{% static 'accounts/login.css' %}">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="nav-left">
-            <img src="{% static 'accounts/logo.png' %}" alt="FranchiseHub Logo" class="logo">
-            <h2>Franchise<span>Hub</span></h2>
-        </div>
-        <div class="nav-right">
-            <a href="#">Browse Franchises</a>
-            <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'register' %}" class="btn">Get Started</a>
-        </div>
-    </nav>
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="{% url 'home' %}">
+                <img src="{% static 'accounts/logo.png' %}" alt="FranchiseHub Logo" class="logo">
+            </a>
+            <h2>Franchise<span>Hub</span></h2>
+        </div>
+        <div class="nav-right">
+            <a href="#">Browse Franchises</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}" class="btn">Get Started</a>
+        </div>
+    </nav>
 
-    <div class="background">
-        <div class="login-container">
-            <div class="login-card">
-                <img src="{% static 'accounts/logo.png' %}" alt="Logo" class="center-logo">
-                <h2>Welcome Back</h2>
-                <p>Sign in to your FranchiseHub account</p>
+    <div class="background">
+        <div class="login-container">
+            <div class="login-card">
+                <a href="{% url 'home' %}">
+                    <img src="{% static 'accounts/logo.png' %}" alt="Logo" class="center-logo">
+                </a>
+                <h2>Welcome Back</h2>
+                <p>Sign in to your FranchiseHub account</p>
 
-                <form method="POST" action="">
-                    {% csrf_token %}
-                    <label>Email Address</label>
-                    <input type="email" name="email" placeholder="Enter your email" required>
+                <form method="POST" action="">
+                    {% csrf_token %}
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
 
-                    <label>Password</label>
-                    <input type="password" name="password" placeholder="Enter your password" required>
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Enter your password" required>
 
-                    <label>Login as</label>
-                    <select name="role" required>
-                        <option value="franchisee">Franchisee</option>
-                        <option value="franchisor">Franchisor</option>
-                    </select>
+                    <label>Login as</label>
+                    <select name="role" required>
+                        <option value="franchisee">Franchisee</option>
+                        <option value="franchisor">Franchisor</option>
+                    </select>
 
-                    <button type="submit" class="btn-apply">Apply Now</button>
-                </form>
+                    <button type="submit" class="btn-apply">Apply Now</button>
+                </form>
 
-                <p class="register-text">
-                    Don’t have an account? <a href="{% url 'register' %}">Create one</a>
-                </p>
-            </div>
-        </div>
-    </div>
+                <p class="register-text">
+                    Don’t have an account? <a href="{% url 'register' %}">Create one</a>
+                </p>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
