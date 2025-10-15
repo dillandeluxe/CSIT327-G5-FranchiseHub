@@ -1,0 +1,114 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Browse Franchise Opportunities</title>
+  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="logo"><span>Franchise</span>Hub</div>
+    <div class="nav-links">
+      <a href="#">Browse Franchises</a>
+      <a href="#">Login</a>
+      <a href="#" class="get-started">Get Started</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="listing-hero">
+    <div class="hero-content">
+      <h1>Browse Franchise Opportunities</h1>
+      <p>Discover your perfect franchise match from our verified marketplace</p>
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <section class="filter-bar">
+    <form class="filters">
+      <input type="text" placeholder="Search Franchises..." class="search-input">
+      <div class="custom-select">
+        <select>
+          <option>All Industries</option>
+          <option>Food & Beverage</option>
+          <option>Technology</option>
+          <option>Fitness & Health</option>
+          <option>Services</option>
+          <option>Education</option>
+          <option>Pet Services</option>
+          <option>Automotive</option>
+          <option>Home Services</option>
+        </select>
+      </div>
+      <div class="custom-select">
+        <select>
+          <option>All Ranges</option>
+          <option>&lt; ₱500k</option>
+          <option>₱500k - ₱1M</option>
+          <option>&gt; ₱1M</option>
+        </select>
+      </div>
+      <div class="custom-select">
+        <select>
+          <option>Highest Rated</option>
+          <option>Newest</option>
+          <option>Oldest</option>
+        </select>
+      </div>
+    </form>
+  </section>
+
+  <!-- Franchise Cards List -->
+  <section class="franchise-list">
+    <div class="franchise-card">
+      <div class="franchise-cover"></div>
+      <h3>FitZone Gym</h3>
+      <div class="franchise-meta">
+        <span class="industry">Fitness & Health</span><br>
+        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+        <div class="franchise-details">
+          <span class="investment">₱450k+ Investment</span>
+          <span class="location">Suburban</span>
+          <span class="established">Est 2015</span>
+        </div>
+        <span class="rating">4.9 ★</span>
+      </div>
+      <button class="inquire-btn">Inquire Now</button>
+    </div>
+    <div class="franchise-card">
+      <div class="franchise-cover"></div>
+      <h3>FitZone Gym</h3>
+      <div class="franchise-meta">
+        <span class="industry">Fitness & Health</span><br>
+        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+        <div class="franchise-details">
+          <span class="investment">₱450k+ Investment</span>
+          <span class="location">Suburban</span>
+          <span class="established">Est 2015</span>
+        </div>
+        <span class="rating">4.9 ★</span>
+      </div>
+      <button class="inquire-btn">Inquire Now</button>
+    </div>
+    <div class="franchise-card">
+      <div class="franchise-cover"></div>
+      <h3>FitZone Gym</h3>
+      <div class="franchise-meta">
+        <span class="industry">Fitness & Health</span><br>
+        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+        <div class="franchise-details">
+          <span class="investment">₱450k+ Investment</span>
+          <span class="location">Suburban</span>
+          <span class="established">Est 2015</span>
+        </div>
+        <span class="rating">4.9 ★</span>
+      </div>
+      <button class="inquire-btn">Inquire Now</button>
+    </div>
+  </section>
+
+</body>
+</html>

@@ -46,3 +46,6 @@ def logout_view(request):
 
 def home_view(request):
     return render(request, 'accounts/home.html')
+
+def browse(request):
+    return render(request, 'accounts/browse.html')
