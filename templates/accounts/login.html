@@ -10,8 +10,9 @@
 <body>
     <nav class="navbar">
         <div class="nav-left">
-            <img src="{% static 'accounts/logo.png' %}" alt="FranchiseHub Logo" class="logo">
-            <h2>Franchise<span>Hub</span></h2>
+            <a href="{% url 'home' %}">
+                <h2>Franchise<span>Hub</span></h2>
+            </a>
         </div>
         <div class="nav-right">
             <a href="#">Browse Franchises</a>
@@ -23,7 +24,7 @@
     <div class="background">
         <div class="login-container">
             <div class="login-card">
-                <img src="{% static 'accounts/logo.png' %}" alt="Logo" class="center-logo">
+               
                 <h2>Welcome Back</h2>
                 <p>Sign in to your FranchiseHub account</p>
 
