@@ -10,11 +10,11 @@
 <body>
   <!-- Navbar -->
   <nav class="navbar">
-    <div class="logo"><span>Franchise</span>Hub</div>
+    <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
     <div class="nav-links">
-      <a href="#">Browse Franchises</a>
-      <a href="#">Login</a>
-      <a href="#" class="get-started">Get Started</a>
+      <a href="{% url 'browse' %}">Browse Franchises</a>
+      <a href="{% url 'login' %}">Login</a>
+      <a href="{% url 'register' %}" class="get-started">Get Started</a>
     </div>
   </nav>
 
