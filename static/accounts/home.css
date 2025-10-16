@@ -5,6 +5,7 @@ body {
   background: #fff;
 }
 
+
 /* Navbar */
 .navbar {
   display: flex;
@@ -16,12 +17,14 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
+  text-decoration: none;
 }
 
 .logo {
   font-size: 22px;
   font-weight: 700;
   color: #282828;
+  text-decoration: none;
 }
 
 .logo span {
@@ -49,6 +52,14 @@ body {
   font-weight: 600;
   text-decoration: none;
 }
+
+.navbar a.logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: #282828;
+  text-decoration: none; /* This will now properly remove the underline */
+}
+
 
 /* Hero Section */
 .hero-section {
@@ -361,22 +372,26 @@ body {
   color: #d66900;
 }
 
-/* Footer */
+/* Footer Styles */
 footer {
   background: #18181e;
   color: #fff;
-  padding: 0;
 }
 
 .footer-main {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 40px 60px 28px 60px;
   max-width: 1200px;
   margin: 0 auto;
-  flex-wrap: wrap;
-  gap: 40px;
+  padding: 48px 60px 32px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 48px;
+}
+
+/* Brand Section */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .footer-logo {
@@ -389,71 +404,81 @@ footer {
   color: #d66900;
 }
 
+/* Navigation Columns */
 .footer-columns {
-  display: flex;
-  gap: 70px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 48px;
 }
 
-.footer-columns h4 {
-  font-size: 1.07em;
-  margin-bottom: 9px;
+.footer-column h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
   color: #fff;
 }
 
-.footer-columns a,
-.footer-columns span {
-  font-size: 1em;
+.footer-column a,
+.footer-column span {
+  display: block;
   color: #eee;
   text-decoration: none;
-  margin-bottom: 6px;
-  display: block;
-  transition: color 0.15s;
+  margin-bottom: 12px;
+  transition: color 0.2s ease;
+  font-size: 15px;
 }
 
-.footer-columns a:hover {
+.footer-column a:hover {
   color: #d66900;
 }
 
+/* Footer Bottom */
 .footer-bottom {
-  border-top: 1px solid #2f2f38;
-  padding: 12px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 0;
   text-align: center;
   color: #aaa;
-  font-size: 1em;
+  font-size: 14px;
 }
 
-/* Responsive Styles */
+/* Responsive Design */
 @media (max-width: 1100px) {
   .footer-main {
-    flex-direction: column;
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-brand {
     align-items: center;
   }
+  
   .footer-columns {
-    gap: 38px;
+    gap: 32px;
   }
 }
 
-@media (max-width: 900px) {
-  .stats-bar,
-  .hero-tags,
-  .steps,
-  .franchise-cards {
-    flex-direction: column;
-    gap: 28px;
-    align-items: center;
-  }
+@media (max-width: 768px) {
   .footer-main {
-    padding: 38px 20px 24px 20px;
+    padding: 40px 24px 24px;
+  }
+
+  .footer-columns {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 24px;
   }
 }
 
-@media (max-width: 650px) {
-  .hero-section {
-    height: 260px;
+@media (max-width: 480px) {
+  .footer-main {
+    padding: 32px 16px 20px;
   }
-  .footer-main,
-  .footer-bottom {
-    font-size: 0.95em;
+  
+  .footer-columns {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .footer-column h4 {
+    margin-bottom: 12px;
   }
 }
