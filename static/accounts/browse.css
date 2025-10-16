@@ -16,7 +16,7 @@ body {
   top: 0;
   z-index: 100;
 }
-.logo { font-size: 22px; font-weight: 700; color: #282828; }
+.logo { font-size: 22px; font-weight: 700; color: #282828; text-decoration: none; }
 .logo span { color: #d66900; }
 .nav-links a { margin-left: 28px; font-weight: 500; color: #282828; text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: #d66900; }
