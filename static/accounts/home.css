@@ -382,11 +382,11 @@ footer {
   max-width: 1200px;
   margin: 0 auto;
   padding: 48px 60px 32px;
-  display: grid;
-  grid-template-columns: auto 1fr;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 48px;
 }
-
 /* Brand Section */
 .footer-brand {
   display: flex;
