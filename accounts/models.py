@@ -2,8 +2,12 @@ import uuid
 from django.db import models
 from django.conf import settings
 
+# This imports the default Django User model (defined by settings.AUTH_USER_MODEL)
+# via a Foreign Key to link profiles to users.
+
 class Franchisee(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Links this profile to a base Django User
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
     business_name = models.TextField()
     address = models.TextField(null=True, blank=True)
@@ -11,6 +15,8 @@ class Franchisee(models.Model):
     joined_date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        # NOTE: managed = False is used because you are likely pointing to pre-existing tables.
+        # Ensure this is what you intend, as Django will not create or alter these tables.
         db_table = 'franchisee'
         managed = False
 
@@ -20,6 +26,7 @@ class Franchisee(models.Model):
 
 class Franchisor(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Links this profile to a base Django User
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
     company_name = models.TextField()
     email = models.EmailField(max_length=255, null=True, blank=True)
@@ -37,6 +44,7 @@ class Franchisor(models.Model):
 
 class AdminProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Links this profile to a base Django User
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
     full_name = models.TextField()
     role_description = models.TextField(null=True, blank=True)
@@ -48,4 +56,3 @@ class AdminProfile(models.Model):
 
     def __str__(self):
         return f"{self.full_name} ({self.user.username})"
-
