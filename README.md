@@ -69,15 +69,11 @@ Follow the prompts to create your admin credentials.
 bash
 
 python manage.py runserver
-Then open these URLs in your browser:
+Then open these URL in your browser:
 
-Registration page: http://127.0.0.1:8000/accounts/register/
+http://127.0.0.1:8000/
 
-Login page: http://127.0.0.1:8000/accounts/login/
 
-Admin page: http://127.0.0.1:8000/admin/
-
-Note: The main homepage (/) is not yet implemented — use the routes above to access current features.
 
 ##👥 Team Members
 Lanz Roy Sumalpong      Product Owner       lanzroy.sumalpong@cit.edu

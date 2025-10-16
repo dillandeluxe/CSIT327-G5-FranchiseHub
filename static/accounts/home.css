@@ -383,7 +383,6 @@ footer {
   font-size: 26px;
   font-weight: 700;
   color: #fff;
-  margin-bottom: 22px;
 }
 
 .footer-logo span {
@@ -429,7 +428,6 @@ footer {
   .footer-main {
     flex-direction: column;
     align-items: center;
-    gap: 40px;
   }
   .footer-columns {
     gap: 38px;
