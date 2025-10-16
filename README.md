@@ -82,5 +82,3 @@ David Ryan Sia          Scrum Master        davidryan.sia@cit.edu
 Dillan Marquin Ycoy     Lead Developer      dillanmarquin.ycoy@cit.edu
 German Oliver Velasco   FullStack Developer germanoliver.velasco@cit.edu
 John James Palis        FullStack Developer johnjames.palis@cit.edu
-
-
