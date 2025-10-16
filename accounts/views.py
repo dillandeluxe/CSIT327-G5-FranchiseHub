@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from .forms import ProfileForm
+from .models import Profile
 
 def register_view(request):
     if request.method == 'POST':
@@ -49,3 +52,16 @@ def home_view(request):
 
 def browse(request):
     return render(request, 'accounts/browse.html')
+
+
+def edit_profile(request):
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect('edit_profile')
+    else:
+        form = ProfileForm(instance=profile)
+    return render(request, 'accounts/edit_profile.html', {'form': form})
+
