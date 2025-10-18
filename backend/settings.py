@@ -18,6 +18,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+<<<<<<< HEAD
+=======
+load_dotenv(dotenv_path=BASE_DIR / ".env")
+print("Loaded DB host:", os.getenv("DB_HOST"))
+
+>>>>>>> main
 
 
 # Quick-start development settings - unsuitable for production
@@ -129,3 +135,32 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# =========================================================================
+# AUTHENTICATION & SESSION FIXES
+# =========================================================================
+
+# 1. Cookie Fix: REQUIRED for local development (http://localhost)
+# If DEBUG is True and you are not using HTTPS, set these to False.
+# If these are True, the browser will ignore the cookies on HTTP, causing the login loop.
+SESSION_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = False
+
+# 2. Redirect Definitions: Align views and settings
+# Tells Django where to send users after a successful login
+# Since your view redirects to 'browse', we use its path or name.
+# Assuming 'browse' is mapped to path('/browse/', ...) in your urls.py
+LOGIN_REDIRECT_URL = '/browse/'
+
+# Tells Django where the login page is located (for @login_required decorator)
+# If your view is mapped to path('login/', ..., name='login')
+LOGIN_URL = '/login/' 
+
+# 3. User Model (Best Practice - only necessary if 'accounts' is the app name)
+# If you are using your own custom user model, this is critical. 
+# Since you're using the default User model, it's safer to ensure this is set if 
+# you plan to customize it later.
+# If you have a custom user model in the 'accounts' app called 'CustomUser':
+# AUTH_USER_MODEL = 'accounts.CustomUser' 
+# Since you use the default, setting it may not be necessary, but defining it 
+# makes your intentions clear.

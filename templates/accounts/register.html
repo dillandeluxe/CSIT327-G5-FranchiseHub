@@ -10,9 +10,9 @@
 </head>
 <body>
   <div class="navbar">
-    <a href="{% url 'home' %}" class="logo">🏢 <span>Franchise</span>Hub</a>
+    <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
     <div class="nav-links">
-      <a href="{% url 'browse' %}">Browse Franchises</a>
+      
       <a href="{% url 'login' %}">Login</a>
       <a href="{% url 'register' %}" class="btn">Get Started</a>
     </div>
@@ -33,8 +33,8 @@
 
       <form method="POST">
         {% csrf_token %}
-        <label>Full Name</label>
-        <input type="text" name="username" placeholder="Enter your full name" required>
+       <label>Username (or Full Name)</label>
+<input type="text" name="username" placeholder="Enter a unique username" required>
 
         <label>Email Address</label>
         <input type="email" name="email" placeholder="Enter your email" required>
@@ -54,7 +54,7 @@
         <button type="submit" class="apply-btn">Apply Now</button>
       </form>
 
-      <p class="signin-link">Already have an account? <a href="/accounts/login/">Sign in</a></p>
+      <p class="signin-link">Already have an account? <a href="{% url 'login' %}">Sign in</a></p>
     </div>
   </div>
 </body>

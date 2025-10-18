@@ -7,17 +7,22 @@ body {
 }
 
 .navbar {
-  display: flex;
+   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
+  padding: 16px 44px;
   background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .logo {
-  font-size: 20px;
-  color: #000;
-  font-weight: 600;
+  font-size: 22px;
+  color: #282828;
+  font-weight: 700;
+  text-decoration: none;
 }
 .logo span {
   color: #d66900;

@@ -5,11 +5,16 @@ body {
 }
 
 .navbar {
-    background-color: white;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 40px;
+   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 44px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  
 }
 
 .nav-left {
@@ -17,20 +22,19 @@ body {
     align-items: center;
 }
 
-.nav-left h2 {
-    color: #333;
-    margin-left: 8px;
-    font-size: 20px;
-    font-weight: 600;
-}
-
 .nav-left span {
     color: #d35400;
 }
 
 .logo {
-    width: 26px;
-    height: 26px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #282828;
+    text-decoration: none;
+}
+
+.logo span {
+    color: #d66900;
 }
 
 .nav-right a {
@@ -38,6 +42,7 @@ body {
     color: #333;
     text-decoration: none;
     font-size: 14px;
+    font-weight: 500;
 }
 
 .nav-right .btn {
