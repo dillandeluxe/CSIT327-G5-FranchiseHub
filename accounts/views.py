@@ -118,3 +118,30 @@ def browse(request):
 
 # NOTE: The provided code does not include the AdminProfile logic, 
 # but the foundation is ready for expansion if needed later.
+
+
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django import forms
+
+# Simple form for editing user info
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email']
+
+@login_required
+def profile_view(request):
+    """Displays and allows editing of the user's profile."""
+    user = request.user  # current logged-in user
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('profile')
+    else:
+        form = ProfileForm(instance=user)
+
+    return render(request, 'accounts/profile.html', {'form': form})

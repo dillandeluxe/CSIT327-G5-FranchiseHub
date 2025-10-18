@@ -18,12 +18,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-<<<<<<< HEAD
-=======
 load_dotenv(dotenv_path=BASE_DIR / ".env")
 print("Loaded DB host:", os.getenv("DB_HOST"))
 
->>>>>>> main
 
 
 # Quick-start development settings - unsuitable for production
@@ -84,11 +81,17 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-"default": dj_database_url.config(
-default="sqlite:///db.sqlite3",
-conn_max_age=600, # persistent connections
-ssl_require=True # enforce SSL
-)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
+    }
 }
 
 
@@ -129,8 +132,9 @@ USE_TZ = True
 
 import os
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
