@@ -1,9 +1,12 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404 # Added get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
-from django.contrib.auth.decorators import login_required # <-- New Import for security
+from django.contrib.auth.decorators import login_required 
+from django import forms
+from .forms import ProfileForm # Import the ProfileForm from accounts/forms.py
+from .models import Franchisee, Franchisor, Profile # Added Profile model
 
 
 # =========================================================================
@@ -124,24 +127,39 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django import forms
 
-# Simple form for editing user info
-class ProfileForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email']
-
+# --- NEW: READ-ONLY PROFILE VIEW ---
 @login_required
 def profile_view(request):
+    """Displays the read-only view of the user's profile."""
+    # Fetch the related Profile model instance, creating it if it doesn't exist
+    user_profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    context = {
+        'user_profile': user_profile, # Passed to the new view_profile.html
+    }
+    return render(request, 'accounts/view_profile.html', context)
+
+
+# --- RENAMED: EDIT PROFILE VIEW (was profile_view) ---
+@login_required
+def edit_profile_view(request):
     """Displays and allows editing of the user's profile."""
-    user = request.user  # current logged-in user
+    
+    # Get the related Profile model instance, creating it if it doesn't exist
+    user_profile, created = Profile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=user)
+        # Use the Profile model instance for the form
+        form = ProfileForm(request.POST, instance=user_profile)
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect('profile')
+            # Redirect to the new read-only view after saving
+            return redirect('profile') 
     else:
-        form = ProfileForm(instance=user)
+        form = ProfileForm(instance=user_profile)
 
-    return render(request, 'accounts/profile.html', {'form': form})
+    # Pass the form and the profile object to the template
+    return render(request, 'accounts/profile.html', {'form': form, 'user_profile': user_profile})
+
+# NOTE: The simple ProfileForm definition at the end of the original file is removed.

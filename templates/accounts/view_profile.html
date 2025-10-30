@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | FranchiseHub</title>
+  <link rel="stylesheet" href="{% static 'accounts/profile.css' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <nav class="navbar">
+      <div class="nav-left">
+          <img src="{% static 'accounts/logo.png' %}" alt="Logo" class="logo">
+          <h2><span>Franchise</span>Hub</h2>
+      </div>
+      <div class="nav-right">
+          <a href="{% url 'browse' %}">Browse Franchises</a>
+          {% if user.is_authenticated %}
+              <a href="{% url 'logout' %}">Logout</a>
+          {% else %}
+              <a href="{% url 'login' %}">Login</a>
+          {% endif %}
+          <a href="{% url 'register' %}" class="btn">Get Started</a>
+      </div>
+  </nav>
+
+  <section class="profile-header" style="background-color: #d35400; color: white; text-align: center; padding: 40px 0;">
+      <h1>My Profile</h1>
+      <p>Your personal account details</p>
+  </section>
+
+  <div class="profile-container">
+        <h2>Account Information</h2>
+        
+        <label>Username</label>
+        <p class="profile-data">{{ user.username }}</p>
+
+        <label>Email Address (Primary)</label>
+        <p class="profile-data">{{ user.email }}</p>
+
+        <label>Full Name</label>
+        <p class="profile-data">{{ user_profile.full_name }}</p>
+
+        <label>Phone Number</label>
+        <p class="profile-data">{% if user_profile.phone_number %}{{ user_profile.phone_number }}{% else %}N/A{% endif %}</p>
+
+        <label>Location</label>
+        <p class="profile-data">{% if user_profile.location %}{{ user_profile.location }}{% else %}N/A{% endif %}</p>
+
+        <label>Bio</label>
+        <p class="profile-data bio-text">{% if user_profile.bio %}{{ user_profile.bio }}{% else %}No bio provided.{% endif %}</p>
+
+        <div class="form-buttons">
+            <a href="{% url 'edit_profile' %}" class="save-btn" style="width: 100%; text-align: center;">Edit Profile</a>
+        </div>
+  </div>
+</body>
+</html>

@@ -102,3 +102,21 @@
     background-color: #ccc;
     color: #333;
 }
+
+/* New style for read-only profile data */
+.profile-container .profile-data {
+    display: block;
+    padding: 10px 0;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee; /* Adds a separator line */
+    color: #333;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.profile-container .bio-text {
+    /* Remove the bottom border for the bio text display */
+    border-bottom: none; 
+    white-space: pre-wrap; /* Preserve line breaks in the bio */
+}
