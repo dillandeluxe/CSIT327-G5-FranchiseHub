@@ -1,0 +1,72 @@
+{% load static %}
+<link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'accounts/franchise_detail_modal.css' %}">
+
+<!-- Only the modal card content! DO NOT wrap in .modal-bg here because that’s in the main page. -->
+<div class="modal-card">
+    <div class="franchise-details">
+        <div class="franchise-card-header">
+            <div class="franchise-title">{{ franchise.name }} <span class="franchise-tag">{{ franchise.industry }}</span></div>
+            <div class="franchise-rating"><span>★ {{ franchise.rating }}</span></div>
+        </div>
+        <div class="franchise-desc">{{ franchise.desc }}</div>
+        <div class="investment-breakdown">
+            <h4>Investment Breakdown</h4>
+            <div class="breakdown-list">
+                <div><b>Total Investment</b> Php 5.3M</div>
+                <div>Franchise fee: Php 2.3M</div>
+                <div>Equipment: Php 1.6M</div>
+                <div>Working capital: Php 1M</div>
+                <div>Marketing launch: Php 400K</div>
+            </div>
+        </div>
+        <div class="what-you-get">
+            <h4>What You Get</h4>
+            <div class="tags-row">
+                <span>Comprehensive Training Program</span>
+                <span>National Marketing Support</span>
+                <span>24/7 Ongoing Support</span>
+                <span>Proven Business Model</span>
+            </div>
+        </div>
+        <div class="franchise-highlight">
+            <div>📅 <b>{{ franchise.established|default:"2004" }}</b> <span>Established</span></div>
+            <div>👥 <b>150+</b> <span>Locations</span></div>
+        </div>
+    </div>
+    <div class="inquiry-form">
+        <h2>Get More Information</h2>
+        <form method="post" action="{% url 'franchise_inquiry' %}">
+            {% csrf_token %}
+            <div class="form-row">
+                <input type="text" name="full_name" placeholder="Full Name" required>
+                <input type="email" name="email" placeholder="Email Address" required>
+            </div>
+            <div class="form-row">
+                <input type="text" name="phone" placeholder="Phone Number">
+                <input type="text" name="location" placeholder="Current Location">
+            </div>
+            <div class="form-row">
+                <select name="experience_level" required>
+                    <option value="">Select your experience level</option>
+                    <option value="first_time">First-time franchisee</option>
+                    <option value="experienced_owner">Experienced business owner</option>
+                    <option value="corporate_executive">Corporate executive</option>
+                    <option value="others">Others</option>
+                </select>
+            </div>
+            <textarea name="comments" placeholder="Tell us about your goals, timeline, or any specific question..." rows="3"></textarea>
+            <div class="form-row checkbox-row">
+                <label>
+                    <input type="checkbox" name="agree_terms" required>
+                    I agree to the terms and conditions and privacy policy
+                </label>
+                <label>
+                    <input type="checkbox" name="subscribe">
+                    Subscribe to our newsletter for franchise opportunities and updates
+                </label>
+            </div>
+            <button type="submit" class="inquire-btn">Inquire Now</button>
+        </form>
+    </div>
+</div>

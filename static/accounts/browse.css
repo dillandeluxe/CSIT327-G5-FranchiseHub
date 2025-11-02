@@ -110,3 +110,31 @@ body {
   .franchise-list { flex-direction: column; align-items: center; }
   .filters { flex-direction: column; align-items: flex-start; gap: 10px; }
 }
+/* Modal Overlay: Always centered and topmost */
+.modal-bg {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(30,30,30,0.75);
+  display: none; /* default hidden */
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* When JS sets display: flex (inline in style), this ensures overlay works */
+.modal-bg[style*="display: flex"] {
+  display: flex !important;
+}
+
+/* Modal Content: true card, centered */
+.modal-content {
+  background: #fff;
+  border-radius: 12px;
+  padding: 40px 28px;
+  max-width: 540px;
+  width: 100%;
+  box-shadow: 0 12px 40px rgba(15,15,30,0.18);
+  position: relative;
+  z-index: 10000;
+}

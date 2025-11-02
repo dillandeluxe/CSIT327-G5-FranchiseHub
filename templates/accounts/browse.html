@@ -63,52 +63,65 @@
 
   <!-- Franchise Cards List -->
   <section class="franchise-list">
+    {% for franchise in franchises %}
     <div class="franchise-card">
       <div class="franchise-cover"></div>
-      <h3>FitZone Gym</h3>
+      <h3>
+        <a href="#" class="open-modal" data-id="{{ franchise.id }}">{{ franchise.name }}</a>
+      </h3>
       <div class="franchise-meta">
-        <span class="industry">Fitness & Health</span><br>
-        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+        <span class="industry">{{ franchise.industry }}</span><br>
+        <span class="desc">{{ franchise.desc }}</span>
         <div class="franchise-details">
-          <span class="investment">₱450k+ Investment</span>
-          <span class="location">Suburban</span>
-          <span class="established">Est 2015</span>
+          <span class="investment">{{ franchise.investment }}</span>
+          <span class="location">{{ franchise.location }}</span>
+          <span class="established">{{ franchise.established }}</span>
         </div>
-        <span class="rating">4.9 ★</span>
+        <span class="rating">{{ franchise.rating }}</span>
       </div>
-      <button class="inquire-btn">Inquire Now</button>
+      <!-- "Inquire Now" triggers modal overlay -->
+      <a href="#" class="inquire-btn open-modal" data-id="{{ franchise.id }}">Inquire Now</a>
     </div>
-    <div class="franchise-card">
-      <div class="franchise-cover"></div>
-      <h3>FitZone Gym</h3>
-      <div class="franchise-meta">
-        <span class="industry">Fitness & Health</span><br>
-        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-        <div class="franchise-details">
-          <span class="investment">₱450k+ Investment</span>
-          <span class="location">Suburban</span>
-          <span class="established">Est 2015</span>
-        </div>
-        <span class="rating">4.9 ★</span>
-      </div>
-      <button class="inquire-btn">Inquire Now</button>
-    </div>
-    <div class="franchise-card">
-      <div class="franchise-cover"></div>
-      <h3>FitZone Gym</h3>
-      <div class="franchise-meta">
-        <span class="industry">Fitness & Health</span><br>
-        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-        <div class="franchise-details">
-          <span class="investment">₱450k+ Investment</span>
-          <span class="location">Suburban</span>
-          <span class="established">Est 2015</span>
-        </div>
-        <span class="rating">4.9 ★</span>
-      </div>
-      <button class="inquire-btn">Inquire Now</button>
-    </div>
+    {% endfor %}
   </section>
 
+  <!-- Modal Overlay Container (should be at END of body for best z-index stacking!) -->
+  <div id="franchise-modal-bg" class="modal-bg" style="display:none;">
+    <div id="franchise-modal" class="modal-content"></div>
+  </div>
+
+  <!-- Modal Logic: Handles opening/closing of modal overlay -->
+  <script>
+    function openFranchiseModal(franchiseId) {
+      fetch('/accounts/franchise/' + franchiseId + '/?ajax=1')
+        .then(response => response.text())
+        .then(html => {
+          const modalBg = document.getElementById('franchise-modal-bg');
+          const modal = document.getElementById('franchise-modal');
+          modal.innerHTML = html;
+          modalBg.style.display = 'flex';
+        })
+        .catch(err => console.error('Failed to load franchise detail:', err));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Attach to BOTH franchise name and inquire buttons
+      document.querySelectorAll('.open-modal').forEach(button => {
+        button.addEventListener('click', event => {
+          event.preventDefault();
+          const franchiseId = button.getAttribute('data-id');
+          if (franchiseId) openFranchiseModal(franchiseId);
+        });
+      });
+
+      // Clicking the overlay background closes the modal
+      document.getElementById('franchise-modal-bg').addEventListener('click', e => {
+        if (e.target.id === 'franchise-modal-bg') {
+          e.target.style.display = 'none';
+          document.getElementById('franchise-modal').innerHTML = '';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
