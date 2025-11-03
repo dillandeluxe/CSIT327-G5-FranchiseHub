@@ -1,0 +1,46 @@
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Franchisor Dashboard | FranchiseHub{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/franchisor_dashboard.css' %}">
+
+
+
+</head>
+
+<body>
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="logo"><span>Franchise</span>Hub</div>
+    <nav>
+      <a href="{% url 'browse' %}">Browse Franchises</a>
+      <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+    </nav>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-section">
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Optional JS -->
+  <script>
+    // Common modal handler (optional)
+    const modal = document.getElementById("addFranchiseModal");
+    const btnAdd = document.querySelector(".btn-add");
+    const spanClose = document.querySelector(".close");
+    if (btnAdd && modal && spanClose) {
+      btnAdd.onclick = () => modal.classList.remove("hidden");
+      spanClose.onclick = () => modal.classList.add("hidden");
+      window.onclick = (e) => { if (e.target === modal) modal.classList.add("hidden"); };
+    }
+  </script>
+</body>
+</html>

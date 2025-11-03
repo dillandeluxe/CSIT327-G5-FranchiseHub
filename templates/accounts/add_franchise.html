@@ -1,0 +1,24 @@
+{% extends 'accounts/base_franchisor.html' %}
+
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Add Franchise</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="name" class="form-label">Franchise Name</label>
+            <input type="text" name="name" id="name" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea name="description" id="description" class="form-control" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="logo" class="form-label">Logo</label>
+            <input type="file" name="logo" id="logo" class="form-control">
+        </div>
+        <button type="submit" class="btn btn-primary">Add Franchise</button>
+    </form>
+</div>
+{% endblock %}

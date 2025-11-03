@@ -1,9 +1,14 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
-from django.contrib.auth.decorators import login_required # <-- New Import for security
+from django.contrib.auth.decorators import login_required
+from django import forms
+
+from .models import Franchisee, Franchisor, Franchise
+from .forms import FranchiseForm
+from accounts.utils import get_user_role
 
 
 # =========================================================================
@@ -11,84 +16,73 @@ from django.contrib.auth.decorators import login_required # <-- New Import for s
 # =========================================================================
 
 def register_view(request):
-    """Handles user registration and associated profile creation (Franchisee/Franchisor)."""
-
-    from .models import Franchisee, Franchisor  # Importing here to avoid circular imports
+    """Handles new user registration for Franchisees and Franchisors."""
     if request.method == 'POST':
-        # 1. Get ALL necessary data from the POST request
-        username = request.POST.get('username').strip()
-        email = request.POST.get('email', '').strip()
+        username = request.POST.get('username')
+        email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         role = request.POST.get('role')
 
-        # Basic Validation Checks
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
-            return redirect('register')
-        
-        if not email:
-            messages.error(request, "Email is required.")
             return redirect('register')
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists.")
             return redirect('register')
 
-        # Use transaction.atomic for database consistency
         try:
             with transaction.atomic():
-                # 2. Create the base Django User
-                user = User.objects.create_user(
-                    username=username, 
-                    email=email, 
-                    password=password
-                )
-                user.save()
+                user = User.objects.create_user(username=username, email=email, password=password)
 
-                # 3. Create the corresponding profile based on role
-                if role == 'franchisee':
-                    Franchisee.objects.create(
-                        user=user, 
-                        business_name=f"New Franchisee ({username})"
-                    )
-                elif role == 'franchisor':
-                    Franchisor.objects.create(
-                        user=user, 
-                        company_name=f"New Franchisor ({username})", 
-                        email=email
-                    )
+                if role == 'franchisor':
+                    Franchisor.objects.create(user=user)
+                elif role == 'franchisee':
+                    Franchisee.objects.create(user=user)
                 else:
-                    raise ValueError("Invalid role selected.")
-                    
-                # 4. Log the user in and redirect to the browse page
+                    messages.error(request, "Invalid role selected.")
+                    return redirect('register')
+
+            user = authenticate(request, username=username, password=password)
+            if user:
                 login(request, user)
-                messages.success(request, f"Welcome to FranchiseHub, {username}!")
+
+            # Redirect based on role
+            if role == 'franchisee':
                 return redirect('browse')
+            elif role == 'franchisor':
+                return redirect('franchisor_dashboard')
+            else:
+                return redirect('home')
 
         except Exception as e:
-            messages.error(request, f"Registration failed due to an error. Please try again. (Details: {e})")
+            messages.error(request, f"Error during registration: {str(e)}")
             return redirect('register')
 
     return render(request, 'accounts/register.html')
 
 
 def login_view(request):
-    """Handles user authentication."""
+    """Handles user authentication and redirects based on role."""
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
-        password = request.POST.get('password', '')
+        password = request.POST.get('password', '').strip()
 
-        # Authenticate the user
         user = authenticate(request, username=username, password=password)
 
         if user is not None:
-            # Successful authentication: Log the user in and redirect to browse
             login(request, user)
             messages.success(request, f"Welcome back, {username}!")
-            return redirect('browse') 
+
+            if Franchisee.objects.filter(user=user).exists():
+                return redirect('browse')
+            elif Franchisor.objects.filter(user=user).exists():
+                return redirect('franchisor_dashboard')
+            else:
+                messages.error(request, "No role assigned to this user.")
+                return redirect('login')
         else:
-            # Failed authentication: Display error message
             messages.error(request, "Invalid username or password.")
             return redirect('login')
 
@@ -96,44 +90,43 @@ def login_view(request):
 
 
 def logout_view(request):
-    """Logs the user out and redirects to the login page."""
+    """Logs out the user."""
     logout(request)
     messages.info(request, "You have been logged out.")
     return redirect('login')
 
 
 # =========================================================================
-# 2. APPLICATION VIEWS
+# 2. MAIN APP VIEWS
 # =========================================================================
 
 def home_view(request):
-    """The main landing page view."""
+    """Landing page."""
     return render(request, 'accounts/home.html')
 
 
-@login_required # <-- Security: Only logged-in users can access this page
+@login_required
 def browse(request):
-    """The main view for displaying franchise opportunities."""
-    return render(request, 'accounts/browse.html')
-
-# NOTE: The provided code does not include the AdminProfile logic, 
-# but the foundation is ready for expansion if needed later.
+    """Displays all active franchises for franchisees."""
+    franchises = Franchise.objects.filter(is_active=True)
+    return render(request, 'accounts/browse.html', {'franchises': franchises})
 
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
-from django import forms
+# =========================================================================
+# 3. PROFILE VIEW
+# =========================================================================
 
-# Simple form for editing user info
 class ProfileForm(forms.ModelForm):
+    """Simple form for editing user info."""
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
 
+
 @login_required
 def profile_view(request):
     """Displays and allows editing of the user's profile."""
-    user = request.user  # current logged-in user
+    user = request.user
 
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=user)
@@ -145,3 +138,82 @@ def profile_view(request):
         form = ProfileForm(instance=user)
 
     return render(request, 'accounts/profile.html', {'form': form})
+
+
+# =========================================================================
+# 4. FRANCHISOR DASHBOARD + ADD FRANCHISE
+# =========================================================================
+
+@login_required
+def franchisor_dashboard(request):
+    """Displays franchisor dashboard with their franchises."""
+    try:
+        franchisor = Franchisor.objects.get(user=request.user)
+    except Franchisor.DoesNotExist:
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('browse')
+
+    franchises = Franchise.objects.filter(franchisor=franchisor)
+    return render(request, 'accounts/franchisor_dashboard.html', {
+        'franchises': franchises
+    })
+
+
+@login_required
+def add_franchise_view(request):
+    """Allows franchisors to create new franchises (Add Franchise button)."""
+    if not request.user.is_authenticated:
+        return redirect('login')
+
+    franchisor = Franchisor.objects.filter(user=request.user).first()
+    if not franchisor:
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('browse')
+
+    if request.method == 'POST':
+        form = FranchiseForm(request.POST)
+        if form.is_valid():
+            franchise = form.save(commit=False)
+            franchise.franchisor = franchisor
+            franchise.save()
+            messages.success(request, "Franchise created successfully!")
+            return redirect('franchisor_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = FranchiseForm()
+
+    return render(request, 'accounts/add_franchise.html', {'form': form})
+
+
+# =========================================================================
+# 5. ROLE DASHBOARD REDIRECT
+# =========================================================================
+
+@login_required
+def dashboard_redirect(request):
+    """Redirects users to their appropriate dashboard."""
+    user_role = get_user_role(request.user)
+    if user_role == 'franchisor':
+        return redirect('franchisor_dashboard')
+    return redirect('browse')
+
+
+# =========================================================================
+# 6. FRANCHISE DETAIL + INQUIRY
+# =========================================================================
+
+@login_required
+def franchise_detail(request, franchise_id):
+    """Displays a specific franchise’s detailed page."""
+    franchise = get_object_or_404(Franchise, id=franchise_id)
+    return render(request, 'accounts/franchise_detail.html', {'franchise': franchise})
+
+
+@login_required
+def franchise_inquiry(request):
+    """Handles inquiries from the modal form."""
+    if request.method == 'POST':
+        messages.success(request, "Your inquiry has been submitted successfully!")
+        return redirect('browse')
+    return render(request, 'accounts/franchise_detail_modal.html')

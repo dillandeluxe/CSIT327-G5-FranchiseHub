@@ -1,0 +1,84 @@
+{% extends 'accounts/base_franchisor.html' %}
+{% load static %}
+
+{% block title %}Franchisor Dashboard | FranchiseHub{% endblock %}
+{% block content %}
+
+<main class="dashboard-container">
+  <!-- Header -->
+  <section class="dashboard-header">
+    <div class="header-text">
+      <h1>Franchisor Dashboard</h1>
+      <p>Manage your franchise listings and applications with ease.</p>
+    </div>
+    <button class="btn-add" onclick="window.location.href='{% url 'add_franchise' %}'">+ Add Franchise</button>
+  </section>
+
+  <!-- Main Grid Section -->
+  <section class="main-section">
+    <!-- Stats Overview -->
+    <div class="stats">
+      <div class="card">
+        <h3>Active Franchises</h3>
+        <p class="stat-value">8</p>
+        <p class="stat-sub">+2 this month</p>
+      </div>
+      <div class="card">
+        <h3>Total Applications</h3>
+        <p class="stat-value">45</p>
+        <p class="stat-sub">+12 this week</p>
+      </div>
+      <div class="card">
+        <h3>Active Franchisees</h3>
+        <p class="stat-value">23</p>
+        <p class="stat-sub">+5 this month</p>
+      </div>
+      <div class="card">
+        <h3>Revenue This Month</h3>
+        <p class="stat-value">$12,400</p>
+        <p class="stat-sub">+10% growth</p>
+      </div>
+    </div>
+
+    <!-- Franchises and Applications -->
+    <div class="dashboard-grid">
+      <div class="franchises">
+        <h2>My Franchises</h2>
+        {% for franchise in franchises %}
+          <div class="franchise-card">
+            <div>
+              <h3>{{ franchise.name }}</h3>
+              <p>{{ franchise.category }} — ₱{{ franchise.investment }} • {{ franchise.applications.count }} applications</p>
+            </div>
+            <div class="actions">
+              <button class="btn-view">View</button>
+              <button class="btn-edit">Edit</button>
+              <button class="btn-delete">🗑</button>
+            </div>
+          </div>
+        {% empty %}
+          <p>You don’t have any franchises yet.</p>
+        {% endfor %}
+      </div>
+
+      <div class="applications">
+        <h2>Recent Applications</h2>
+        {% for app in applications %}
+          <div class="app-card">
+            <h3>{{ app.full_name }} — {{ app.franchise.name }}</h3>
+            <p>Applied {{ app.created_at|date:"M d, Y" }}</p>
+            <div class="status {{ app.status|lower }}">{{ app.status }}</div>
+            <div class="actions">
+              <button class="btn-review">Review</button>
+            </div>
+          </div>
+        {% empty %}
+          <p>No recent applications.</p>
+        {% endfor %}
+        <button class="btn-view-all">View All Applications</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+{% endblock %}
