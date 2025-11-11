@@ -5,9 +5,10 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django import forms
+from django.views.decorators.http import require_POST
 
-from .models import Franchisee, Franchisor, Franchise
-from .forms import FranchiseForm
+from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
+from .forms import FranchiseForm, FranchiseApplicationForm
 from accounts.utils import get_user_role
 
 
@@ -108,7 +109,8 @@ def home_view(request):
 @login_required
 def browse(request):
     """Displays all active franchises for franchisees."""
-    franchises = Franchise.objects.filter(is_active=True)
+    # Order newest first so newly created franchises are visible at the top.
+    franchises = Franchise.objects.filter(is_active=True).order_by('-created_at')
     return render(request, 'accounts/browse.html', {'franchises': franchises})
 
 
@@ -146,32 +148,46 @@ def profile_view(request):
 
 @login_required
 def franchisor_dashboard(request):
-    """Displays franchisor dashboard with their franchises."""
+    """
+    Displays the franchisor dashboard with:
+    - All active franchises of the logged-in franchisor
+    - Recent applications (latest 5)
+    """
+    try:
+        # Get the logged-in user's franchisor profile
+        franchisor = Franchisor.objects.get(user=request.user)
+    except Franchisor.DoesNotExist:
+        # Non-franchisor users are redirected with a message
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('browse')
+
+    # Fetch all active franchises for this franchisor
+    franchises = franchisor.franchises.filter(is_active=True).order_by('-created_at')
+
+    # Collect recent applications across all franchises
+    applications = []
+    for franchise in franchises:
+        applications += list(franchise.applications.all().order_by('-created_at'))
+
+    # Sort all applications by creation date descending and limit to latest 5
+    applications = sorted(applications, key=lambda x: x.created_at, reverse=True)[:5]
+
+    return render(request, 'accounts/franchisor_dashboard.html', {
+        'franchises': franchises,
+        'applications': applications
+    })
+
+@login_required
+def add_franchise_view(request):
+    """Allows franchisors to create new franchises."""
     try:
         franchisor = Franchisor.objects.get(user=request.user)
     except Franchisor.DoesNotExist:
         messages.error(request, "You are not registered as a franchisor.")
         return redirect('browse')
 
-    franchises = Franchise.objects.filter(franchisor=franchisor)
-    return render(request, 'accounts/franchisor_dashboard.html', {
-        'franchises': franchises
-    })
-
-
-@login_required
-def add_franchise_view(request):
-    """Allows franchisors to create new franchises (Add Franchise button)."""
-    if not request.user.is_authenticated:
-        return redirect('login')
-
-    franchisor = Franchisor.objects.filter(user=request.user).first()
-    if not franchisor:
-        messages.error(request, "You are not registered as a franchisor.")
-        return redirect('browse')
-
     if request.method == 'POST':
-        form = FranchiseForm(request.POST)
+        form = FranchiseForm(request.POST, request.FILES)
         if form.is_valid():
             franchise = form.save(commit=False)
             franchise.franchisor = franchisor
@@ -184,6 +200,56 @@ def add_franchise_view(request):
         form = FranchiseForm()
 
     return render(request, 'accounts/add_franchise.html', {'form': form})
+
+
+@login_required
+def delete_franchise(request, franchise_id):
+    franchisor = Franchisor.objects.filter(user=request.user).first()
+    if not franchisor:
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('browse')
+
+    franchise = get_object_or_404(Franchise, id=franchise_id, franchisor=franchisor)
+    franchise.is_active = False  # Soft delete
+    franchise.save()
+
+    messages.success(request, "Franchise removed successfully.")
+    return redirect('franchisor_dashboard')
+
+
+@login_required
+def edit_franchise_view(request, franchise_id):
+    """
+    Allows a franchisor to edit an existing franchise.
+    Only active franchises belonging to the logged-in franchisor can be edited.
+    """
+    try:
+        franchisor = Franchisor.objects.get(user=request.user)
+    except Franchisor.DoesNotExist:
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('browse')
+
+    # Get the franchise or 404 if it doesn't exist or doesn't belong to this franchisor
+    franchise = get_object_or_404(Franchise, id=franchise_id, franchisor=franchisor, is_active=True)
+
+    if request.method == 'POST':
+        form = FranchiseForm(request.POST, request.FILES, instance=franchise)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Franchise '{franchise.name}' updated successfully!")
+            return redirect('franchisor_dashboard')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        form = FranchiseForm(instance=franchise)
+
+    return render(request, 'accounts/edit_franchise.html', {'form': form, 'franchise': franchise})
+
+
+@login_required
+def all_applications(request):
+    applications = FranchiseApplication.objects.all()  # Or filter by franchisor
+    return render(request, 'accounts/all_applications.html', {'applications': applications})
 
 
 # =========================================================================
@@ -217,3 +283,62 @@ def franchise_inquiry(request):
         messages.success(request, "Your inquiry has been submitted successfully!")
         return redirect('browse')
     return render(request, 'accounts/franchise_detail_modal.html')
+
+
+@login_required
+def franchise_apply(request, franchise_id):
+    """
+    Franchisee submits an application for a franchise.
+    Links FranchiseApplication to both Franchise & Franchisee.
+    """
+    franchise = get_object_or_404(Franchise, id=franchise_id, is_active=True)
+
+    franchisee = Franchisee.objects.filter(user=request.user).first()
+    if not franchisee:
+        messages.error(request, "Only franchisees can submit applications.")
+        return redirect('browse')
+
+    if request.method == 'POST':
+        form = FranchiseApplicationForm(request.POST)
+        if form.is_valid():
+            app = form.save(commit=False)
+            app.franchise = franchise
+            app.franchisee = franchisee
+            app.save()
+            messages.success(request, "Application submitted successfully.")
+            return redirect('browse')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    else:
+        initial = {
+            'full_name': request.user.get_full_name() or request.user.username,
+            'email': request.user.email,
+        }
+        form = FranchiseApplicationForm(initial=initial)
+
+    return render(request, 'accounts/franchise_apply.html', {
+        'form': form,
+        'franchise': franchise
+    })
+
+@require_POST
+@login_required
+def application_set_status(request, application_id, status):
+    """
+    Franchisor updates application status (Approve / Reject).
+    """
+    app = get_object_or_404(FranchiseApplication, id=application_id)
+    # Security: only owning franchisor may change status
+    if not Franchisor.objects.filter(user=request.user, franchises__id=app.franchise.id).exists():
+        messages.error(request, "Not authorized to modify this application.")
+        return redirect('franchisor_dashboard')
+
+    if status == 'approve':
+        app.approve()
+        messages.success(request, "Application approved.")
+    elif status == 'reject':
+        app.reject()
+        messages.info(request, "Application rejected.")
+    else:
+        messages.error(request, "Invalid status action.")
+    return redirect('franchisor_dashboard')

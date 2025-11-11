@@ -70,52 +70,122 @@
 
   <!-- Franchise Cards List -->
   <section class="franchise-list">
-    <div class="franchise-card">
-      <div class="franchise-cover"></div>
-      <h3>FitZone Gym</h3>
-      <div class="franchise-meta">
-        <span class="industry">Fitness & Health</span><br>
-        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-        <div class="franchise-details">
-          <span class="investment">₱450k+ Investment</span>
-          <span class="location">Suburban</span>
-          <span class="established">Est 2015</span>
+    {% for franchise in franchises %}
+      <div class="franchise-card" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}">
+        <div class="franchise-cover"></div>
+        <h3>{{ franchise.name }}</h3>
+        <div class="franchise-meta">
+          <span class="industry">{{ franchise.category }}</span><br>
+          <span class="desc">{{ franchise.short_description }}</span>
+          <div class="franchise-details">
+            <span class="investment">{{ franchise.formatted_investment }}</span>
+            <span class="location">Nationwide</span>
+            <span class="established">Est {{ franchise.created_at|date:"Y" }}</span>
+          </div>
+          <span class="rating">4.9 ★</span>
         </div>
-        <span class="rating">4.9 ★</span>
+        {% if user.is_authenticated %}
+          <button class="inquire-btn js-open-apply" type="button">Inquire Now</button>
+          <noscript>
+            <a class="inquire-btn" href="{% url 'franchise_apply' franchise.id %}">Inquire Now</a>
+          </noscript>
+        {% else %}
+          <a class="inquire-btn" href="{% url 'login' %}">Login to Inquire</a>
+        {% endif %}
       </div>
-      <button class="inquire-btn">Inquire Now</button>
-    </div>
-    <div class="franchise-card">
-      <div class="franchise-cover"></div>
-      <h3>FitZone Gym</h3>
-      <div class="franchise-meta">
-        <span class="industry">Fitness & Health</span><br>
-        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-        <div class="franchise-details">
-          <span class="investment">₱450k+ Investment</span>
-          <span class="location">Suburban</span>
-          <span class="established">Est 2015</span>
+    {% empty %}
+      <!-- Fallback to the original static cards when there are no active franchises yet -->
+      <div class="franchise-card">
+        <div class="franchise-cover"></div>
+        <h3>FitZone Gym</h3>
+        <div class="franchise-meta">
+          <span class="industry">Fitness & Health</span><br>
+          <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+          <div class="franchise-details">
+            <span class="investment">₱450k+ Investment</span>
+            <span class="location">Suburban</span>
+            <span class="established">Est 2015</span>
+          </div>
+          <span class="rating">4.9 ★</span>
         </div>
-        <span class="rating">4.9 ★</span>
+        <button class="inquire-btn">Inquire Now</button>
       </div>
-      <button class="inquire-btn">Inquire Now</button>
-    </div>
-    <div class="franchise-card">
-      <div class="franchise-cover"></div>
-      <h3>FitZone Gym</h3>
-      <div class="franchise-meta">
-        <span class="industry">Fitness & Health</span><br>
-        <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-        <div class="franchise-details">
-          <span class="investment">₱450k+ Investment</span>
-          <span class="location">Suburban</span>
-          <span class="established">Est 2015</span>
+      <div class="franchise-card">
+        <div class="franchise-cover"></div>
+        <h3>FitZone Gym</h3>
+        <div class="franchise-meta">
+          <span class="industry">Fitness & Health</span><br>
+          <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+          <div class="franchise-details">
+            <span class="investment">₱450k+ Investment</span>
+            <span class="location">Suburban</span>
+            <span class="established">Est 2015</span>
+          </div>
+          <span class="rating">4.9 ★</span>
         </div>
-        <span class="rating">4.9 ★</span>
+        <button class="inquire-btn">Inquire Now</button>
       </div>
-      <button class="inquire-btn">Inquire Now</button>
-    </div>
+      <div class="franchise-card">
+        <div class="franchise-cover"></div>
+        <h3>FitZone Gym</h3>
+        <div class="franchise-meta">
+          <span class="industry">Fitness & Health</span><br>
+          <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+          <div class="franchise-details">
+            <span class="investment">₱450k+ Investment</span>
+            <span class="location">Suburban</span>
+            <span class="established">Est 2015</span>
+          </div>
+          <span class="rating">4.9 ★</span>
+        </div>
+        <button class="inquire-btn">Inquire Now</button>
+      </div>
+    {% endfor %}
   </section>
 
-</body>
-</html>
+  {% if user.is_authenticated %}
+  <!-- Application Modal (hidden by default) -->
+  <div id="applyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:4000; align-items:center; justify-content:center;">
+    <div style="background:#fff; width:420px; max-width:92%; border-radius:10px; padding:28px 28px 22px; font-family:Poppins, sans-serif; position:relative;">
+      <button id="applyModalClose" style="position:absolute; top:8px; right:10px; background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
+      <h2 style="margin:0 0 14px;" id="applyModalTitle">Apply</h2>
+      <form id="applyForm" method="post" action="">
+        {% csrf_token %}
+        <input type="hidden" name="franchise_id" id="franchiseIdHidden">
+        <label style="font-size:13px;">Full Name</label>
+        <input name="full_name" required style="width:100%; margin:4px 0 10px; padding:8px;" value="{{ user.get_full_name|default:user.username }}">
+        <label style="font-size:13px;">Email</label>
+        <input name="email" type="email" required style="width:100%; margin:4px 0 10px; padding:8px;" value="{{ user.email }}">
+        <label style="font-size:13px;">Phone</label>
+        <input name="phone" style="width:100%; margin:4px 0 10px; padding:8px;">
+        <label style="font-size:13px;">Experience / Background</label>
+        <textarea name="experience" rows="3" style="width:100%; margin:4px 0 14px; padding:8px;"></textarea>
+        <button type="submit" class="inquire-btn" style="width:100%; text-align:center;">Submit Application</button>
+      </form>
+    </div>
+  </div>
+  <script>
+    (function(){
+      const modal = document.getElementById('applyModal');
+      const closeBtn = document.getElementById('applyModalClose');
+      const form = document.getElementById('applyForm');
+      const title = document.getElementById('applyModalTitle');
+      const hiddenId = document.getElementById('franchiseIdHidden');
+      document.querySelectorAll('.js-open-apply').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          const card = btn.closest('.franchise-card');
+          const id = card.getAttribute('data-franchise-id');
+          const name = card.getAttribute('data-franchise-name');
+          title.textContent = 'Apply to ' + name;
+          hiddenId.value = id;
+          // Build action using the known accounts route with UUID param
+          form.action = '/accounts/franchise/' + id + '/apply/';
+          modal.style.display = 'flex';
+        });
+      });
+      closeBtn.addEventListener('click', ()=> modal.style.display='none');
+      modal.addEventListener('click', e => { if(e.target === modal) modal.style.display='none'; });
+    })();
+  </script>
+  {% endif %}
+<!-- ...existing code after list... -->

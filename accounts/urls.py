@@ -11,7 +11,12 @@ urlpatterns = [
     path('profile/', views.profile_view, name='profile'),
     path('franchisor/dashboard/', views.franchisor_dashboard, name='franchisor_dashboard'),
     path('franchisor/add-franchise/', views.add_franchise_view, name='add_franchise'),
-
-
-
+    path('franchisor/delete-franchise/<uuid:franchise_id>/', views.delete_franchise, name='delete_franchise'),
+    path('franchisor/edit-franchise/<uuid:franchise_id>/', views.edit_franchise_view, name='edit_franchise'),
+    path('franchise/<uuid:franchise_id>/', views.franchise_detail, name='franchise_detail'),
+    path('applications/', views.all_applications, name='all_applications'),
+    # Application submit (Franchisee)
+    path('franchise/<uuid:franchise_id>/apply/', views.franchise_apply, name='franchise_apply'),
+    # Approve/Reject (Franchisor)
+    path('application/<uuid:application_id>/<str:status>/', views.application_set_status, name='application_set_status'),
 ]
