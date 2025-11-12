@@ -16,11 +16,13 @@ body {
   top: 0;
   z-index: 100;
 }
-.logo { font-size: 22px; font-weight: 700; color: #282828;  text-decoration: none;}
+.logo { font-size: 22px; font-weight: 700; color: #282828; text-decoration: none; }
 .logo span { color: #d66900; }
 .nav-links a { margin-left: 28px; font-weight: 500; color: #282828; text-decoration: none; transition: color 0.2s; }
 .nav-links a:hover { color: #d66900; }
-.get-started { background: #d66900; color: #fff !important; padding: 8px 18px; border-radius: 5px; margin-left: 24px; font-weight: 600; text-decoration: none; }
+.get-started { background: #d66900; color: #fff !important; padding: 8px 18px; border-radius: 5px; margin-left: 24px; font-weight: 600; text-decoration: none; 
+}
+
 /* Hero Section */
 .listing-hero {
   background: linear-gradient(90deg, #ff6600 10%, #c44a00 90%);

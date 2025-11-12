@@ -6,6 +6,7 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.views.decorators.http import require_POST
+from django.db.models import Q  # for search filtering
 
 from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
 from .forms import FranchiseForm, FranchiseApplicationForm
@@ -109,9 +110,24 @@ def home_view(request):
 @login_required
 def browse(request):
     """Displays all active franchises for franchisees."""
-    # Order newest first so newly created franchises are visible at the top.
-    franchises = Franchise.objects.filter(is_active=True).order_by('-created_at')
-    return render(request, 'accounts/browse.html', {'franchises': franchises})
+    # New: simple search by keyword across multiple fields.
+    q = request.GET.get('q', '').strip()
+    qs = Franchise.objects.filter(is_active=True)
+    if q:
+        qs = qs.filter(
+            Q(name__icontains=q) |
+            Q(category__icontains=q) |
+            Q(description__icontains=q) |
+            Q(franchisor__company_name__icontains=q) |
+            Q(franchisor__country__icontains=q)
+        )
+    # Note: qs may be empty when no results match; that is OK and handled in the template.
+    franchises = qs.order_by('-created_at')
+
+    return render(request, 'accounts/browse.html', {
+        'franchises': franchises,
+        'q': q  # used by the template to render "No franchises found." when searching
+    })
 
 
 # =========================================================================

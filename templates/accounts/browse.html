@@ -35,8 +35,12 @@
 
   <!-- Filter Bar -->
   <section class="filter-bar">
-    <form class="filters">
-      <input type="text" placeholder="Search Franchises..." class="search-input">
+    <form class="filters" method="get" action="">
+      <input type="text"
+             name="q"
+             value="{{ q|default:'' }}"
+             placeholder="Search Franchises..."
+             class="search-input">
       <div class="custom-select">
         <select>
           <option>All Industries</option>
@@ -65,6 +69,8 @@
           <option>Oldest</option>
         </select>
       </div>
+      <!-- Optional explicit submit to complement Enter key -->
+      <button type="submit" class="inquire-btn" style="padding:9px 16px;">Search</button>
     </form>
   </section>
 
@@ -94,52 +100,60 @@
         {% endif %}
       </div>
     {% empty %}
-      <!-- Fallback to the original static cards when there are no active franchises yet -->
-      <div class="franchise-card">
-        <div class="franchise-cover"></div>
-        <h3>FitZone Gym</h3>
-        <div class="franchise-meta">
-          <span class="industry">Fitness & Health</span><br>
-          <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-          <div class="franchise-details">
-            <span class="investment">₱450k+ Investment</span>
-            <span class="location">Suburban</span>
-            <span class="established">Est 2015</span>
-          </div>
-          <span class="rating">4.9 ★</span>
+      {% if q %}
+        <!-- Styled consistently by reusing the franchise-card box -->
+        <div class="franchise-card no-results-card">
+          <h3>No franchises found.</h3>
+          <div class="franchise-meta">Try another keyword or clear your search.</div>
         </div>
-        <button class="inquire-btn">Inquire Now</button>
-      </div>
-      <div class="franchise-card">
-        <div class="franchise-cover"></div>
-        <h3>FitZone Gym</h3>
-        <div class="franchise-meta">
-          <span class="industry">Fitness & Health</span><br>
-          <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-          <div class="franchise-details">
-            <span class="investment">₱450k+ Investment</span>
-            <span class="location">Suburban</span>
-            <span class="established">Est 2015</span>
+      {% else %}
+        <!-- Fallback to the original static cards when there are no active franchises yet -->
+        <div class="franchise-card">
+          <div class="franchise-cover"></div>
+          <h3>FitZone Gym</h3>
+          <div class="franchise-meta">
+            <span class="industry">Fitness & Health</span><br>
+            <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+            <div class="franchise-details">
+              <span class="investment">₱450k+ Investment</span>
+              <span class="location">Suburban</span>
+              <span class="established">Est 2015</span>
+            </div>
+            <span class="rating">4.9 ★</span>
           </div>
-          <span class="rating">4.9 ★</span>
+          <button class="inquire-btn">Inquire Now</button>
         </div>
-        <button class="inquire-btn">Inquire Now</button>
-      </div>
-      <div class="franchise-card">
-        <div class="franchise-cover"></div>
-        <h3>FitZone Gym</h3>
-        <div class="franchise-meta">
-          <span class="industry">Fitness & Health</span><br>
-          <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-          <div class="franchise-details">
-            <span class="investment">₱450k+ Investment</span>
-            <span class="location">Suburban</span>
-            <span class="established">Est 2015</span>
+        <div class="franchise-card">
+          <div class="franchise-cover"></div>
+          <h3>FitZone Gym</h3>
+          <div class="franchise-meta">
+            <span class="industry">Fitness & Health</span><br>
+            <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+            <div class="franchise-details">
+              <span class="investment">₱450k+ Investment</span>
+              <span class="location">Suburban</span>
+              <span class="established">Est 2015</span>
+            </div>
+            <span class="rating">4.9 ★</span>
           </div>
-          <span class="rating">4.9 ★</span>
+          <button class="inquire-btn">Inquire Now</button>
         </div>
-        <button class="inquire-btn">Inquire Now</button>
-      </div>
+        <div class="franchise-card">
+          <div class="franchise-cover"></div>
+          <h3>FitZone Gym</h3>
+          <div class="franchise-meta">
+            <span class="industry">Fitness & Health</span><br>
+            <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
+            <div class="franchise-details">
+              <span class="investment">₱450k+ Investment</span>
+              <span class="location">Suburban</span>
+              <span class="established">Est 2015</span>
+            </div>
+            <span class="rating">4.9 ★</span>
+          </div>
+          <button class="inquire-btn">Inquire Now</button>
+        </div>
+      {% endif %}
     {% endfor %}
   </section>
 
