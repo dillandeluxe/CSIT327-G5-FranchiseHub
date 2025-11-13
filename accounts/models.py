@@ -11,7 +11,13 @@ from django.contrib.auth.models import User
 # =========================
 class Franchisee(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
+    user = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE,
+    db_column='user_id',
+    null=True,      # ✅ allow empty temporarily so migration won't fail
+    blank=True      # ✅ allow forms to save without user (for now)
+)
     business_name = models.TextField()
     address = models.TextField(null=True, blank=True)
     contact_number = models.CharField(max_length=20, null=True, blank=True)
@@ -30,7 +36,13 @@ class Franchisee(models.Model):
 # =========================
 class Franchisor(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
+    user = models.ForeignKey(
+    settings.AUTH_USER_MODEL,
+    on_delete=models.CASCADE,
+    db_column='user_id',
+    null=True,      # ✅ allow temporarily null so migrations won't fail
+    blank=True      # ✅ allow form entries without user for now
+)
     company_name = models.TextField()
     email = models.EmailField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
@@ -50,17 +62,24 @@ class Franchisor(models.Model):
 # =========================
 class AdminProfile(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, db_column='user_id')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        db_column='user_id',
+        null=True,      # ✅ allow temporarily null
+        blank=True      # ✅ allow form submission without user
+    )
     full_name = models.TextField()
     role_description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'admin_profile'
-        managed = True  # ✅ managed by Django
+        managed = True
 
     def __str__(self):
-        return f"{self.full_name} ({self.user.username})"
+        return f"{self.full_name} ({self.user.username if self.user else 'No user'})"
+
 
 
 # =========================
