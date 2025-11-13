@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'accounts',
+    'django_admin_charts',  # With hyphen
+    'chartjs',
 ]
 
 MIDDLEWARE = [
