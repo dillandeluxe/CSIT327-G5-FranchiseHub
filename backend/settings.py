@@ -17,24 +17,30 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 if os.environ.get("RENDER", "") != "true":
     load_dotenv(dotenv_path=BASE_DIR / ".env")
 
+# --- Debug/host config ---
+DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
+IS_RENDER = os.getenv('RENDER', '').lower() == 'true'
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
+
+# When running on Render, set ALLOWED_HOSTS from RENDER_EXTERNAL_HOSTNAME automatically
+if DEBUG:
+    ALLOWED_HOSTS = []
+else:
+    env_hosts = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',') if h.strip()]
+    ALLOWED_HOSTS = env_hosts or ([RENDER_EXTERNAL_HOSTNAME] if RENDER_EXTERNAL_HOSTNAME else [])
+
+# CSRF trusted origins (include Render URL if available)
+default_csrf = []
+if RENDER_EXTERNAL_HOSTNAME:
+    default_csrf.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
+CSRF_TRUSTED_ORIGINS = default_csrf + [
+    o.strip() for o in os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
+]
+
 # --------------------------------------------------------------------
 # SECURITY
 # --------------------------------------------------------------------
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "unsafe-dev-key")
-DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
-
-ALLOWED_HOSTS = [
-    "localhost",
-    "127.0.0.1",
-] + [
-    h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h.strip()
-] or ["franchisehub-t4nh.onrender.com"]
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://franchisehub-t4nh.onrender.com"
-] + [
-    o.strip() for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()
-]
 
 # --------------------------------------------------------------------
 # APPLICATIONS
@@ -52,7 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # Required for Render
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # keep directly after SecurityMiddleware
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -72,6 +78,7 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
+                "django.template.context_processors.static",  # NEW: ensures {% static %} has context
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
@@ -114,28 +121,23 @@ USE_TZ = True
 # STATIC FILES
 # --------------------------------------------------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic output
+STATICFILES_DIRS = [BASE_DIR / "static"]  # source assets for development
 
-# WhiteNoise configuration (for static file serving on Render)
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-# --------------------------------------------------------------------
-# SECURITY SETTINGS (for Render)
-# --------------------------------------------------------------------
-if os.environ.get("DJANGO_SECURE_SSL_REDIRECT", "True").lower() == "true":
-    SECURE_SSL_REDIRECT = True
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
+# Use simpler storage in dev; hashed, compressed files in production
+if DEBUG:
+    STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 else:
-    SESSION_COOKIE_SECURE = False
-    CSRF_COOKIE_SECURE = False
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# Optional (recommended on Render behind proxy)
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # --------------------------------------------------------------------
 # AUTHENTICATION & LOGIN
 # --------------------------------------------------------------------
-LOGIN_REDIRECT_URL = "/browse/"
-LOGIN_URL = "/login/"
+LOGIN_URL = "/accounts/login/"
+LOGIN_REDIRECT_URL = "/accounts/browse/"
 
 # --------------------------------------------------------------------
 # DEFAULT PRIMARY KEY FIELD TYPE

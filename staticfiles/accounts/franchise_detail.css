@@ -1,0 +1,64 @@
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+}
+
+.modal {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(30,30,30,.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.modal-content {
+    background: #fff;
+    min-width: 900px;
+    max-width: 1000px;
+    border-radius: 18px;
+    box-shadow: 0 8px 48px rgba(26,26,34,0.13);
+    display: flex;
+    gap: 30px;
+    padding: 32px 38px;
+}
+
+.franchise-details { flex: 1.2; padding-right: 12px; }
+.inquiry-form { flex: 1; background: #fff; padding-left: 24px; border-left: 1px solid #f2f2f2;}
+.franchise-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;}
+.franchise-title { font-size: 2em; font-weight: 700; color: #d66900;}
+.franchise-rating { font-size: 1.1em; color: #f8c76b;}
+.franchise-desc { color: #282828; margin: 15px 0 16px;}
+.investment-breakdown .breakdown-list { margin-top: 8px; margin-bottom: 12px;}
+.breakdown-list div { background: #fafcfb; border-radius: 7px; display: inline-block; margin-right: 9px; margin-bottom: 7px; padding: 6px 13px; font-size: 1em;}
+.what-you-get .tags-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px;}
+.what-you-get .tags-row span { background: #ffeded; color: #b95500; padding: 7px 13px; border-radius: 6px; font-weight: 500; font-size: .98em;}
+.franchise-highlight { display: flex; gap: 24px; margin-top: 18px;}
+.franchise-highlight div { background: #fafbfc; padding: 6px 17px; border-radius: 7px; display: flex; align-items: center; gap: 7px;}
+.inquiry-form h2 { margin-bottom: 8px; color: #222;}
+.inquiry-form form { display: flex; flex-direction: column;}
+.form-row { display: flex; gap: 16px; margin-bottom: 14px;}
+.form-row input, .form-row select { flex: 1; padding: 10px 10px; border-radius: 6px; border: 1px solid #d3d3d3; font-size: 1em; }
+textarea { padding: 10px; border-radius: 6px; border: 1px solid #d3d3d3; font-size: 1em; margin-bottom: 10px;}
+.checkbox-row { flex-direction: column; gap: 4px; font-size: 0.97em; margin-bottom: 15px;}
+.inquire-btn {
+    display: block;
+    background: linear-gradient(90deg, #d66900 50%, #804613 100%);
+    color: #fff;
+    padding: 13px 0;
+    border-radius: 7px;
+    border: none;
+    font-size: 1.1em;
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(140,90,30,0.1);
+    margin-top: 8px;
+    cursor: pointer;
+    transition: background 0.18s;
+}
+.inquire-btn:hover { background: #b95500; }
+@media (max-width: 1150px) {
+    .modal-content { flex-direction: column; padding: 20px 8px; min-width: 320px; }
+    .franchise-details, .inquiry-form { padding: 0; border: none;}
+}
