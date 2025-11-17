@@ -140,11 +140,15 @@ class FranchiseApplication(models.Model):
         default='Pending',
         choices=[
             ('Pending', 'Pending Review'),
-            ('Approved', 'Approved'),
+            ('Accepted', 'Accepted'),   # added
+            ('Approved', 'Approved'),   # kept for backward compatibility
             ('Rejected', 'Rejected'),
         ]
     )
     created_at = models.DateTimeField(auto_now_add=True)
+    # --- New fields ---
+    rejection_reason = models.TextField(null=True, blank=True)  # why rejected
+    approval_note = models.TextField(null=True, blank=True)     # optional acceptance note
 
     class Meta:
         db_table = 'franchise_application'
@@ -156,6 +160,7 @@ class FranchiseApplication(models.Model):
 
     # --- New helper methods for status transitions (convenience, optional) ---
     def approve(self):
+        # legacy helper left as-is (sets Approved)
         self.status = 'Approved'
         self.save(update_fields=['status'])
 

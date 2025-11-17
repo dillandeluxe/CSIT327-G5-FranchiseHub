@@ -19,4 +19,9 @@ urlpatterns = [
     path('franchise/<uuid:franchise_id>/apply/', views.franchise_apply, name='franchise_apply'),
     # Approve/Reject (Franchisor)
     path('application/<uuid:application_id>/<str:status>/', views.application_set_status, name='application_set_status'),
+    # Franchisor actions (UUID PK)
+    path("franchisor/application/<uuid:pk>/accept/", views.accept_application, name="accept_application"),
+    path("franchisor/application/<uuid:pk>/reject/", views.reject_application, name="reject_application"),
+    # Franchisee application status
+    path("application/status/", views.application_status, name="application_status"),
 ]
