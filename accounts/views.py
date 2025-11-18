@@ -80,12 +80,22 @@ def login_view(request):
             login(request, user)
             messages.success(request, f"Welcome back, {username}!")
 
-            if Franchisee.objects.filter(user=user).exists():
+            # 1. Check for Superuser FIRST
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+
+            # 2. Then check for Franchisee
+            elif Franchisee.objects.filter(user=user).exists():
                 return redirect('browse')
+            
+            # 3. Then check for Franchisor
             elif Franchisor.objects.filter(user=user).exists():
                 return redirect('franchisor_dashboard')
+            
             else:
+                # User is logged in but has no specific role
                 messages.error(request, "No role assigned to this user.")
+                logout(request) # Log them out for safety
                 return redirect('login')
         else:
             messages.error(request, "Invalid username or password.")
@@ -368,7 +378,7 @@ def application_set_status(request, application_id, status):
 
 def is_admin(user):
     # Checks if user is superuser OR has an AdminProfile
-    return True
+    return user.is_superuser
 
 @login_required
 @user_passes_test(is_admin, login_url='home') # Security: Only admins can see this

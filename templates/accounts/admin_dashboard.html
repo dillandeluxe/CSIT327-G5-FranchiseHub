@@ -7,35 +7,37 @@
     <title>Admin Dashboard</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
-    <link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
-    
     <style>
-        /* We overwrite the active link style here to work better with the orange background.
-           White text with a slightly darker underline/background.
-        */
+        .nav-link {
+            transition: background-color 0.2s, color 0.2s;
+        }
         .nav-link.active {
             background-color: rgba(255, 255, 255, 0.2);
             color: #ffffff;
+            font-weight: 700;
+        }
+        /* Your Brand Gradient */
+        .bg-brand-gradient {
+            background: linear-gradient(90deg, #ff6600 40%, #b35c04 90%);
         }
     </style>
 </head>
-<body class="h-full">
+<body class="h-full font-sans text-gray-900">
     <div class="min-h-full">
-        <nav style="background: linear-gradient(90deg, #ff6600 40%, #b35c04 90%);">
+        
+        <nav class="bg-brand-gradient shadow-md">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            <span class="font-bold text-white text-xl">System Admin</span>
+                            <span class="font-bold text-white text-xl tracking-wide">System Admin</span>
                         </div>
                         <div class="ml-10 flex items-baseline space-x-4">
                             <a href="#" id="nav-dashboard" class="nav-link active text-white hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Dashboard</a>
                             <a href="#" id="nav-analytics" class="nav-link text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Analytics</a>
-                            
-                            <a href="{% url 'browse' %}" class="text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Back to Browse</a>
+                            <a href="{% url 'browse' %}" class="text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Browse Franchises</a>
                         </div>
                     </div>
                 </div>
@@ -55,83 +57,71 @@
                     <h2 class="text-2xl font-semibold text-gray-800 mb-6">Management Interface</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-blue-500">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Pending Applications</h3>
                             {% if recent_approvals %}
-                            <ul class="space-y-3">
+                            <ul class="space-y-3 divide-y divide-gray-100">
                                 {% for app in recent_approvals %}
-                                <li class="flex justify-between items-center p-3 bg-gray-50 rounded-md">
+                                <li class="flex justify-between items-center pt-2">
                                     <div class="flex flex-col">
-                                        <span class="font-semibold text-sm">{{ app.franchise.name }}</span>
-                                        <span class="text-xs text-gray-500">Applicant: {{ app.full_name }}</span>
+                                        <span class="font-semibold text-sm text-gray-700">{{ app.franchise.name }}</span>
+                                        <span class="text-xs text-gray-500">{{ app.full_name }}</span>
                                     </div>
-                                    <a href="{% url 'application_set_status' app.id 'approve' %}" class="text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-full">Approve</a>
+                                    <a href="{% url 'application_set_status' app.id 'approve' %}" class="text-xs bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-3 rounded-full transition">Approve</a>
                                 </li>
                                 {% endfor %}
                             </ul>
                             {% else %}
-                                <p class="text-gray-500 text-sm">No pending applications.</p>
+                                <p class="text-gray-500 text-sm italic">No pending applications.</p>
                             {% endif %}
                         </div>
                         
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-green-500">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Users</h3>
-                            <ul class="space-y-3">
+                            <ul class="space-y-3 divide-y divide-gray-100">
                                 {% for u in recent_users %}
-                                <li class="p-3 bg-gray-50 rounded-md flex justify-between">
-                                    <span>{{ u.username }}</span>
+                                <li class="pt-2 flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-700">{{ u.username }}</span>
                                     <span class="text-xs text-gray-400">{{ u.date_joined|date:"M d" }}</span>
                                 </li>
                                 {% empty %}
-                                <li class="text-gray-500">No users yet.</li>
+                                <li class="text-gray-500 text-sm italic">No users yet.</li>
                                 {% endfor %}
                             </ul>
-                            <button class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">Manage Users</button>
                         </div>
                         
-                        <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-purple-500">
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Newest Franchises</h3>
-                             <ul class="space-y-3">
+                             <ul class="space-y-3 divide-y divide-gray-100">
                                 {% for f in active_franchises %}
-                                <li class="p-3 bg-gray-50 rounded-md flex justify-between">
-                                    <span>{{ f.name }}</span>
-                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Active</span>
+                                <li class="pt-2 flex justify-between items-center">
+                                    <span class="text-sm font-medium text-gray-700">{{ f.name }}</span>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Active</span>
                                 </li>
                                 {% empty %}
-                                <li class="text-gray-500">No active franchises.</li>
+                                <li class="text-gray-500 text-sm italic">No active franchises.</li>
                                 {% endfor %}
                             </ul>
-                            <button class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">Manage Franchises</button>
                         </div>
 
                     </div>
                 </div>
 
                 <div id="page-analytics" class="hidden">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6"></h2>
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Data Analytics</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">New Users (Joined per Month)</h3>
-                            <div class="w-full h-64">
-                                <canvas id="barChart"></canvas>
-                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">New Users (Monthly)</h3>
+                            <div class="w-full h-64"><canvas id="barChart"></canvas></div>
                         </div>
-
                         <div class="bg-white rounded-lg shadow-md p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Application Activity (Volume)</h3>
-                            <div class="w-full h-64">
-                                <canvas id="lineChart"></canvas>
-                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Applications (Monthly)</h3>
+                            <div class="w-full h-64"><canvas id="lineChart"></canvas></div>
                         </div>
-
                         <div class="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Most Popular Franchises (By # of Applications)</h3>
-                            <div class="w-full h-80">
-                                <canvas id="columnChart"></canvas>
-                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Popular Franchises</h3>
+                            <div class="w-full h-80"><canvas id="columnChart"></canvas></div>
                         </div>
-
                     </div>
                 </div>
 
@@ -147,92 +137,58 @@
     {{ sales_chart_data|json_script:"data-sales-data" }}
 
     <script>
-        // --- Navigation Logic ---
         const navDashboard = document.getElementById('nav-dashboard');
         const navAnalytics = document.getElementById('nav-analytics');
         const pageDashboard = document.getElementById('page-dashboard');
         const pageAnalytics = document.getElementById('page-analytics');
         const pageTitle = document.getElementById('page-title');
 
-        navDashboard.addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage('dashboard');
-        });
-
-        navAnalytics.addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage('analytics');
-        });
+        navDashboard.addEventListener('click', (e) => { e.preventDefault(); showPage('dashboard'); });
+        navAnalytics.addEventListener('click', (e) => { e.preventDefault(); showPage('analytics'); });
 
         function showPage(pageName) {
             pageDashboard.classList.add('hidden');
             pageAnalytics.classList.add('hidden');
             navDashboard.classList.remove('active');
             navAnalytics.classList.remove('active');
-
             if (pageName === 'dashboard') {
                 pageDashboard.classList.remove('hidden');
                 navDashboard.classList.add('active');
                 pageTitle.textContent = 'Admin Dashboard';
-            } else if (pageName === 'analytics') {
+            } else {
                 pageAnalytics.classList.remove('hidden');
                 navAnalytics.classList.add('active');
                 pageTitle.textContent = 'Analytics';
             }
         }
 
-        // --- HELPER FUNCTION ---
-        function loadDjangoData(id) {
-            return JSON.parse(document.getElementById(id).textContent);
-        }
+        function loadDjangoData(id) { return JSON.parse(document.getElementById(id).textContent); }
 
-        // --- DYNAMIC CHARTS ---
-        const barCtx = document.getElementById('barChart').getContext('2d');
-        new Chart(barCtx, {
+        new Chart(document.getElementById('barChart').getContext('2d'), {
             type: 'bar',
             data: {
                 labels: loadDjangoData('data-user-labels'),
-                datasets: [{
-                    label: '# of New Users',
-                    data: loadDjangoData('data-user-data'),
-                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    borderWidth: 1
-                }]
+                datasets: [{ label: 'New Users', data: loadDjangoData('data-user-data'), backgroundColor: 'rgba(54, 162, 235, 0.6)' }]
             },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            options: { responsive: true, maintainAspectRatio: false }
         });
 
-        const lineCtx = document.getElementById('lineChart').getContext('2d');
-        new Chart(lineCtx, {
+        new Chart(document.getElementById('lineChart').getContext('2d'), {
             type: 'line',
             data: {
                 labels: loadDjangoData('data-traffic-labels'),
-                datasets: [{
-                    label: 'Applications Submitted',
-                    data: loadDjangoData('data-traffic-data'),
-                    fill: false,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    tension: 0.1
-                }]
+                datasets: [{ label: 'Applications', data: loadDjangoData('data-traffic-data'), borderColor: 'rgba(75, 192, 192, 1)', tension: 0.3 }]
             },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            options: { responsive: true, maintainAspectRatio: false }
         });
 
-        const columnCtx = document.getElementById('columnChart').getContext('2d');
-        new Chart(columnCtx, {
+        new Chart(document.getElementById('columnChart').getContext('2d'), {
             type: 'bar',
             data: {
                 labels: loadDjangoData('data-sales-labels'),
-                datasets: [{
-                    label: 'Total Applications',
-                    data: loadDjangoData('data-sales-data'),
-                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    borderWidth: 1
-                }]
+                datasets: [{ label: 'Applications', data: loadDjangoData('data-sales-data'), backgroundColor: 'rgba(255, 99, 132, 0.6)' }]
             },
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+            options: { responsive: true, maintainAspectRatio: false }
         });
     </script>
 </body>
