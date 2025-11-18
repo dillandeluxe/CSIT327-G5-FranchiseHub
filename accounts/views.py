@@ -12,7 +12,10 @@ from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
 from .forms import FranchiseForm, FranchiseApplicationForm
 from accounts.utils import get_user_role
 
-
+import json
+from django.db.models.functions import TruncMonth
+from django.db.models import Count
+from django.contrib.auth.decorators import user_passes_test
 # =========================================================================
 # 1. AUTHENTICATION VIEWS
 # =========================================================================
@@ -358,3 +361,67 @@ def application_set_status(request, application_id, status):
     else:
         messages.error(request, "Invalid status action.")
     return redirect('franchisor_dashboard')
+
+# =========================================================================
+# 7. SUPER ADMIN DASHBOARD & ANALYTICS
+# =========================================================================
+
+def is_admin(user):
+    # Checks if user is superuser OR has an AdminProfile
+    return True
+
+@login_required
+@user_passes_test(is_admin, login_url='home') # Security: Only admins can see this
+def admin_dashboard_view(request):
+    # --- PART 1: DASHBOARD LIST DATA ---
+    
+    # 1. Pending Approvals (Franchise Applications)
+    recent_approvals = FranchiseApplication.objects.filter(status='Pending').order_by('-created_at')[:5]
+    
+    # 2. Recent Users (Admin, Franchisee, etc)
+    recent_users = User.objects.all().order_by('-date_joined')[:5]
+    
+    # 3. Active Franchises
+    active_franchises = Franchise.objects.filter(is_active=True).order_by('-created_at')[:5]
+
+
+    # --- PART 2: ANALYTICS CHART DATA ---
+
+    # CHART 1: New Users Per Month (Bar Chart)
+    # Group users by month joined
+    users_by_month = User.objects.annotate(month=TruncMonth('date_joined')).values('month').annotate(count=Count('id')).order_by('month')
+    
+    # Prepare data lists for Chart.js
+    user_chart_labels = [item['month'].strftime('%b') for item in users_by_month] # e.g. ['Jan', 'Feb']
+    user_chart_data = [item['count'] for item in users_by_month]
+
+    # CHART 2: Applications Activity (Line Chart) - Replacing "Website Traffic"
+    # Since we don't track page views, we track Applications created per month
+    apps_by_month = FranchiseApplication.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month')
+    traffic_chart_labels = [item['month'].strftime('%b') for item in apps_by_month]
+    traffic_chart_data = [item['count'] for item in apps_by_month]
+
+    # CHART 3: Top Franchises by Popularity (Applications count) - Replacing "Sales"
+    # We count how many applications each franchise has received
+    popular_franchises = Franchise.objects.annotate(app_count=Count('applications')).order_by('-app_count')[:5]
+    sales_chart_labels = [f.name for f in popular_franchises]
+    sales_chart_data = [f.app_count for f in popular_franchises]
+
+    context = {
+        # Lists
+        'recent_approvals': recent_approvals,
+        'recent_users': recent_users,
+        'active_franchises': active_franchises,
+        
+        # Charts - SEND RAW LISTS (Remove json.dumps here!)
+        'user_chart_labels': user_chart_labels,
+        'user_chart_data': user_chart_data,
+        
+        'traffic_chart_labels': traffic_chart_labels,
+        'traffic_chart_data': traffic_chart_data,
+        
+        'sales_chart_labels': sales_chart_labels,
+        'sales_chart_data': sales_chart_data,
+    }
+
+    return render(request, 'accounts/admin_dashboard.html', context)

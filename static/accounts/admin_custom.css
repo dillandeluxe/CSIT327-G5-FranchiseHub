@@ -1,0 +1,15 @@
+/* location: static/css/admin_custom.css */
+
+/* Custom style for active nav link */
+.nav-link.active {
+    border-bottom: 2px solid #3b82f6; /* blue-500 */
+    color: #ffffff; /* white */
+}
+
+.nav-link {
+    padding-bottom: 4px;
+}
+
+/* Note: Most styling is handled by Tailwind classes in the HTML.
+   This file is for custom overrides only.
+*/

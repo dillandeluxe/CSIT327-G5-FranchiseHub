@@ -1,0 +1,239 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="{% static 'css/admin_custom.css' %}">
+    
+    <style>
+        /* We overwrite the active link style here to work better with the orange background.
+           White text with a slightly darker underline/background.
+        */
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="h-full">
+    <div class="min-h-full">
+        <nav style="background: linear-gradient(90deg, #ff6600 40%, #b35c04 90%);">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div class="flex h-16 items-center justify-between">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <span class="font-bold text-white text-xl">System Admin</span>
+                        </div>
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#" id="nav-dashboard" class="nav-link active text-white hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Dashboard</a>
+                            <a href="#" id="nav-analytics" class="nav-link text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Analytics</a>
+                            
+                            <a href="{% url 'browse' %}" class="text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Back to Browse</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <header class="bg-white shadow">
+            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+                <h1 id="page-title" class="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+            </div>
+        </header>
+
+        <main>
+            <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
+                
+                <div id="page-dashboard">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Management Interface</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Pending Applications</h3>
+                            {% if recent_approvals %}
+                            <ul class="space-y-3">
+                                {% for app in recent_approvals %}
+                                <li class="flex justify-between items-center p-3 bg-gray-50 rounded-md">
+                                    <div class="flex flex-col">
+                                        <span class="font-semibold text-sm">{{ app.franchise.name }}</span>
+                                        <span class="text-xs text-gray-500">Applicant: {{ app.full_name }}</span>
+                                    </div>
+                                    <a href="{% url 'application_set_status' app.id 'approve' %}" class="text-xs bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-full">Approve</a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% else %}
+                                <p class="text-gray-500 text-sm">No pending applications.</p>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Users</h3>
+                            <ul class="space-y-3">
+                                {% for u in recent_users %}
+                                <li class="p-3 bg-gray-50 rounded-md flex justify-between">
+                                    <span>{{ u.username }}</span>
+                                    <span class="text-xs text-gray-400">{{ u.date_joined|date:"M d" }}</span>
+                                </li>
+                                {% empty %}
+                                <li class="text-gray-500">No users yet.</li>
+                                {% endfor %}
+                            </ul>
+                            <button class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">Manage Users</button>
+                        </div>
+                        
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Newest Franchises</h3>
+                             <ul class="space-y-3">
+                                {% for f in active_franchises %}
+                                <li class="p-3 bg-gray-50 rounded-md flex justify-between">
+                                    <span>{{ f.name }}</span>
+                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded">Active</span>
+                                </li>
+                                {% empty %}
+                                <li class="text-gray-500">No active franchises.</li>
+                                {% endfor %}
+                            </ul>
+                            <button class="mt-4 w-full bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-md">Manage Franchises</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div id="page-analytics" class="hidden">
+                    <h2 class="text-2xl font-semibold text-gray-800 mb-6"></h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">New Users (Joined per Month)</h3>
+                            <div class="w-full h-64">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Application Activity (Volume)</h3>
+                            <div class="w-full h-64">
+                                <canvas id="lineChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Most Popular Franchises (By # of Applications)</h3>
+                            <div class="w-full h-80">
+                                <canvas id="columnChart"></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    {{ user_chart_labels|json_script:"data-user-labels" }}
+    {{ user_chart_data|json_script:"data-user-data" }}
+    {{ traffic_chart_labels|json_script:"data-traffic-labels" }}
+    {{ traffic_chart_data|json_script:"data-traffic-data" }}
+    {{ sales_chart_labels|json_script:"data-sales-labels" }}
+    {{ sales_chart_data|json_script:"data-sales-data" }}
+
+    <script>
+        // --- Navigation Logic ---
+        const navDashboard = document.getElementById('nav-dashboard');
+        const navAnalytics = document.getElementById('nav-analytics');
+        const pageDashboard = document.getElementById('page-dashboard');
+        const pageAnalytics = document.getElementById('page-analytics');
+        const pageTitle = document.getElementById('page-title');
+
+        navDashboard.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('dashboard');
+        });
+
+        navAnalytics.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('analytics');
+        });
+
+        function showPage(pageName) {
+            pageDashboard.classList.add('hidden');
+            pageAnalytics.classList.add('hidden');
+            navDashboard.classList.remove('active');
+            navAnalytics.classList.remove('active');
+
+            if (pageName === 'dashboard') {
+                pageDashboard.classList.remove('hidden');
+                navDashboard.classList.add('active');
+                pageTitle.textContent = 'Admin Dashboard';
+            } else if (pageName === 'analytics') {
+                pageAnalytics.classList.remove('hidden');
+                navAnalytics.classList.add('active');
+                pageTitle.textContent = 'Analytics';
+            }
+        }
+
+        // --- HELPER FUNCTION ---
+        function loadDjangoData(id) {
+            return JSON.parse(document.getElementById(id).textContent);
+        }
+
+        // --- DYNAMIC CHARTS ---
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: loadDjangoData('data-user-labels'),
+                datasets: [{
+                    label: '# of New Users',
+                    data: loadDjangoData('data-user-data'),
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+
+        const lineCtx = document.getElementById('lineChart').getContext('2d');
+        new Chart(lineCtx, {
+            type: 'line',
+            data: {
+                labels: loadDjangoData('data-traffic-labels'),
+                datasets: [{
+                    label: 'Applications Submitted',
+                    data: loadDjangoData('data-traffic-data'),
+                    fill: false,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    tension: 0.1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+
+        const columnCtx = document.getElementById('columnChart').getContext('2d');
+        new Chart(columnCtx, {
+            type: 'bar',
+            data: {
+                labels: loadDjangoData('data-sales-labels'),
+                datasets: [{
+                    label: 'Total Applications',
+                    data: loadDjangoData('data-sales-data'),
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true } } }
+        });
+    </script>
+</body>
+</html>
