@@ -1,0 +1,51 @@
+[33ma8c8224[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m fixes
+[33m505955a[m Fix static settings and collected static files for Render
+[33md47e402[m Add fallback ALLOWED_HOSTS for Render
+[33m2ef3ec3[m Add pillow to requirements
+[33m45fb116[m Add gunicorn to requirements
+[33m0b048dc[m fix
+[33m880c4cc[m deploy
+[33m7d044cb[m Updated some tasks
+[33mc5a19cc[m[33m ([m[1;32mfeature/admin-authorization[m[33m)[m Your commit message describing your changes
+[33mb4afc9f[m[33m ([m[1;31morigin/feature/admin-authorization[m[33m)[m Fix franchisor dashboard template inheritance and CSS loading
+[33maaf582f[m Implement admin authorization middleware and unauthorized access handling
+[33mce6f888[m[33m ([m[1;32mfeature/user-profile[m[33m)[m Fixed Problem with backend configurations
+[33m0ab5528[m Merge main into feature/user-profile
+[33ma15bd70[m Ignore Python cache files
+[33ma8909c8[m Update README
+[33md3875d3[m updated Header and error in loggin in as franchisor
+[33m8bdaea2[m[33m ([m[1;32mfeature/user-auth[m[33m)[m Fix: Resolved login redirect loop issue by adjusting session cookie settings
+[33m1c76470[m[33m ([m[1;31morigin/feature/user-auth[m[33m)[m updated
+[33ma971724[m UserProfile
+[33m43555ae[m Merge changes and update all files
+[33me5dc8fd[m Finish merge and update README.md
+[33md932312[m Updated README
+[33m749434f[m Update README.md with project details
+[33ma98ae6c[m Finalize merge and update models, URLs, and templates
+[33m3a99e04[m Merge branch 'feature/public-interface' into main
+[33meeb75bb[m Merge feature/user-auth into main — my latest changes are now the base
+[33m747a23f[m made the FranchiseHub logo clickable and where user can press to go back to home page
+[33m0b31065[m fix css and connected the login and register html
+[33m2bbf8f7[m modified:   accounts/urls.py modified:   accounts/views.py modified:   backend/urls.py new file:   static/accounts/browse.css new file:   templates/accounts/browse.html modified:   templates/accounts/home.html
+[33m6aefc9d[m Merge pull request #1 from dillandeluxe/feature/user-auth
+[33m4bf9e9d[m Remove cached __pycache__ files
+[33me98dc0a[m 	modified:   accounts/urls.py 	modified:   accounts/views.py 	modified:   backend/urls.py 	modified:   static/accounts/home.css 	modified:   templates/accounts/home.html 	modified:   templates/accounts/login.html
+[33m54277a5[m Update settings and configure Supabase PostgreSQL connection
+[33m70a4b9e[m Update README.md for assignment
+[33m3fa015b[m Update README.md for assignment
+[33m8647711[m Update README.md for assignment
+[33m5f55926[m Connected Django to Supabase and configured environment variables
+[33m10b6f43[m modified:   templates/accounts/home.html  Log in opens to home
+[33m104337d[m Changes:     modified:   static/accounts/home.css 	new file:   static/accounts/result.css 	modified:   templates/accounts/home.html 	new file:   templates/accounts/result.html
+[33m4ef648e[m Changes to be committed: modified:   static/accounts/home.css modified:   templates/accounts/home.html
+[33m2fbe36a[m Changes: deleted:    static/home.css deleted:    templates/home.html
+[33m464d753[m Merge branch 'feature/user-auth' of https://github.com/dillandeluxe/FranchiseHub into feature/user-auth
+[33m1bd07ff[m Changes to be committed: renamed:    static/home.css -> static/accounts/home.css renamed:    templates/home.html -> templates/accounts/home.html
+[33m415e69d[m Changes to be committed: Addition of file:   static/home.css file:   templates/home.html
+[33m036a47b[m Changes to be committed: Addition of new file:   static/home.css new file:   templates/home.html
+[33m4099726[m Add login and register backend + frontend
+[33m0b6237e[m Add requirements.txt with Django dependecies
+[33m6d52b04[m Stop tracking db.sqlite3
+[33m9f3301d[m Add .gitignore file
+[33mc19ebeb[m Initialize Django project
+[33m23dab34[m Initial commit

@@ -1,0 +1,65 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Application Status | FranchiseHub</title>
+  <link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
+  <style>
+    .status-wrap { max-width: 800px; margin: 40px auto; padding: 24px; background:#fff; border:1px solid #eee; border-radius:10px; box-shadow:0 2px 16px rgba(26,26,34,.06); font-family:Poppins, sans-serif; }
+    .status-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+    .pill { padding:6px 10px; border-radius:999px; font-weight:600; font-size:.9em; }
+    .pill.accepted { background:#ecfdf5; color:#065f46; }
+    .pill.approved { background:#eef2ff; color:#3730a3; }
+    .pill.rejected { background:#fef2f2; color:#991b1b; }
+    .pill.pending { background:#fff7ed; color:#9a3412; }
+    .note { background:#fafbfc; border:1px solid #eee; padding:12px; border-radius:8px; margin-top:10px; white-space:pre-wrap; }
+    .actions a { text-decoration:none; color:#fff; background:#d66900; padding:8px 12px; border-radius:6px; font-weight:600; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
+    <div class="nav-links">
+      <a href="{% url 'browse' %}">Browse Franchises</a>
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+  </nav>
+
+  <div class="status-wrap">
+    <div class="status-head">
+      <h2 style="margin:0;">Application — {{ application.franchise.name }}</h2>
+      {% with application.status|lower as st %}
+        <span class="pill {% if st == 'accepted' %}accepted{% elif st == 'approved' %}approved{% elif st == 'rejected' %}rejected{% else %}pending{% endif %}">{{ application.status }}</span>
+      {% endwith %}
+    </div>
+    <p><b>Submitted:</b> {{ application.created_at|date:"M d, Y, g:i a" }}</p>
+    <hr>
+    {% if application.status == 'Accepted' %}
+      <p><b>Status:</b> Accepted</p>
+      <div class="note">
+        <b>Approval Notes</b><br>
+        {{ application.approval_note|default:"No notes provided." }}
+      </div>
+    {% elif application.status == 'Approved' %}
+      <p><b>Status:</b> Approved</p>
+      <div class="note">
+        <b>Notes</b><br>
+        {{ application.approval_note|default:"No notes provided." }}
+      </div>
+    {% elif application.status == 'Rejected' %}
+      <p><b>Status:</b> Rejected</p>
+      <div class="note">
+        <b>Reason</b><br>
+        {{ application.rejection_reason|default:"No reason provided." }}
+      </div>
+    {% else %}
+      <p><b>Status:</b> Pending Review</p>
+      <div class="note">Your application is waiting for franchisor review.</div>
+    {% endif %}
+    <div class="actions" style="margin-top:14px;">
+      <a href="{% url 'browse' %}">Back to Browse</a>
+    </div>
+  </div>
+</body>
+</html>

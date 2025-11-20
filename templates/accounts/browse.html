@@ -96,10 +96,16 @@
           <span class="rating">4.9 ★</span>
         </div>
         {% if user.is_authenticated %}
-          <button class="inquire-btn js-open-apply" type="button">Inquire Now</button>
-          <noscript>
-            <a class="inquire-btn" href="{% url 'franchise_apply' franchise.id %}">Inquire Now</a>
-          </noscript>
+          {% if franchise.id in applied_franchise_ids %}
+            <!-- Already applied: show status page link -->
+            <a class="inquire-btn" href="{% url 'application_status' %}?franchise={{ franchise.id }}">Application Update</a>
+          {% else %}
+            <!-- Not applied: open application modal -->
+            <button class="inquire-btn js-open-apply" type="button">Inquire Now</button>
+            <noscript>
+              <a class="inquire-btn" href="{% url 'franchise_apply' franchise.id %}">Inquire Now</a>
+            </noscript>
+          {% endif %}
         {% else %}
           <a class="inquire-btn" href="{% url 'login' %}">Login to Inquire</a>
         {% endif %}

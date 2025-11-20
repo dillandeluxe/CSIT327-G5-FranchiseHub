@@ -6,7 +6,7 @@ from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django import forms
 from django.views.decorators.http import require_POST
-from django.db.models import Q  # for search filtering
+from django.db.models import Q
 
 from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
 from .forms import FranchiseForm, FranchiseApplicationForm
@@ -123,7 +123,6 @@ def home_view(request):
 @login_required
 def browse(request):
     """Displays all active franchises for franchisees."""
-    # New: simple search by keyword across multiple fields.
     q = request.GET.get('q', '').strip()
     qs = Franchise.objects.filter(is_active=True)
     if q:
@@ -134,12 +133,20 @@ def browse(request):
             Q(franchisor__company_name__icontains=q) |
             Q(franchisor__country__icontains=q)
         )
-    # Note: qs may be empty when no results match; that is OK and handled in the template.
     franchises = qs.order_by('-created_at')
+
+    # New: identify franchises the current user has already applied to
+    applied_franchise_ids = []
+    if Franchisee.objects.filter(user=request.user).exists():
+        fe = Franchisee.objects.get(user=request.user)
+        applied_franchise_ids = list(
+            FranchiseApplication.objects.filter(franchisee=fe).values_list('franchise_id', flat=True)
+        )
 
     return render(request, 'accounts/browse.html', {
         'franchises': franchises,
-        'q': q  # used by the template to render "No franchises found." when searching
+        'q': q,
+        'applied_franchise_ids': applied_franchise_ids,  # used to toggle “Application Update”
     })
 
 
@@ -371,6 +378,77 @@ def application_set_status(request, application_id, status):
     else:
         messages.error(request, "Invalid status action.")
     return redirect('franchisor_dashboard')
+
+@require_POST
+@login_required
+def accept_application(request, pk):
+    """
+    Franchisor Accept flow:
+    - Save approval_note (optional)
+    - Set status to 'Accepted'
+    """
+    app = get_object_or_404(FranchiseApplication, id=pk)
+    # authorize: only the owning franchisor can accept/reject
+    if not Franchisor.objects.filter(user=request.user, franchises__id=app.franchise_id).exists():
+        messages.error(request, "Not authorized to accept this application.")
+        return redirect('franchisor_dashboard')
+
+    note = request.POST.get('approval_note', '').strip()
+    app.approval_note = note or None
+    app.rejection_reason = None
+    app.status = 'Accepted'
+    app.save(update_fields=['approval_note', 'rejection_reason', 'status'])
+    messages.success(request, "Application marked as Accepted.")
+    return redirect('franchisor_dashboard')
+
+@require_POST
+@login_required
+def reject_application(request, pk):
+    """
+    Franchisor Reject flow:
+    - Require rejection_reason textarea
+    - Set status to 'Rejected'
+    """
+    app = get_object_or_404(FranchiseApplication, id=pk)
+    if not Franchisor.objects.filter(user=request.user, franchises__id=app.franchise_id).exists():
+        messages.error(request, "Not authorized to reject this application.")
+        return redirect('franchisor_dashboard')
+
+    reason = request.POST.get('rejection_reason', '').strip()
+    if not reason:
+        messages.error(request, "Rejection reason is required.")
+        return redirect('franchisor_dashboard')
+
+    app.rejection_reason = reason
+    app.approval_note = None
+    app.status = 'Rejected'
+    app.save(update_fields=['rejection_reason', 'approval_note', 'status'])
+    messages.info(request, "Application marked as Rejected.")
+    return redirect('franchisor_dashboard')
+
+@login_required
+def application_status(request):
+    """
+    Franchisee view to see application status.
+    Optional query param ?franchise=<uuid> to view status for a specific franchise.
+    """
+    # must be a franchisee
+    franchisee = Franchisee.objects.filter(user=request.user).first()
+    if not franchisee:
+        messages.error(request, "Only franchisees can view application status.")
+        return redirect('browse')
+
+    fid = request.GET.get('franchise')
+    if fid:
+        app = FranchiseApplication.objects.filter(franchisee=franchisee, franchise_id=fid).order_by('-created_at').first()
+    else:
+        app = FranchiseApplication.objects.filter(franchisee=franchisee).order_by('-created_at').first()
+
+    if not app:
+        messages.info(request, "You have not submitted any applications yet.")
+        return redirect('browse')
+
+    return render(request, 'accounts/application_status.html', {'application': app})
 
 # =========================================================================
 # 7. SUPER ADMIN DASHBOARD & ANALYTICS
