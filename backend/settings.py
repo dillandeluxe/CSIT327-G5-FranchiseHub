@@ -5,6 +5,7 @@ Configured for Render + Supabase deployment.
 
 import os
 from pathlib import Path
+BASE_DIR = Path(__file__).resolve().parent.parent
 from dotenv import load_dotenv
 import dj_database_url
 
@@ -92,11 +93,10 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # DATABASE (Supabase)
 # --------------------------------------------------------------------
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
-        conn_max_age=600,
-        ssl_require=True,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 # --------------------------------------------------------------------

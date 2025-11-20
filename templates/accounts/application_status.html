@@ -15,6 +15,13 @@
     .pill.pending { background:#fff7ed; color:#9a3412; }
     .note { background:#fafbfc; border:1px solid #eee; padding:12px; border-radius:8px; margin-top:10px; white-space:pre-wrap; }
     .actions a { text-decoration:none; color:#fff; background:#d66900; padding:8px 12px; border-radius:6px; font-weight:600; }
+    .upload-section { margin-top: 30px; padding: 20px; border-top: 1px solid #eee; }
+    .upload-section h3, .upload-section h4 { margin-bottom: 10px; }
+    .upload-section ul { padding-left: 20px; }
+    .upload-section li { margin-bottom: 6px; }
+    .upload-section form { margin-top: 10px; }
+    .upload-section input[type="file"] { margin-bottom: 10px; }
+    .upload-section button { background:#007bff; color:#fff; padding:6px 12px; border:none; border-radius:4px; cursor:pointer; }
   </style>
 </head>
 <body>
@@ -60,6 +67,26 @@
     <div class="actions" style="margin-top:14px;">
       <a href="{% url 'browse' %}">Back to Browse</a>
     </div>
+  </div>
+
+  <div class="status-wrap upload-section">
+    <h3>Uploaded Documents</h3>
+    {% if application.documents.all %}
+      <ul>
+        {% for doc in application.documents.all %}
+          <li><a href="{{ doc.file.url }}" target="_blank">{{ doc.file.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No documents uploaded yet.</p>
+    {% endif %}
+
+    <h4>Upload a Document</h4>
+    <form method="post" action="{% url 'upload_application_document' application.id %}" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="file" accept=".pdf,.jpg,.jpeg,.png" required>
+      <button type="submit">Upload</button>
+    </form>
   </div>
 </body>
 </html>

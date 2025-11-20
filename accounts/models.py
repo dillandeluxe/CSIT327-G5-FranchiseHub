@@ -187,3 +187,22 @@ class Profile(models.Model):
     def __str__(self):
         return self.full_name or self.user.username
 
+# =========================
+#  DOCUMENTS UPLOAD
+# =========================
+class ApplicationDocument(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    application = models.ForeignKey(
+        FranchiseApplication,
+        on_delete=models.CASCADE,
+        related_name='documents'
+    )
+    file = models.FileField(upload_to='application_docs/')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'application_document'
+        managed = True
+
+    def __str__(self):
+        return f"Document for {self.application.full_name}"

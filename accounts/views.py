@@ -7,6 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.views.decorators.http import require_POST
 from django.db.models import Q
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import ApplicationDocument
 
 from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
 from .forms import FranchiseForm, FranchiseApplicationForm
@@ -513,3 +516,23 @@ def admin_dashboard_view(request):
     }
 
     return render(request, 'accounts/admin_dashboard.html', context)
+
+#=================================
+#   DOCUMENT UPLOAD
+#=================================
+@csrf_exempt
+@login_required
+def upload_application_document(request, application_id):
+    if request.method == 'POST' and request.FILES.get('file'):
+        file = request.FILES['file']
+
+        # ✅ Validate file type
+        ALLOWED_TYPES = ['application/pdf', 'image/jpeg', 'image/png']
+        if file.content_type not in ALLOWED_TYPES:
+            return JsonResponse({'error': 'Unsupported file type'}, status=400)
+
+        application = get_object_or_404(FranchiseApplication, id=application_id)
+        doc = ApplicationDocument.objects.create(application=application, file=file)
+        return JsonResponse({'message': 'Document uploaded successfully', 'doc_id': str(doc.id)})
+
+    return JsonResponse({'error': 'Invalid request'}, status=400)
