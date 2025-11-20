@@ -7,30 +7,36 @@
   <title>My Profile | FranchiseHub</title>
   <link rel="stylesheet" href="{% static 'accounts/profile.css' %}?v=1">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    .user-management { max-width: 900px; margin: 40px auto; font-family: Poppins, sans-serif; }
+    .search-bar input { width: 100%; padding: 10px; font-size: 1em; border: 1px solid #ccc; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
+    select, button { padding: 6px 10px; font-size: 0.95em; }
+    .notification { margin-top: 20px; padding: 10px; border-radius: 6px; display: none; }
+    .notification.success { background: #ecfdf5; color: #065f46; }
+    .notification.error { background: #fef2f2; color: #991b1b; }
+  </style>
 </head>
 
 <body>
   <!-- ===== NAVBAR ===== -->
-  <!-- Navbar -->
-<nav class="navbar">
-  <a href="{% url 'browse' %}" class="logo"><span>Franchise</span>Hub</a>
-  <div class="nav-links">
-    {% if user.is_authenticated %}
-      
-      {% if user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+  <nav class="navbar">
+    <a href="{% url 'browse' %}" class="logo"><span>Franchise</span>Hub</a>
+    <div class="nav-links">
+      {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+          <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+        {% endif %}
+        <a href="{% url 'browse' %}">Browse Franchises</a>
+        <a href="{% url 'profile' %}">Edit Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}" class="get-started">Get Started</a>
       {% endif %}
-      <a href="{% url 'browse' %}">Browse Franchises</a>
-      <a href="{% url 'profile' %}">Edit Profile</a>
-      <a href="{% url 'logout' %}">Logout</a>
-
-    {% else %}
-      <a href="{% url 'login' %}">Login</a>
-      <a href="{% url 'register' %}" class="get-started">Get Started</a>
-    {% endif %}
-</div>
-</nav>
-
+    </div>
+  </nav>
 
   <!-- Hero Section -->
   <section class="listing-hero">
@@ -42,30 +48,103 @@
 
   <!-- ===== PROFILE FORM ===== -->
   <div class="profile-container">
-      <form method="POST" action="{% url 'profile' %}">
-          {% csrf_token %}
-          <h2>Personal Information</h2>
+    <form method="POST" action="{% url 'profile' %}">
+      {% csrf_token %}
+      <h2>Personal Information</h2>
 
-          <label for="full_name">Full Name</label>
-          <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" value="{{ user.full_name }}">
+      <label for="full_name">Full Name</label>
+      <input type="text" id="full_name" name="full_name" placeholder="Enter your full name" value="{{ user.full_name }}">
 
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" placeholder="Enter your email address" value="{{ user.email }}">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" name="email" placeholder="Enter your email address" value="{{ user.email }}">
 
-          <label for="phone">Phone Number</label>
-          <input type="text" id="phone" name="phone" placeholder="Enter your phone number" value="{{ user.phone }}">
+      <label for="phone">Phone Number</label>
+      <input type="text" id="phone" name="phone" placeholder="Enter your phone number" value="{{ user.phone }}">
 
-          <label for="location">Location</label>
-          <input type="text" id="location" name="location" placeholder="Enter your location" value="{{ user.location }}">
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" placeholder="Enter your location" value="{{ user.location }}">
 
-          <label for="bio">Bio</label>
-          <textarea id="bio" name="bio" rows="4" placeholder="Write a short bio...">{{ user.bio }}</textarea>
+      <label for="bio">Bio</label>
+      <textarea id="bio" name="bio" rows="4" placeholder="Write a short bio...">{{ user.bio }}</textarea>
 
-          <div class="form-buttons">
-              <a href="{% url 'browse' %}" class="cancel-btn">Cancel</a>
-              <button type="submit" class="save-btn">Save Changes</button>
-          </div>
-      </form>
+      <div class="form-buttons">
+        <a href="{% url 'browse' %}" class="cancel-btn">Cancel</a>
+        <button type="submit" class="save-btn">Save Changes</button>
+      </div>
+    </form>
   </div>
+
+  {% if user.is_superuser %}
+  <!-- ===== USER MANAGEMENT TABLE ===== -->
+  <div class="user-management">
+    <h2>User Management</h2>
+
+    <div class="search-bar">
+      <input type="text" id="userSearch" placeholder="Search by name or email" onkeyup="filterUsers()">
+    </div>
+
+<table id="userTable">
+  <thead>
+    <tr>
+      <th>Full Name</th>
+      <th>Email</th>
+      <th>Role</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u.full_name }}</td>
+      <td>{{ u.email }}</td>
+      <td>
+        <select onchange="updateRole('{{ u.id }}', this.value)">
+          {% for role in role_choices %}
+            <option value="{{ role.0 }}" {% if u.role == role.0 %}selected{% endif %}>{{ role.1 }}</option>
+          {% endfor %}
+        </select>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+    <div id="notification" class="notification"></div>
+  </div>
+  {% endif %}
+
+  <script>
+    function filterUsers() {
+      const input = document.getElementById("userSearch").value.toLowerCase();
+      const rows = document.querySelectorAll("#userTable tbody tr");
+      rows.forEach(row => {
+        const name = row.cells[0].textContent.toLowerCase();
+        const email = row.cells[1].textContent.toLowerCase();
+        row.style.display = (name.includes(input) || email.includes(input)) ? "" : "none";
+      });
+    }
+
+    function updateRole(userId, newRole) {
+      fetch(`/accounts/update-role/${userId}/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': '{{ csrf_token }}'
+        },
+        body: JSON.stringify({ role: newRole })
+      })
+      .then(res => res.json())
+      .then(data => showNotification(data.message, 'success'))
+      .catch(err => showNotification("Error updating role", 'error'));
+    }
+
+
+    function showNotification(message, type) {
+      const note = document.getElementById("notification");
+      note.textContent = message;
+      note.className = `notification ${type}`;
+      note.style.display = "block";
+      setTimeout(() => note.style.display = "none", 3000);
+    }
+  </script>
 </body>
 </html>
