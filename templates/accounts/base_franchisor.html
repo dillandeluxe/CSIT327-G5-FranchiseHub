@@ -1,46 +1,29 @@
-
+{% extends 'base.html' %}
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Franchisor Dashboard | FranchiseHub{% endblock %}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'accounts/franchisor_dashboard.css' %}">
+{% block title %}{% block franchisor_title %}Franchisor Dashboard | FranchiseHub{% endblock %}{% endblock %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/franchisor_dashboard.css' %}">
+{% endblock %}
 
-
-</head>
-
-<body>
-  <!-- Navbar -->
-  <header class="navbar">
-    <div class="logo"><span>Franchise</span>Hub</div>
-    <nav>
-      <a href="{% url 'browse' %}">Browse Franchises</a>
-      <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
-    </nav>
-  </header>
+{% block content %}
+  <!-- Modern Horizontal Navbar -->
+  <nav class="base-navbar">
+    <a href="{% url 'home' %}" class="brand-logo">
+      <span>Franchise</span>Hub
+    </a>
+    <div class="nav-menu">
+      <a href="{% url 'profile' %}">Profile</a>
+      <a href="{% url 'logout' %}">Logout</a>
+    </div>
+  </nav>
 
   <!-- Main Content -->
   <main class="main-section">
-    {% block content %}
+    {% block franchisor_content %}
     {% endblock %}
   </main>
 
-  <!-- Optional JS -->
-  <script>
-    // Common modal handler (optional)
-    const modal = document.getElementById("addFranchiseModal");
-    const btnAdd = document.querySelector(".btn-add");
-    const spanClose = document.querySelector(".close");
-    if (btnAdd && modal && spanClose) {
-      btnAdd.onclick = () => modal.classList.remove("hidden");
-      spanClose.onclick = () => modal.classList.add("hidden");
-      window.onclick = (e) => { if (e.target === modal) modal.classList.add("hidden"); };
-    }
-  </script>
-</body>
-</html>
+  {% block extra_js %}{% endblock %}
+{% endblock %}

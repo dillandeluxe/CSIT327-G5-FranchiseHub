@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django import forms
 from django.views.decorators.http import require_POST
 from django.db.models import Q
+from django.http import JsonResponse
 
 from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
 from .forms import FranchiseForm, FranchiseApplicationForm
@@ -78,27 +79,20 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, f"Welcome back, {username}!")
+            messages.success(request, f"Welcome back, {username}!")  # ✅ Success message
 
-            # 1. Check for Superuser FIRST
             if user.is_superuser:
                 return redirect('admin_dashboard')
-
-            # 2. Then check for Franchisee
             elif Franchisee.objects.filter(user=user).exists():
-                return redirect('browse')
-            
-            # 3. Then check for Franchisor
+                return redirect('franchisee_dashboard')
             elif Franchisor.objects.filter(user=user).exists():
                 return redirect('franchisor_dashboard')
-            
             else:
-                # User is logged in but has no specific role
-                messages.error(request, "No role assigned to this user.")
-                logout(request) # Log them out for safety
+                messages.error(request, "No role assigned to this user.")  # ✅ Error message
+                logout(request)
                 return redirect('login')
         else:
-            messages.error(request, "Invalid username or password.")
+            messages.error(request, "Invalid username or password.")  # ✅ Error message
             return redirect('login')
 
     return render(request, 'accounts/login.html')
@@ -242,14 +236,14 @@ def add_franchise_view(request):
 def delete_franchise(request, franchise_id):
     franchisor = Franchisor.objects.filter(user=request.user).first()
     if not franchisor:
-        messages.error(request, "You are not registered as a franchisor.")
+        messages.error(request, "You are not registered as a franchisor.")  # ✅ Error message
         return redirect('browse')
 
     franchise = get_object_or_404(Franchise, id=franchise_id, franchisor=franchisor)
     franchise.is_active = False  # Soft delete
     franchise.save()
 
-    messages.success(request, "Franchise removed successfully.")
+    messages.success(request, f"Franchise '{franchise.name}' removed successfully.")  # ✅ Success message
     return redirect('franchisor_dashboard')
 
 
@@ -388,9 +382,8 @@ def accept_application(request, pk):
     - Set status to 'Accepted'
     """
     app = get_object_or_404(FranchiseApplication, id=pk)
-    # authorize: only the owning franchisor can accept/reject
     if not Franchisor.objects.filter(user=request.user, franchises__id=app.franchise_id).exists():
-        messages.error(request, "Not authorized to accept this application.")
+        messages.error(request, "Not authorized to accept this application.")  # ✅ Error message
         return redirect('franchisor_dashboard')
 
     note = request.POST.get('approval_note', '').strip()
@@ -398,7 +391,7 @@ def accept_application(request, pk):
     app.rejection_reason = None
     app.status = 'Accepted'
     app.save(update_fields=['approval_note', 'rejection_reason', 'status'])
-    messages.success(request, "Application marked as Accepted.")
+    messages.success(request, f"Application from {app.full_name} has been accepted.")  # ✅ Success message
     return redirect('franchisor_dashboard')
 
 @require_POST
@@ -411,19 +404,19 @@ def reject_application(request, pk):
     """
     app = get_object_or_404(FranchiseApplication, id=pk)
     if not Franchisor.objects.filter(user=request.user, franchises__id=app.franchise_id).exists():
-        messages.error(request, "Not authorized to reject this application.")
+        messages.error(request, "Not authorized to reject this application.")  # ✅ Error message
         return redirect('franchisor_dashboard')
 
     reason = request.POST.get('rejection_reason', '').strip()
     if not reason:
-        messages.error(request, "Rejection reason is required.")
+        messages.warning(request, "Rejection reason is required.")  # ✅ Warning message
         return redirect('franchisor_dashboard')
 
     app.rejection_reason = reason
     app.approval_note = None
     app.status = 'Rejected'
     app.save(update_fields=['rejection_reason', 'approval_note', 'status'])
-    messages.info(request, "Application marked as Rejected.")
+    messages.info(request, f"Application from {app.full_name} has been rejected.")  # ✅ Info message
     return redirect('franchisor_dashboard')
 
 @login_required
@@ -513,3 +506,42 @@ def admin_dashboard_view(request):
     }
 
     return render(request, 'accounts/admin_dashboard.html', context)
+
+# =========================================================================
+# 8. FRANCHISEE DASHBOARD
+# =========================================================================
+
+@login_required
+def franchisee_dashboard(request):
+    """
+    Franchisee dashboard showing all applications, including those for soft-deleted franchises.
+    """
+    try:
+        franchisee = Franchisee.objects.get(user=request.user)
+    except Franchisee.DoesNotExist:
+        messages.error(request, "You are not registered as a franchisee.")
+        return redirect('browse')
+
+    # DO NOT filter by franchise.is_active - show all applications including soft-deleted
+    applications = FranchiseApplication.objects.filter(franchisee=franchisee).select_related('franchise').order_by('-created_at')
+
+    return render(request, 'accounts/franchisee_dashboard.html', {
+        'applications': applications
+    })
+
+@require_POST
+@login_required
+def remove_application(request, pk):
+    """
+    Allows franchisee to remove an application from their dashboard.
+    Used primarily when a franchise has been soft-deleted.
+    """
+    app = get_object_or_404(
+        FranchiseApplication,
+        id=pk,
+        franchisee__user=request.user
+    )
+    franchise_name = app.franchise.name
+    app.delete()
+    messages.success(request, f"'{franchise_name}' removed from your dashboard.")  # ✅ Success message
+    return redirect('franchisee_dashboard')

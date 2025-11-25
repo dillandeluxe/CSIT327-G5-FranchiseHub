@@ -1,21 +1,387 @@
 {% extends 'accounts/base_franchisor.html' %}
+{% load static %}
 
-{% block content %}
-<div class="container mt-5">
-    <h1>Add Franchise</h1>
-    <form method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        
-        {% for field in form %}
-    <div class="mb-3">
-        <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-        {{ field }}
-        {% if field.errors %}
-            <div class="text-danger">{{ field.errors }}</div>
-        {% endif %}
-    </div>
-{% endfor %}
-        <button type="submit" class="btn btn-primary">Add Franchise</button>
+{% block franchisor_title %}Add Franchise | FranchiseHub{% endblock %}
+
+{% block franchisor_content %}
+<div class="add-franchise-container">
+  <div class="page-header">
+    <h1 class="page-title">Add New Franchise</h1>
+    <p class="page-subtitle">Fill in the details below to create a new franchise listing</p>
+  </div>
+
+  <div class="form-card">
+    <form method="POST" enctype="multipart/form-data" class="modern-form" novalidate>
+      {% csrf_token %}
+      
+      {% for field in form %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+          <label for="{{ field.id_for_label }}" class="form-label">
+            {{ field.label }}
+            {% if field.field.required %}<span class="required-mark">*</span>{% endif %}
+          </label>
+          
+          {% if field.field.widget.input_type == 'textarea' %}
+            <textarea 
+              name="{{ field.name }}" 
+              id="{{ field.id_for_label }}"
+              class="form-control form-textarea"
+              placeholder="Enter detailed description..."
+              {% if field.field.required %}required{% endif %}
+            >{{ field.value|default:'' }}</textarea>
+          {% elif field.field.widget.input_type == 'select' %}
+            {{ field }}
+          {% elif field.field.widget.input_type == 'file' %}
+            <div class="file-upload-wrapper">
+              {{ field }}
+              <label for="{{ field.id_for_label }}" class="file-upload-label">
+                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
+                <span class="file-text">Choose File</span>
+              </label>
+            </div>
+          {% else %}
+            <input 
+              type="{{ field.field.widget.input_type }}" 
+              name="{{ field.name }}" 
+              id="{{ field.id_for_label }}"
+              class="form-control"
+              value="{{ field.value|default:'' }}"
+              {% if field.field.required %}required{% endif %}
+              {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}
+            >
+          {% endif %}
+          
+          {% if field.errors %}
+            <div class="error-message">
+              {% for error in field.errors %}
+                <span class="error-text">{{ error }}</span>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          {% if field.help_text %}
+            <small class="help-text">{{ field.help_text }}</small>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'franchisor_dashboard' %}'">
+          Cancel
+        </button>
+        <button type="submit" class="btn-primary">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Create Franchise
+        </button>
+      </div>
     </form>
+  </div>
 </div>
+
+<style>
+/* Add Franchise Page Styles */
+.add-franchise-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 0 24px;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: #6b7280;
+}
+
+.form-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.modern-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.required-mark {
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  background: #f9fafb;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #d66900;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(214, 105, 0, 0.1);
+}
+
+.form-control:valid:not(:placeholder-shown) {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.form-group.has-error .form-control {
+  border-color: #ef4444;
+  background: #fef2f2;
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-control[type="number"],
+.form-control[type="text"],
+.form-control[type="email"] {
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+}
+
+/* Select Styling */
+select.form-control {
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 20px;
+  padding-right: 40px;
+}
+
+/* File Upload */
+.file-upload-wrapper {
+  position: relative;
+}
+
+.file-upload-wrapper input[type="file"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.file-upload-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  border: 2px dashed #d1d5db;
+  border-radius: 10px;
+  background: #f9fafb;
+  color: #6b7280;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.file-upload-label:hover {
+  border-color: #d66900;
+  background: #fff7ed;
+  color: #d66900;
+}
+
+/* Error Messages */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.error-text {
+  font-size: 13px;
+  color: #ef4444;
+  font-weight: 500;
+}
+
+.error-text::before {
+  content: "⚠ ";
+}
+
+/* Help Text */
+.help-text {
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 4px;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 16px;
+  padding-top: 24px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Poppins', sans-serif;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #d66900 0%, #b35c04 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(214, 105, 0, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+  background: #e5e7eb;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .add-franchise-container {
+    padding: 0 16px;
+  }
+
+  .form-card {
+    padding: 24px 20px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Animation on Page Load */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-card {
+  animation: slideInUp 0.4s ease-out;
+}
+</style>
+
+<script>
+(function() {
+  // Real-time validation feedback
+  const inputs = document.querySelectorAll('.form-control');
+  
+  inputs.forEach(input => {
+    input.addEventListener('input', function() {
+      const formGroup = this.closest('.form-group');
+      
+      if (this.validity.valid && this.value.trim() !== '') {
+        formGroup.classList.remove('has-error');
+      }
+    });
+    
+    input.addEventListener('blur', function() {
+      if (this.hasAttribute('required') && this.value.trim() === '') {
+        this.closest('.form-group').classList.add('has-error');
+      }
+    });
+  });
+
+  // File upload feedback
+  const fileInputs = document.querySelectorAll('input[type="file"]');
+  fileInputs.forEach(input => {
+    input.addEventListener('change', function() {
+      const label = this.nextElementSibling;
+      const fileText = label.querySelector('.file-text');
+      if (this.files.length > 0) {
+        fileText.textContent = this.files[0].name;
+        label.style.borderColor = '#10b981';
+        label.style.background = '#f0fdf4';
+        label.style.color = '#10b981';
+      }
+    });
+  });
+
+  // Form submission loading state
+  const form = document.querySelector('.modern-form');
+  form.addEventListener('submit', function(e) {
+    const submitBtn = this.querySelector('.btn-primary');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<span>Creating...</span>';
+  });
+})();
+</script>
 {% endblock %}

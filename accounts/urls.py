@@ -25,4 +25,7 @@ urlpatterns = [
     # Franchisee application status
     path("application/status/", views.application_status, name="application_status"),
     path('admin-dashboard/', views.admin_dashboard_view, name='admin_dashboard'),
+    # Franchisee dashboard
+    path("franchisee/dashboard/", views.franchisee_dashboard, name="franchisee_dashboard"),
+    path("application/remove/<uuid:pk>/", views.remove_application, name="remove_application"),
 ]

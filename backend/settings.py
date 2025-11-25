@@ -7,6 +7,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
+from django.contrib.messages import constants as messages
 
 # --------------------------------------------------------------------
 # BASE CONFIGURATION
@@ -18,7 +19,7 @@ if os.environ.get("RENDER", "") != "true":
     load_dotenv(dotenv_path=BASE_DIR / ".env")
 
 # --- Debug/host config ---
-DEBUG = os.getenv('DJANGO_DEBUG', 'True').lower() == 'true'
+DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 IS_RENDER = os.getenv('RENDER', '').lower() == 'true'
 RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
 
@@ -26,8 +27,18 @@ RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
 if DEBUG:
     ALLOWED_HOSTS = []
 else:
-    env_hosts = [h.strip() for h in os.getenv('ALLOWED_HOSTS', '').split(',') if h.strip()]
-    ALLOWED_HOSTS = env_hosts or ([RENDER_EXTERNAL_HOSTNAME] if RENDER_EXTERNAL_HOSTNAME else [])
+    env_hosts = [
+        h.strip()
+        for h in os.getenv('ALLOWED_HOSTS', '').split(',')
+        if h.strip()
+    ]
+
+    ALLOWED_HOSTS = env_hosts or [
+        "127.0.0.1",
+        "localhost",
+        RENDER_EXTERNAL_HOSTNAME,
+    ]
+
 
 # CSRF trusted origins (include Render URL if available)
 default_csrf = []
@@ -143,3 +154,12 @@ LOGIN_REDIRECT_URL = "/accounts/browse/"
 # DEFAULT PRIMARY KEY FIELD TYPE
 # --------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# Message framework tags mapped to Bootstrap 5 classes
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}

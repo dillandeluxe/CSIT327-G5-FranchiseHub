@@ -14,11 +14,13 @@
   <a href="{% url 'browse' %}" class="logo"><span>Franchise</span>Hub</a>
   <div class="nav-links">
     {% if user.is_authenticated %}
-      
       {% if user.is_superuser %}
         <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
       {% endif %}
       <a href="{% url 'browse' %}">Browse Franchises</a>
+      {% if not user.is_superuser %}
+        <a href="{% url 'franchisee_dashboard' %}">My Applications</a>
+      {% endif %}
       <a href="{% url 'profile' %}">Edit Profile</a>
       <a href="{% url 'logout' %}">Logout</a>
 
@@ -26,7 +28,7 @@
       <a href="{% url 'login' %}">Login</a>
       <a href="{% url 'register' %}" class="get-started">Get Started</a>
     {% endif %}
-</div>
+  </div>
 </nav>
 
 
