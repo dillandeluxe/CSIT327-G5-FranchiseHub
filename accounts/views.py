@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.http import JsonResponse
 
-from .models import Franchisee, Franchisor, Franchise, FranchiseApplication
+from .models import Franchisee, Franchisor, Franchise, FranchiseApplication, SecurityQuestion
 from .forms import FranchiseForm, FranchiseApplicationForm
 from accounts.utils import get_user_role
 
@@ -22,14 +22,20 @@ from django.contrib.auth.decorators import user_passes_test
 # =========================================================================
 
 def register_view(request):
-    """Handles new user registration for Franchisees and Franchisors."""
+    """Handles new user registration with security questions."""
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
         password = request.POST.get('password')
         confirm_password = request.POST.get('confirm_password')
         role = request.POST.get('role')
+        
+        # Security question answers
+        answer1 = request.POST.get('security_answer_1', '').strip()
+        answer2 = request.POST.get('security_answer_2', '').strip()
+        answer3 = request.POST.get('security_answer_3', '').strip()
 
+        # Validation
         if password != confirm_password:
             messages.error(request, "Passwords do not match.")
             return redirect('register')
@@ -38,22 +44,43 @@ def register_view(request):
             messages.error(request, "Username already exists.")
             return redirect('register')
 
+        # Validate security answers
+        if not all([answer1, answer2, answer3]):
+            messages.error(request, "All security questions must be answered.")
+            return redirect('register')
+
+        if len(answer1) < 2 or len(answer2) < 2 or len(answer3) < 2:
+            messages.error(request, "Security answers must be at least 2 characters.")
+            return redirect('register')
+
         try:
             with transaction.atomic():
+                # Create user
                 user = User.objects.create_user(username=username, email=email, password=password)
 
+                # Create security questions
+                sec_q = SecurityQuestion.objects.create(user=user)
+                sec_q.set_answer(1, answer1)
+                sec_q.set_answer(2, answer2)
+                sec_q.set_answer(3, answer3)
+                sec_q.save()
+
+                # Create role profile
                 if role == 'franchisor':
-                    Franchisor.objects.create(user=user)
+                    Franchisor.objects.create(user=user, company_name=username)
                 elif role == 'franchisee':
-                    Franchisee.objects.create(user=user)
+                    Franchisee.objects.create(user=user, business_name=username)
                 else:
                     messages.error(request, "Invalid role selected.")
                     return redirect('register')
 
+            # Auto-login
             user = authenticate(request, username=username, password=password)
             if user:
                 login(request, user)
 
+            messages.success(request, f"Account created successfully! Welcome, {username}.")
+            
             # Redirect based on role
             if role == 'franchisee':
                 return redirect('browse')
@@ -590,3 +617,115 @@ def franchisor_franchise_detail(request, franchise_id):
         'accepted_apps': accepted_apps,
         'rejected_apps': rejected_apps,
     })
+
+# =========================================================================
+# 9. FORGOT PASSWORD VIEWS
+# =========================================================================
+
+def forgot_password_view(request):
+    """Step 1: Enter username to initiate password reset."""
+    if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        
+        if not username:
+            messages.error(request, "Please enter your username.")
+            return redirect('forgot_password')
+
+        try:
+            user = User.objects.get(username=username)
+            # Store username in session for next step
+            request.session['reset_username'] = username
+            request.session['reset_step'] = 'questions'
+            return redirect('forgot_password_questions')
+        except User.DoesNotExist:
+            # Don't reveal if username exists (security)
+            messages.error(request, "If this username exists, you can proceed to security questions.")
+            return redirect('forgot_password')
+
+    return render(request, 'accounts/forgot_password.html')
+
+
+def forgot_password_questions_view(request):
+    """Step 2: Answer security questions."""
+    username = request.session.get('reset_username')
+    if not username or request.session.get('reset_step') != 'questions':
+        messages.error(request, "Invalid password reset session.")
+        return redirect('forgot_password')
+
+    try:
+        user = User.objects.get(username=username)
+        sec_q = SecurityQuestion.objects.get(user=user)
+        
+        # Check if locked
+        if sec_q.is_locked():
+            messages.error(request, "Too many failed attempts. Please try again later.")
+            return redirect('login')
+
+        if request.method == 'POST':
+            answer1 = request.POST.get('answer_1', '').strip()
+            answer2 = request.POST.get('answer_2', '').strip()
+            answer3 = request.POST.get('answer_3', '').strip()
+
+            if sec_q.check_all_answers(answer1, answer2, answer3):
+                # Success! Reset failed attempts and proceed
+                sec_q.reset_failed_attempts()
+                request.session['reset_step'] = 'newpassword'
+                messages.success(request, "Security questions verified! Set your new password.")
+                return redirect('forgot_password_reset')
+            else:
+                # Failed attempt
+                sec_q.record_failed_attempt()
+                remaining = 5 - sec_q.failed_attempts
+                if remaining > 0:
+                    messages.error(request, f"Incorrect answers. {remaining} attempts remaining.")
+                else:
+                    messages.error(request, "Account locked due to too many failed attempts. Try again in 1 hour.")
+                    return redirect('login')
+
+        return render(request, 'accounts/forgot_password_questions.html', {
+            'question_1': sec_q.question_1,
+            'question_2': sec_q.question_2,
+            'question_3': sec_q.question_3,
+        })
+
+    except (User.DoesNotExist, SecurityQuestion.DoesNotExist):
+        messages.error(request, "Security questions not set for this account.")
+        return redirect('login')
+
+
+def forgot_password_reset_view(request):
+    """Step 3: Set new password after verification."""
+    username = request.session.get('reset_username')
+    if not username or request.session.get('reset_step') != 'newpassword':
+        messages.error(request, "Invalid password reset session.")
+        return redirect('forgot_password')
+
+    if request.method == 'POST':
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if new_password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return redirect('forgot_password_reset')
+
+        if len(new_password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+            return redirect('forgot_password_reset')
+
+        try:
+            user = User.objects.get(username=username)
+            user.set_password(new_password)
+            user.save()
+
+            # Clear session
+            request.session.pop('reset_username', None)
+            request.session.pop('reset_step', None)
+
+            messages.success(request, "Password reset successfully! You can now login.")
+            return redirect('login')
+
+        except User.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect('login')
+
+    return render(request, 'accounts/forgot_password_reset.html')

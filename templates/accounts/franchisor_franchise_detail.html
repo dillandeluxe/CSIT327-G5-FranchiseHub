@@ -1,9 +1,15 @@
-{% extends 'accounts/base_franchisor.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
-{% block franchisor_title %}{{ franchise.name }} | Franchisor Dashboard{% endblock %}
+{% block title %}{{ franchise.name }} | Franchisor View{% endblock %}
 
-{% block franchisor_content %}
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/franchisee_dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
 <div class="franchise-detail-container" style="max-width: 1200px; margin: 40px auto; padding: 0 24px;">
   
   <!-- Back Button -->
@@ -78,4 +84,10 @@
   </div>
 
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // ...existing code...
+</script>
 {% endblock %}

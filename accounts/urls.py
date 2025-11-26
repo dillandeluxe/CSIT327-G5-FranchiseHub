@@ -29,4 +29,8 @@ urlpatterns = [
     # Franchisee dashboard
     path("franchisee/dashboard/", views.franchisee_dashboard, name="franchisee_dashboard"),
     path("application/remove/<uuid:pk>/", views.remove_application, name="remove_application"),
+    # Forgot Password Flow (No Email)
+    path('forgot-password/', views.forgot_password_view, name='forgot_password'),
+    path('forgot-password/questions/', views.forgot_password_questions_view, name='forgot_password_questions'),
+    path('forgot-password/reset/', views.forgot_password_reset_view, name='forgot_password_reset'),
 ]

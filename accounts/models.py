@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password, check_password as django_check_password
 
 # This imports the default Django User model (defined by settings.AUTH_USER_MODEL)
 # via a Foreign Key to link profiles to users.
@@ -187,4 +188,93 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.full_name or self.user.username
+
+
+# =========================
+#  SECURITY QUESTION MODEL
+# =========================
+class SecurityQuestion(models.Model):
+    """
+    Stores user's security questions and hashed answers for password recovery.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='security_questions'
+    )
+    question_1 = models.CharField(max_length=255, default="What is the name of your childhood best friend?")
+    answer_1_hash = models.CharField(max_length=255)  # Hashed answer
+    
+    question_2 = models.CharField(max_length=255, default="What city were you born in?")
+    answer_2_hash = models.CharField(max_length=255)  # Hashed answer
+    
+    question_3 = models.CharField(max_length=255, default="What was the name of your first pet?")
+    answer_3_hash = models.CharField(max_length=255)  # Hashed answer
+    
+    failed_attempts = models.IntegerField(default=0)  # Track failed recovery attempts
+    locked_until = models.DateTimeField(null=True, blank=True)  # Temporary lockout
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'security_questions'
+        managed = True
+
+    def __str__(self):
+        return f"Security Questions for {self.user.username}"
+
+    def set_answer(self, question_num, answer):
+        """Hash and store answer (1, 2, or 3)"""
+        normalized = answer.strip().lower()
+        hashed = make_password(normalized)
+        if question_num == 1:
+            self.answer_1_hash = hashed
+        elif question_num == 2:
+            self.answer_2_hash = hashed
+        elif question_num == 3:
+            self.answer_3_hash = hashed
+
+    def check_answer(self, question_num, answer):
+        """Verify answer (case-insensitive, trimmed)"""
+        normalized = answer.strip().lower()
+        if question_num == 1:
+            return django_check_password(normalized, self.answer_1_hash)
+        elif question_num == 2:
+            return django_check_password(normalized, self.answer_2_hash)
+        elif question_num == 3:
+            return django_check_password(normalized, self.answer_3_hash)
+        return False
+
+    def check_all_answers(self, answer1, answer2, answer3):
+        """Verify all three answers at once"""
+        return (
+            self.check_answer(1, answer1) and
+            self.check_answer(2, answer2) and
+            self.check_answer(3, answer3)
+        )
+
+    def record_failed_attempt(self):
+        """Increment failed attempts and lock if threshold reached"""
+        from django.utils import timezone
+        from datetime import timedelta
+        
+        self.failed_attempts += 1
+        if self.failed_attempts >= 5:
+            self.locked_until = timezone.now() + timedelta(hours=1)
+        self.save(update_fields=['failed_attempts', 'locked_until'])
+
+    def reset_failed_attempts(self):
+        """Clear failed attempts after successful recovery"""
+        self.failed_attempts = 0
+        self.locked_until = None
+        self.save(update_fields=['failed_attempts', 'locked_until'])
+
+    def is_locked(self):
+        """Check if account is temporarily locked"""
+        from django.utils import timezone
+        if self.locked_until and self.locked_until > timezone.now():
+            return True
+        return False
 
