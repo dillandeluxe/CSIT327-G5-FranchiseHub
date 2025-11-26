@@ -98,31 +98,63 @@
       {% endfor %}
     </div>
 
-    <div class="applications-section">
+    <!-- ✨ NEW MODERN RECENT APPLICATIONS SECTION ✨ -->
+    <div class="recent-applications-section">
       <h2 class="section-heading">Recent Applications</h2>
-      {% for app in applications %}
-        <div class="app-panel">
-          <h3 class="app-title">{{ app.full_name }}</h3>
-          <p class="app-franchise">{{ app.franchise.name }}</p>
-          <p class="app-date">Applied {{ app.created_at|date:"M d, Y" }}</p>
-          <span class="status-badge status-{{ app.status|lower }}">{{ app.status }}</span>
-          <div class="app-actions">
-            <button type="button" class="btn-modern-accept js-open-accept" data-app="{{ app.id }}">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
-              Accept
-            </button>
-            <button type="button" class="btn-modern-reject js-open-reject" data-app="{{ app.id }}">
-              <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
-              Reject
-            </button>
+      <div class="modern-applications-list">
+        {% for app in applications %}
+          <div class="modern-application-card" data-app-id="{{ app.id }}">
+            <!-- Profile Picture -->
+            <div class="app-profile-picture">
+              {% if app.franchisee.user.profile.profile_picture %}
+                <img src="{{ app.franchisee.user.profile.profile_picture.url }}" alt="{{ app.full_name }}">
+              {% else %}
+                <div class="app-avatar-placeholder">
+                  <svg width="28" height="28" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                  </svg>
+                </div>
+              {% endif %}
+            </div>
+
+            <!-- Application Info -->
+            <div class="app-info-section">
+              <div class="app-info-header">
+                <h4 class="app-applicant-name">{{ app.full_name }}</h4>
+                <span class="app-status-badge status-{{ app.status|lower }}">{{ app.status }}</span>
+              </div>
+              <p class="app-franchise-name">{{ app.franchise.name }}</p>
+              <p class="app-date">
+                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+                Applied {{ app.created_at|date:"M d, Y" }}
+              </p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="app-action-buttons">
+              <button type="button" class="app-btn app-btn-accept js-open-accept" data-app="{{ app.id }}">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                Accept
+              </button>
+              <button type="button" class="app-btn app-btn-reject js-open-reject" data-app="{{ app.id }}">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                Reject
+              </button>
+            </div>
           </div>
-        </div>
-      {% empty %}
-        <div class="empty-state">
-          <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <p>No recent applications.</p>
-        </div>
-      {% endfor %}
+        {% empty %}
+          <div class="empty-state">
+            <svg width="64" height="64" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            <p>No recent applications.</p>
+          </div>
+        {% endfor %}
+      </div>
     </div>
   </section>
 </main>

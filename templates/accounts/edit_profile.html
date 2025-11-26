@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Profile | FranchiseHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/edit_profile.css' %}">
+</head>
+<body>
+  <!-- Modern Navbar -->
+  <nav class="navbar">
+    <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
+    <div class="nav-links">
+      <a href="{% url 'profile' %}">Back to Profile</a>
+    </div>
+  </nav>
+
+  <!-- Edit Profile Container -->
+  <div class="edit-container">
+    <div class="edit-header">
+      <h1 class="edit-title">Edit Your Profile</h1>
+      <p class="edit-subtitle">Update your personal information and profile picture</p>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data" class="edit-form" id="editProfileForm">
+      {% csrf_token %}
+
+      <!-- Profile Picture Upload Section -->
+      <div class="upload-section">
+        <div class="current-avatar">
+          {% if user.profile.profile_picture %}
+            <img id="avatarPreview" src="{{ user.profile.profile_picture.url }}" alt="Profile">
+          {% else %}
+            <div id="avatarPreview" class="avatar-placeholder">
+              <svg width="60" height="60" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+          {% endif %}
+        </div>
+        
+        <div class="upload-controls">
+          <label for="profilePictureInput" class="btn-upload">
+            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V9.413l1.293 1.293a1 1 0 001.414-1.414l-3-3a1 1 0 00-1.414 0l-3 3a1 1 0 001.414 1.414L9 9.414V13H5.5z"/>
+              <path d="M9 13h2v5a1 1 0 11-2 0v-5z"/>
+            </svg>
+            Choose Photo
+          </label>
+          <input type="file" id="profilePictureInput" name="profile_picture" accept="image/*" style="display: none;">
+          <button type="button" class="btn-remove" onclick="removePhoto()">Remove</button>
+        </div>
+      </div>
+
+      <!-- Form Fields Grid -->
+      <div class="form-grid">
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="first_name" class="form-label">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+            First Name
+          </label>
+          <input 
+            type="text" 
+            id="first_name" 
+            name="first_name" 
+            class="form-input" 
+            value="{{ user.first_name }}"
+            placeholder="Enter your first name"
+          >
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="last_name" class="form-label">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+            Last Name
+          </label>
+          <input 
+            type="text" 
+            id="last_name" 
+            name="last_name" 
+            class="form-input" 
+            value="{{ user.last_name }}"
+            placeholder="Enter your last name"
+          >
+        </div>
+
+        <!-- Email -->
+        <div class="form-group">
+          <label for="email" class="form-label">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            Email Address
+          </label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            class="form-input" 
+            value="{{ user.email }}"
+            placeholder="your@email.com"
+          >
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label for="phone_number" class="form-label">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+            </svg>
+            Phone Number
+          </label>
+          <input 
+            type="tel" 
+            id="phone_number" 
+            name="phone_number" 
+            class="form-input" 
+            value="{{ user.profile.phone_number|default:'' }}"
+            placeholder="+63 912 345 6789"
+          >
+        </div>
+
+        <!-- Location (Full Width) -->
+        <div class="form-group form-group-full">
+          <label for="location" class="form-label">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+            </svg>
+            Location
+          </label>
+          <input 
+            type="text" 
+            id="location" 
+            name="location" 
+            class="form-input" 
+            value="{{ user.profile.location|default:'' }}"
+            placeholder="City, Country"
+          >
+        </div>
+
+        <!-- Bio (Full Width) -->
+        <div class="form-group form-group-full">
+          <label for="bio" class="form-label">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            Bio
+          </label>
+          <textarea 
+            id="bio" 
+            name="bio" 
+            class="form-textarea" 
+            rows="4"
+            placeholder="Tell us about yourself..."
+          >{{ user.profile.bio|default:'' }}</textarea>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <a href="{% url 'profile' %}" class="btn-cancel">Cancel</a>
+        <button type="submit" class="btn-save">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // Profile Picture Preview
+    const fileInput = document.getElementById('profilePictureInput');
+    const preview = document.getElementById('avatarPreview');
+
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          if (preview.tagName === 'IMG') {
+            preview.src = e.target.result;
+          } else {
+            // Replace placeholder with image
+            const img = document.createElement('img');
+            img.id = 'avatarPreview';
+            img.src = e.target.result;
+            img.alt = 'Profile';
+            preview.parentNode.replaceChild(img, preview);
+          }
+          // Add animation
+          const avatar = document.querySelector('.current-avatar');
+          avatar.style.transform = 'scale(1.05)';
+          setTimeout(() => avatar.style.transform = 'scale(1)', 300);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // Remove Photo Function
+    function removePhoto() {
+      fileInput.value = '';
+      const preview = document.getElementById('avatarPreview');
+      if (preview.tagName === 'IMG') {
+        const placeholder = document.createElement('div');
+        placeholder.id = 'avatarPreview';
+        placeholder.className = 'avatar-placeholder';
+        placeholder.innerHTML = `
+          <svg width="60" height="60" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+          </svg>
+        `;
+        preview.parentNode.replaceChild(placeholder, preview);
+      }
+    }
+
+    // Page Load Animation
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('.edit-form');
+      setTimeout(() => {
+        form.style.opacity = '1';
+        form.style.transform = 'translateY(0)';
+      }, 100);
+    });
+
+    // Input Focus Animation
+    document.querySelectorAll('.form-input, .form-textarea').forEach(input => {
+      input.addEventListener('focus', function() {
+        this.parentElement.classList.add('focused');
+      });
+      input.addEventListener('blur', function() {
+        this.parentElement.classList.remove('focused');
+      });
+    });
+
+    // Form Validation
+    document.getElementById('editProfileForm').addEventListener('submit', function(e) {
+      const submitBtn = this.querySelector('.btn-save');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span>Saving...</span>';
+    });
+  </script>
+</body>
+</html>

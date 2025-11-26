@@ -421,7 +421,216 @@ body {
   box-shadow: 0 8px 20px rgba(214, 105, 0, 0.4);
 }
 
-/* Responsive */
+/* ============================================================
+   NEW MODERN RECENT APPLICATIONS SECTION
+   ============================================================ */
+
+.recent-applications-section {
+  background: transparent;
+  padding: 0;
+}
+
+.recent-applications-section .section-heading {
+  margin-bottom: 24px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.modern-applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Modern Application Card */
+.modern-application-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modern-application-card:nth-child(1) { animation-delay: 0.05s; }
+.modern-application-card:nth-child(2) { animation-delay: 0.10s; }
+.modern-application-card:nth-child(3) { animation-delay: 0.15s; }
+.modern-application-card:nth-child(4) { animation-delay: 0.20s; }
+.modern-application-card:nth-child(5) { animation-delay: 0.25s; }
+
+.modern-application-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12);
+  border-color: #d1d5db;
+}
+
+/* Profile Picture */
+.app-profile-picture {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 3px solid #ffffff;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+.app-profile-picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.app-avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9ca3af;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+}
+
+/* Application Info Section */
+.app-info-section {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-info-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.app-applicant-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.app-franchise-name {
+  font-size: 14px;
+  color: #6b7280;
+  margin: 0 0 4px 0;
+  font-weight: 500;
+}
+
+.app-date {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.app-date svg {
+  flex-shrink: 0;
+}
+
+/* Status Badge */
+.app-status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+}
+
+.app-status-badge.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.app-status-badge.status-accepted,
+.app-status-badge.status-approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.app-status-badge.status-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* Action Buttons */
+.app-action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.app-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Poppins', sans-serif;
+  white-space: nowrap;
+}
+
+.app-btn svg {
+  flex-shrink: 0;
+}
+
+.app-btn-accept {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.app-btn-accept:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+}
+
+.app-btn-accept:active {
+  transform: translateY(0) scale(1);
+}
+
+.app-btn-reject {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.app-btn-reject:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+}
+
+.app-btn-reject:active {
+  transform: translateY(0) scale(1);
+}
+
+/* Responsive Design */
 @media (max-width: 1024px) {
   .content-grid {
     grid-template-columns: 1fr;
@@ -453,5 +662,55 @@ body {
   .btn-action, .btn-modern-accept, .btn-modern-reject {
     width: 100%;
     justify-content: center;
+  }
+
+  .modern-application-card {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px;
+  }
+
+  .app-profile-picture {
+    width: 48px;
+    height: 48px;
+  }
+
+  .app-info-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .app-action-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .app-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-application-card {
+    padding: 16px;
+  }
+
+  .app-applicant-name {
+    font-size: 15px;
+  }
+
+  .app-franchise-name {
+    font-size: 13px;
+  }
+
+  .app-date {
+    font-size: 12px;
+  }
+
+  .app-btn {
+    font-size: 13px;
+    padding: 9px 16px;
   }
 }

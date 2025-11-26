@@ -9,7 +9,7 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.http import JsonResponse
 
-from .models import Franchisee, Franchisor, Franchise, FranchiseApplication, SecurityQuestion
+from .models import Franchisee, Franchisor, Franchise, FranchiseApplication, SecurityQuestion, Profile
 from .forms import FranchiseForm, FranchiseApplicationForm
 from accounts.utils import get_user_role
 
@@ -197,6 +197,36 @@ def profile_view(request):
         form = ProfileForm(instance=user)
 
     return render(request, 'accounts/profile.html', {'form': form})
+
+
+@login_required
+def edit_profile_view(request):
+    """Allows users to edit their profile information."""
+    # Get or create profile
+    profile, created = Profile.objects.get_or_create(user=request.user)
+    
+    if request.method == 'POST':
+        # Update user fields
+        request.user.first_name = request.POST.get('first_name', '')
+        request.user.last_name = request.POST.get('last_name', '')
+        request.user.email = request.POST.get('email', '')
+        request.user.save()
+        
+        # Update profile fields
+        profile.phone_number = request.POST.get('phone_number', '')
+        profile.location = request.POST.get('location', '')
+        profile.bio = request.POST.get('bio', '')
+        
+        # Handle profile picture upload
+        if request.FILES.get('profile_picture'):
+            profile.profile_picture = request.FILES['profile_picture']
+        
+        profile.save()
+        
+        messages.success(request, "Profile updated successfully!")
+        return redirect('profile')
+    
+    return render(request, 'accounts/edit_profile.html', {'profile': profile})
 
 
 # =========================================================================
