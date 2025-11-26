@@ -209,7 +209,7 @@ def franchisor_dashboard(request):
 
 @login_required
 def add_franchise_view(request):
-    """Allows franchisors to create new franchises."""
+    """Allows franchisors to create new franchises with image upload."""
     try:
         franchisor = Franchisor.objects.get(user=request.user)
     except Franchisor.DoesNotExist:
@@ -217,12 +217,12 @@ def add_franchise_view(request):
         return redirect('browse')
 
     if request.method == 'POST':
-        form = FranchiseForm(request.POST, request.FILES)
+        form = FranchiseForm(request.POST, request.FILES)  # ✅ Include request.FILES
         if form.is_valid():
             franchise = form.save(commit=False)
             franchise.franchisor = franchisor
             franchise.save()
-            messages.success(request, "Franchise created successfully!")
+            messages.success(request, f"Franchise '{franchise.name}' created successfully!")
             return redirect('franchisor_dashboard')
         else:
             messages.error(request, "Please correct the errors below.")
@@ -249,21 +249,17 @@ def delete_franchise(request, franchise_id):
 
 @login_required
 def edit_franchise_view(request, franchise_id):
-    """
-    Allows a franchisor to edit an existing franchise.
-    Only active franchises belonging to the logged-in franchisor can be edited.
-    """
+    """Allows a franchisor to edit an existing franchise including image."""
     try:
         franchisor = Franchisor.objects.get(user=request.user)
     except Franchisor.DoesNotExist:
         messages.error(request, "You are not registered as a franchisor.")
         return redirect('browse')
 
-    # Get the franchise or 404 if it doesn't exist or doesn't belong to this franchisor
     franchise = get_object_or_404(Franchise, id=franchise_id, franchisor=franchisor, is_active=True)
 
     if request.method == 'POST':
-        form = FranchiseForm(request.POST, request.FILES, instance=franchise)
+        form = FranchiseForm(request.POST, request.FILES, instance=franchise)  # ✅ Include request.FILES
         if form.is_valid():
             form.save()
             messages.success(request, f"Franchise '{franchise.name}' updated successfully!")
@@ -301,9 +297,22 @@ def dashboard_redirect(request):
 
 @login_required
 def franchise_detail(request, franchise_id):
-    """Displays a specific franchise’s detailed page."""
-    franchise = get_object_or_404(Franchise, id=franchise_id)
-    return render(request, 'accounts/franchise_detail.html', {'franchise': franchise})
+    """Displays a specific franchise's detailed page with all information."""
+    franchise = get_object_or_404(Franchise, id=franchise_id, is_active=True)
+    
+    # Check if current user already applied
+    has_applied = False
+    if Franchisee.objects.filter(user=request.user).exists():
+        franchisee = Franchisee.objects.get(user=request.user)
+        has_applied = FranchiseApplication.objects.filter(
+            franchisee=franchisee,
+            franchise=franchise
+        ).exists()
+    
+    return render(request, 'accounts/franchise_detail.html', {
+        'franchise': franchise,
+        'has_applied': has_applied
+    })
 
 
 @login_required

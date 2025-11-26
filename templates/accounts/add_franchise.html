@@ -21,7 +21,7 @@
             {% if field.field.required %}<span class="required-mark">*</span>{% endif %}
           </label>
           
-          {% if field.field.widget.input_type == 'textarea' %}
+          {% if field.name == 'description' %}
             <textarea 
               name="{{ field.name }}" 
               id="{{ field.id_for_label }}"
@@ -29,16 +29,33 @@
               placeholder="Enter detailed description..."
               {% if field.field.required %}required{% endif %}
             >{{ field.value|default:'' }}</textarea>
-          {% elif field.field.widget.input_type == 'select' %}
-            {{ field }}
-          {% elif field.field.widget.input_type == 'file' %}
-            <div class="file-upload-wrapper">
-              {{ field }}
-              <label for="{{ field.id_for_label }}" class="file-upload-label">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/></svg>
-                <span class="file-text">Choose File</span>
+          
+          {% elif field.name == 'image' %}
+            <div class="image-upload-wrapper">
+              <input 
+                type="file" 
+                name="{{ field.name }}" 
+                id="{{ field.id_for_label }}"
+                class="image-input"
+                accept="image/*"
+              >
+              <label for="{{ field.id_for_label }}" class="image-upload-label">
+                <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                </svg>
+                <span class="upload-text">Click to upload franchise image</span>
+                <span class="upload-hint">PNG, JPG, GIF up to 10MB</span>
               </label>
+              <div id="imagePreview" class="image-preview" style="display: none;">
+                <img id="previewImg" src="" alt="Preview">
+                <button type="button" class="remove-image" onclick="removeImage()">
+                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                  </svg>
+                </button>
+              </div>
             </div>
+          
           {% else %}
             <input 
               type="{{ field.field.widget.input_type }}" 
@@ -47,7 +64,7 @@
               class="form-control"
               value="{{ field.value|default:'' }}"
               {% if field.field.required %}required{% endif %}
-              {% if field.field.widget.attrs.placeholder %}placeholder="{{ field.field.widget.attrs.placeholder }}"{% endif %}
+              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"
             >
           {% endif %}
           
@@ -70,7 +87,9 @@
           Cancel
         </button>
         <button type="submit" class="btn-primary">
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
           Create Franchise
         </button>
       </div>
@@ -222,6 +241,98 @@ select.form-control {
   color: #d66900;
 }
 
+/* Image Upload Styles */
+.image-upload-wrapper {
+  position: relative;
+}
+
+.image-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.image-upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  border: 2px dashed #d1d5db;
+  border-radius: 12px;
+  background: #f9fafb;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.image-upload-label:hover {
+  border-color: #d66900;
+  background: #fff7ed;
+}
+
+.image-upload-label svg {
+  color: #9ca3af;
+  transition: color 0.3s;
+}
+
+.image-upload-label:hover svg {
+  color: #d66900;
+}
+
+.upload-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.upload-hint {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.image-preview {
+  position: relative;
+  margin-top: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #10b981;
+  background: #f0fdf4;
+}
+
+.image-preview img {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
+}
+
+.remove-image {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.remove-image:hover {
+  background: #dc2626;
+  transform: scale(1.1);
+}
+
 /* Error Messages */
 .error-message {
   display: flex;
@@ -360,20 +471,26 @@ select.form-control {
     });
   });
 
-  // File upload feedback
-  const fileInputs = document.querySelectorAll('input[type="file"]');
-  fileInputs.forEach(input => {
-    input.addEventListener('change', function() {
-      const label = this.nextElementSibling;
-      const fileText = label.querySelector('.file-text');
-      if (this.files.length > 0) {
-        fileText.textContent = this.files[0].name;
-        label.style.borderColor = '#10b981';
-        label.style.background = '#f0fdf4';
-        label.style.color = '#10b981';
+  // Image upload preview
+  const imageInput = document.querySelector('.image-input');
+  const uploadLabel = document.querySelector('.image-upload-label');
+  const imagePreview = document.getElementById('imagePreview');
+  const previewImg = document.getElementById('previewImg');
+
+  if (imageInput) {
+    imageInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewImg.src = e.target.result;
+          uploadLabel.style.display = 'none';
+          imagePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
       }
     });
-  });
+  }
 
   // Form submission loading state
   const form = document.querySelector('.modern-form');
@@ -383,5 +500,16 @@ select.form-control {
     submitBtn.innerHTML = '<span>Creating...</span>';
   });
 })();
+
+// Remove image function
+function removeImage() {
+  const imageInput = document.querySelector('.image-input');
+  const uploadLabel = document.querySelector('.image-upload-label');
+  const imagePreview = document.getElementById('imagePreview');
+  
+  imageInput.value = '';
+  uploadLabel.style.display = 'flex';
+  imagePreview.style.display = 'none';
+}
 </script>
 {% endblock %}

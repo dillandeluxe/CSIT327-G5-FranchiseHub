@@ -1,218 +1,257 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Browse Franchise Opportunities</title>
-  <link href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
-</head>
-<body>
-  <!-- Navbar -->
-<!-- Navbar -->
-<nav class="navbar">
-  <a href="{% url 'browse' %}" class="logo"><span>Franchise</span>Hub</a>
-  <div class="nav-links">
-    {% if user.is_authenticated %}
-      {% if user.is_superuser %}
-        <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+
+{% block title %}Browse Franchise Opportunities | FranchiseHub{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
+{% endblock %}
+
+{% block content %}
+  <!-- Modern Navbar (matching franchisee dashboard) -->
+  <nav class="modern-navbar">
+    <a href="{% url 'home' %}" class="brand-logo">
+      <span>Franchise</span>Hub
+    </a>
+    <div class="nav-menu">
+      {% if user.is_authenticated %}
+        {% if user.is_superuser %}
+          <a href="{% url 'admin_dashboard' %}" class="nav-link">Admin Dashboard</a>
+        {% endif %}
+        <a href="{% url 'browse' %}" class="nav-link active">Browse</a>
+        {% if not user.is_superuser %}
+          <a href="{% url 'franchisee_dashboard' %}" class="nav-link">My Applications</a>
+        {% endif %}
+        <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+        <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}" class="nav-link">Login</a>
+        <a href="{% url 'register' %}" class="nav-link signup-link">Get Started</a>
       {% endif %}
-      <a href="{% url 'browse' %}">Browse Franchises</a>
-      {% if not user.is_superuser %}
-        <a href="{% url 'franchisee_dashboard' %}">My Applications</a>
-      {% endif %}
-      <a href="{% url 'profile' %}">Edit Profile</a>
-      <a href="{% url 'logout' %}">Logout</a>
-
-    {% else %}
-      <a href="{% url 'login' %}">Login</a>
-      <a href="{% url 'register' %}" class="get-started">Get Started</a>
-    {% endif %}
-  </div>
-</nav>
-
-
-  <!-- Hero Section -->
-  <section class="listing-hero">
-    <div class="hero-content">
-      <h1>Browse Franchise Opportunities</h1>
-      <p>Discover your perfect franchise match from our verified marketplace</p>
     </div>
-  </section>
+  </nav>
 
-  <!-- Filter Bar -->
-  <section class="filter-bar">
-    <form class="filters" method="get" action="">
-      <input type="text"
-             name="q"
-             value="{{ q|default:'' }}"
-             placeholder="Search Franchises..."
-             class="search-input">
-      <div class="custom-select">
-        <select>
-          <option>All Industries</option>
-          <option>Food & Beverage</option>
-          <option>Technology</option>
-          <option>Fitness & Health</option>
-          <option>Services</option>
-          <option>Education</option>
-          <option>Pet Services</option>
-          <option>Automotive</option>
-          <option>Home Services</option>
-        </select>
+  <!-- Hero Header (matching franchisee dashboard) -->
+  <div class="dashboard-hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Browse Franchise Opportunities</h1>
+      <p class="hero-subtitle">Discover your perfect franchise match from our verified marketplace</p>
+    </div>
+  </div>
+
+  <!-- Search & Filter Section -->
+  <div class="search-container">
+    <form method="get" action="" class="search-form">
+      <div class="search-bar">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" class="search-icon">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+        <input 
+          type="text" 
+          name="q" 
+          value="{{ q|default:'' }}" 
+          placeholder="Search by name, category, or industry..."
+          class="search-input"
+        >
+        <button type="submit" class="search-btn">Search</button>
       </div>
-      <div class="custom-select">
-        <select>
-          <option>All Ranges</option>
-          <option>&lt; ₱500k</option>
-          <option>₱500k - ₱1M</option>
-          <option>&gt; ₱1M</option>
-        </select>
-      </div>
-      <div class="custom-select">
-        <select>
-          <option>Highest Rated</option>
-          <option>Newest</option>
-          <option>Oldest</option>
-        </select>
-      </div>
-      <!-- Optional explicit submit to complement Enter key -->
-      <button type="submit" class="inquire-btn" style="padding:9px 16px;">Search</button>
     </form>
-  </section>
+  </div>
 
-  <!-- Franchise Cards List -->
-  <section class="franchise-list">
-    {% for franchise in franchises %}
-      <div class="franchise-card" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}">
-        <div class="franchise-cover"></div>
-        <h3>{{ franchise.name }}</h3>
-        <div class="franchise-meta">
-          <span class="industry">{{ franchise.category }}</span><br>
-          <span class="desc">{{ franchise.short_description }}</span>
-          <div class="franchise-details">
-            <span class="investment">{{ franchise.formatted_investment }}</span>
-            <span class="location">Nationwide</span>
-            <span class="established">Est {{ franchise.created_at|date:"Y" }}</span>
+  <!-- Main Content -->
+  <div class="dashboard-container">
+    {% if franchises %}
+      <div class="franchises-grid">
+        {% for franchise in franchises %}
+          <a href="{% url 'franchise_detail' franchise.id %}" class="franchise-card" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}">
+            
+            <!-- Franchise Image/Cover -->
+            <div class="franchise-cover">
+              {% if franchise.image %}
+                <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" loading="lazy">
+              {% endif %}
+            </div>
+
+            <!-- Franchise Header -->
+            <div class="franchise-header">
+              <h3 class="franchise-name">{{ franchise.name }}</h3>
+              <span class="franchise-category">{{ franchise.category }}</span>
+            </div>
+
+            <!-- Franchise Description -->
+            <p class="franchise-description">{{ franchise.short_description }}</p>
+
+            <!-- Franchise Meta -->
+            <div class="franchise-meta">
+              <div class="meta-item investment">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                </svg>
+                <span>{{ franchise.formatted_investment }}</span>
+              </div>
+              <div class="meta-item">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                </svg>
+                <span>Est {{ franchise.created_at|date:"Y" }}</span>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="franchise-actions" onclick="event.preventDefault(); event.stopPropagation();">
+              {% if user.is_authenticated %}
+                {% if franchise.id in applied_franchise_ids %}
+                  <a href="{% url 'application_status' %}?franchise={{ franchise.id }}" class="btn-secondary" onclick="event.stopPropagation();">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                      <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                    </svg>
+                    View Status
+                  </a>
+                {% else %}
+                  <button type="button" class="btn-primary js-open-apply" onclick="event.stopPropagation();">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Apply Now
+                  </button>
+                {% endif %}
+              {% else %}
+                <a href="{% url 'login' %}" class="btn-primary" onclick="event.stopPropagation();">
+                  Login to Apply
+                </a>
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <!-- Empty State -->
+      <div class="empty-state">
+        {% if q %}
+          <div class="empty-icon">
+            <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
           </div>
-          <span class="rating">4.9 ★</span>
-        </div>
-        {% if user.is_authenticated %}
-          {% if franchise.id in applied_franchise_ids %}
-            <!-- Already applied: show status page link -->
-            <a class="inquire-btn" href="{% url 'application_status' %}?franchise={{ franchise.id }}">Application Update</a>
-          {% else %}
-            <!-- Not applied: open application modal -->
-            <button class="inquire-btn js-open-apply" type="button">Inquire Now</button>
-            <noscript>
-              <a class="inquire-btn" href="{% url 'franchise_apply' franchise.id %}">Inquire Now</a>
-            </noscript>
-          {% endif %}
+          <h2 class="empty-title">No Results Found</h2>
+          <p class="empty-message">We couldn't find any franchises matching "{{ q }}". Try different keywords or <a href="{% url 'browse' %}">browse all</a>.</p>
         {% else %}
-          <a class="inquire-btn" href="{% url 'login' %}">Login to Inquire</a>
+          <div class="empty-icon">
+            <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+            </svg>
+          </div>
+          <h2 class="empty-title">No Franchises Available</h2>
+          <p class="empty-message">Check back soon for new franchise opportunities!</p>
         {% endif %}
       </div>
-    {% empty %}
-      {% if q %}
-        <!-- Styled consistently by reusing the franchise-card box -->
-        <div class="franchise-card no-results-card">
-          <h3>No franchises found.</h3>
-          <div class="franchise-meta">Try another keyword or clear your search.</div>
-        </div>
-      {% else %}
-        <!-- Fallback to the original static cards when there are no active franchises yet -->
-        <div class="franchise-card">
-          <div class="franchise-cover"></div>
-          <h3>FitZone Gym</h3>
-          <div class="franchise-meta">
-            <span class="industry">Fitness & Health</span><br>
-            <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-            <div class="franchise-details">
-              <span class="investment">₱450k+ Investment</span>
-              <span class="location">Suburban</span>
-              <span class="established">Est 2015</span>
-            </div>
-            <span class="rating">4.9 ★</span>
-          </div>
-          <button class="inquire-btn">Inquire Now</button>
-        </div>
-        <div class="franchise-card">
-          <div class="franchise-cover"></div>
-          <h3>FitZone Gym</h3>
-          <div class="franchise-meta">
-            <span class="industry">Fitness & Health</span><br>
-            <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-            <div class="franchise-details">
-              <span class="investment">₱450k+ Investment</span>
-              <span class="location">Suburban</span>
-              <span class="established">Est 2015</span>
-            </div>
-            <span class="rating">4.9 ★</span>
-          </div>
-          <button class="inquire-btn">Inquire Now</button>
-        </div>
-        <div class="franchise-card">
-          <div class="franchise-cover"></div>
-          <h3>FitZone Gym</h3>
-          <div class="franchise-meta">
-            <span class="industry">Fitness & Health</span><br>
-            <span class="desc">Modern fitness center with state-of-art-asada, 85+sf</span>
-            <div class="franchise-details">
-              <span class="investment">₱450k+ Investment</span>
-              <span class="location">Suburban</span>
-              <span class="established">Est 2015</span>
-            </div>
-            <span class="rating">4.9 ★</span>
-          </div>
-          <button class="inquire-btn">Inquire Now</button>
-        </div>
-      {% endif %}
-    {% endfor %}
-  </section>
+    {% endif %}
+  </div>
 
   {% if user.is_authenticated %}
-  <!-- Application Modal (hidden by default) -->
-  <div id="applyModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:4000; align-items:center; justify-content:center;">
-    <div style="background:#fff; width:420px; max-width:92%; border-radius:10px; padding:28px 28px 22px; font-family:Poppins, sans-serif; position:relative;">
-      <button id="applyModalClose" style="position:absolute; top:8px; right:10px; background:none; border:none; font-size:18px; cursor:pointer;">✕</button>
-      <h2 style="margin:0 0 14px;" id="applyModalTitle">Apply</h2>
-      <form id="applyForm" method="post" action="">
+  <!-- Application Modal -->
+  <div id="applyModal" class="modal-overlay">
+    <div class="modal-card">
+      <button type="button" id="applyModalClose" class="modal-close-btn">✕</button>
+      <h2 class="modal-title" id="applyModalTitle">Apply to Franchise</h2>
+      <form id="applyForm" method="post" action="" class="modal-form">
         {% csrf_token %}
         <input type="hidden" name="franchise_id" id="franchiseIdHidden">
-        <label style="font-size:13px;">Full Name</label>
-        <input name="full_name" required style="width:100%; margin:4px 0 10px; padding:8px;" value="{{ user.get_full_name|default:user.username }}">
-        <label style="font-size:13px;">Email</label>
-        <input name="email" type="email" required style="width:100%; margin:4px 0 10px; padding:8px;" value="{{ user.email }}">
-        <label style="font-size:13px;">Phone</label>
-        <input name="phone" style="width:100%; margin:4px 0 10px; padding:8px;">
-        <label style="font-size:13px;">Experience / Background</label>
-        <textarea name="experience" rows="3" style="width:100%; margin:4px 0 14px; padding:8px;"></textarea>
-        <button type="submit" class="inquire-btn" style="width:100%; text-align:center;">Submit Application</button>
+        
+        <div class="form-group">
+          <label>Full Name</label>
+          <input name="full_name" type="text" required value="{{ user.get_full_name|default:user.username }}" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Email</label>
+          <input name="email" type="email" required value="{{ user.email }}" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Phone</label>
+          <input name="phone" type="tel" class="form-control">
+        </div>
+        
+        <div class="form-group">
+          <label>Experience / Background</label>
+          <textarea name="experience" rows="3" class="form-control" placeholder="Tell us about your business experience..."></textarea>
+        </div>
+        
+        <div class="modal-actions">
+          <button type="button" id="modalCancel" class="btn-cancel">Cancel</button>
+          <button type="submit" class="btn-submit">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            Submit Application
+          </button>
+        </div>
       </form>
     </div>
   </div>
-  <script>
-    (function(){
-      const modal = document.getElementById('applyModal');
-      const closeBtn = document.getElementById('applyModalClose');
-      const form = document.getElementById('applyForm');
-      const title = document.getElementById('applyModalTitle');
-      const hiddenId = document.getElementById('franchiseIdHidden');
-      document.querySelectorAll('.js-open-apply').forEach(btn=>{
-        btn.addEventListener('click', ()=>{
-          const card = btn.closest('.franchise-card');
-          const id = card.getAttribute('data-franchise-id');
-          const name = card.getAttribute('data-franchise-name');
-          title.textContent = 'Apply to ' + name;
-          hiddenId.value = id;
-          // Build action using the known accounts route with UUID param
-          form.action = '/accounts/franchise/' + id + '/apply/';
-          modal.style.display = 'flex';
-        });
-      });
-      closeBtn.addEventListener('click', ()=> modal.style.display='none');
-      modal.addEventListener('click', e => { if(e.target === modal) modal.style.display='none'; });
-    })();
-  </script>
   {% endif %}
-<!-- ...existing code after list... -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function() {
+  {% if user.is_authenticated %}
+  // Modal handling
+  const modal = document.getElementById('applyModal');
+  const closeBtn = document.getElementById('applyModalClose');
+  const cancelBtn = document.getElementById('modalCancel');
+  const form = document.getElementById('applyForm');
+  const title = document.getElementById('applyModalTitle');
+  const hiddenId = document.getElementById('franchiseIdHidden');
+
+  document.querySelectorAll('.js-open-apply').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const card = this.closest('.franchise-card');
+      const id = card.getAttribute('data-franchise-id');
+      const name = card.getAttribute('data-franchise-name');
+      title.textContent = 'Apply to ' + name;
+      hiddenId.value = id;
+      form.action = '/accounts/franchise/' + id + '/apply/';
+      modal.classList.add('active');
+    });
+  });
+
+  function closeModal() {
+    modal.classList.remove('active');
+  }
+
+  closeBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal) closeModal();
+  });
+  {% endif %}
+
+  // Page load animations
+  document.addEventListener('DOMContentLoaded', function() {
+    const cards = document.querySelectorAll('.franchise-card');
+    cards.forEach((card, index) => {
+      setTimeout(() => {
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 80);
+    });
+  });
+
+  // Card hover effects
+  const franchiseCards = document.querySelectorAll('.franchise-card');
+  franchiseCards.forEach(card => {
+    card.addEventListener('mouseenter', function() {
+      this.style.transform = 'translateY(-8px) scale(1.02)';
+    });
+    card.addEventListener('mouseleave', function() {
+      this.style.transform = 'translateY(0) scale(1)';
+    });
+  });
+})();
+</script>
+{% endblock %}
