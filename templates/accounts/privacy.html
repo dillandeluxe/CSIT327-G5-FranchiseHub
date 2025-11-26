@@ -1,0 +1,404 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | FranchiseHub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'accounts/privacy.css' %}">
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
+    <div class="nav-links">
+      {% if user.is_authenticated %}
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'logout' %}">Logout</a>
+      {% else %}
+        <a href="{% url 'login' %}">Login</a>
+        <a href="{% url 'register' %}" class="get-started">Get Started</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="privacy-hero">
+    <div class="hero-content" data-fade>
+      <h1 class="hero-title">Your Privacy Matters</h1>
+      <p class="hero-subtitle">We are committed to protecting your personal information and being transparent about how we use it.</p>
+      <p class="last-updated">Last Updated: January 2025</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="privacy-container">
+    <div class="privacy-sidebar">
+      <nav class="sidebar-nav">
+        <a href="#introduction" class="nav-item active">Introduction</a>
+        <a href="#information-collect" class="nav-item">Information We Collect</a>
+        <a href="#how-we-use" class="nav-item">How We Use Your Information</a>
+        <a href="#data-protection" class="nav-item">Data Protection</a>
+        <a href="#sharing" class="nav-item">Information Sharing</a>
+        <a href="#user-rights" class="nav-item">Your Rights</a>
+        <a href="#cookies" class="nav-item">Cookies Policy</a>
+        <a href="#contact" class="nav-item">Contact Us</a>
+      </nav>
+    </div>
+
+    <div class="privacy-content">
+      <!-- Introduction -->
+      <section id="introduction" class="content-section" data-fade>
+        <h2>Introduction</h2>
+        <p>Welcome to FranchiseHub. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform. By accessing or using FranchiseHub, you agree to the terms outlined in this policy.</p>
+        <p>We are dedicated to maintaining the trust and confidence of our users. This policy is designed to help you understand what data we collect, why we collect it, and how we protect it.</p>
+      </section>
+
+      <!-- Information We Collect -->
+      <section id="information-collect" class="content-section" data-fade>
+        <h2>Information We Collect</h2>
+        <p>We collect several types of information to provide and improve our services:</p>
+        
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-icon">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h4>Personal Information</h4>
+            <ul>
+              <li>Full name</li>
+              <li>Email address</li>
+              <li>Username</li>
+              <li>Phone number (optional)</li>
+              <li>Profile picture (optional)</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h4>Account Details</h4>
+            <ul>
+              <li>User role (Franchisee/Franchisor)</li>
+              <li>Security questions and encrypted answers</li>
+              <li>Account creation date</li>
+              <li>Login history</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M12 1.586l-4 4v12.828l4-4V1.586zM3.707 3.293A1 1 0 002 4v10a1 1 0 00.293.707L6 18.414V5.586L3.707 3.293zM17.707 5.293L14 1.586v12.828l2.293 2.293A1 1 0 0018 16V6a1 1 0 00-.293-.707z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h4>Usage Data</h4>
+            <ul>
+              <li>Pages visited</li>
+              <li>Franchise applications submitted</li>
+              <li>Search queries</li>
+              <li>Device and browser information</li>
+              <li>IP address</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <div class="info-icon">
+              <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+              </svg>
+            </div>
+            <h4>Application Data</h4>
+            <ul>
+              <li>Franchise application details</li>
+              <li>Business experience information</li>
+              <li>Communication preferences</li>
+              <li>Status updates</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- How We Use Information -->
+      <section id="how-we-use" class="content-section" data-fade>
+        <h2>How We Use Your Information</h2>
+        <p>We use the collected information for various purposes:</p>
+        
+        <div class="use-list">
+          <div class="use-item">
+            <span class="use-number">01</span>
+            <div>
+              <h4>Account Management</h4>
+              <p>To create and maintain your account, verify your identity, and enable account recovery through security questions.</p>
+            </div>
+          </div>
+
+          <div class="use-item">
+            <span class="use-number">02</span>
+            <div>
+              <h4>Platform Operations</h4>
+              <p>To connect franchisees with franchisors, process applications, and facilitate communication between parties.</p>
+            </div>
+          </div>
+
+          <div class="use-item">
+            <span class="use-number">03</span>
+            <div>
+              <h4>Service Improvement</h4>
+              <p>To analyze usage patterns, improve features, fix bugs, and enhance overall user experience.</p>
+            </div>
+          </div>
+
+          <div class="use-item">
+            <span class="use-number">04</span>
+            <div>
+              <h4>Security & Fraud Prevention</h4>
+              <p>To detect and prevent unauthorized access, fraudulent activities, and ensure platform integrity.</p>
+            </div>
+          </div>
+
+          <div class="use-item">
+            <span class="use-number">05</span>
+            <div>
+              <h4>Communication</h4>
+              <p>To send important updates, security notifications, and respond to your inquiries and support requests.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Data Protection -->
+      <section id="data-protection" class="content-section" data-fade>
+        <h2>Data Protection & Security</h2>
+        <p>We implement industry-standard security measures to protect your personal information:</p>
+        
+        <div class="protection-grid">
+          <div class="protection-item">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
+            </svg>
+            <p><strong>Encryption:</strong> All sensitive data, including passwords and security answers, are encrypted using industry-standard algorithms.</p>
+          </div>
+
+          <div class="protection-item">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            </svg>
+            <p><strong>Secure Hosting:</strong> Our platform is hosted on Render with Supabase database, both providing enterprise-level security.</p>
+          </div>
+
+          <div class="protection-item">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
+              <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
+            </svg>
+            <p><strong>Access Controls:</strong> Strict role-based access ensures users can only view and modify data they're authorized to access.</p>
+          </div>
+
+          <div class="protection-item">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+            </svg>
+            <p><strong>Regular Monitoring:</strong> We continuously monitor for suspicious activities and potential security threats.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Information Sharing -->
+      <section id="sharing" class="content-section" data-fade>
+        <h2>Information Sharing Policy</h2>
+        <p><strong>We do not sell your personal information.</strong> Your data is shared only in the following limited circumstances:</p>
+        
+        <div class="sharing-box">
+          <h4>When Information May Be Shared:</h4>
+          <ul>
+            <li><strong>Between Users:</strong> When you submit a franchise application, relevant information is shared with the franchisor to facilitate the connection.</li>
+            <li><strong>Service Providers:</strong> With trusted third-party services (hosting, database) that help us operate the platform under strict confidentiality agreements.</li>
+            <li><strong>Legal Requirements:</strong> When required by law, court order, or government request.</li>
+            <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets, your information may be transferred to the acquiring entity.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- User Rights -->
+      <section id="user-rights" class="content-section" data-fade>
+        <h2>Your Rights</h2>
+        <p>You have the following rights regarding your personal information:</p>
+        
+        <div class="rights-grid">
+          <div class="rights-card">
+            <h4>Access Your Data</h4>
+            <p>View all personal information we hold about you through your profile page.</p>
+          </div>
+
+          <div class="rights-card">
+            <h4>Correction</h4>
+            <p>Update or correct your personal information at any time via the "Edit Profile" feature.</p>
+          </div>
+
+          <div class="rights-card">
+            <h4>Account Deletion</h4>
+            <p>Request complete deletion of your account and associated data by contacting support.</p>
+          </div>
+
+          <div class="rights-card">
+            <h4>Data Portability</h4>
+            <p>Request a copy of your data in a structured, machine-readable format.</p>
+          </div>
+
+          <div class="rights-card">
+            <h4>Withdraw Consent</h4>
+            <p>Withdraw your consent for data processing at any time (may affect service functionality).</p>
+          </div>
+
+          <div class="rights-card">
+            <h4>Object to Processing</h4>
+            <p>Object to certain types of data processing for legitimate reasons.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Cookies Policy -->
+      <section id="cookies" class="content-section" data-fade>
+        <h2>Cookies & Tracking</h2>
+        <p>We use cookies and similar technologies to enhance your experience on FranchiseHub:</p>
+        
+        <div class="cookies-info">
+          <div class="cookie-type">
+            <h4>Essential Cookies</h4>
+            <p>Required for the platform to function properly. These include session management, authentication, and security features.</p>
+          </div>
+
+          <div class="cookie-type">
+            <h4>Functional Cookies</h4>
+            <p>Remember your preferences and settings to provide a personalized experience.</p>
+          </div>
+
+          <div class="cookie-type">
+            <h4>Analytics Cookies</h4>
+            <p>Help us understand how users interact with the platform to improve features and performance.</p>
+          </div>
+        </div>
+
+        <div class="cookies-control">
+          <p><strong>You have control over cookies:</strong> You can disable cookies in your browser settings, though this may affect platform functionality. Most browsers allow you to refuse all cookies or indicate when a cookie is being sent.</p>
+        </div>
+      </section>
+
+      <!-- Contact Information -->
+      <section id="contact" class="content-section" data-fade>
+        <h2>Contact Us</h2>
+        <p>If you have any questions, concerns, or requests regarding this Privacy Policy or your personal information, please contact us:</p>
+        
+        <div class="contact-info-box">
+          <div class="contact-method">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            <div>
+              <strong>Email:</strong>
+              <a href="mailto:privacy@franchisehub.com">privacy@franchisehub.com</a>
+            </div>
+          </div>
+
+          <div class="contact-method">
+            <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            <div>
+              <strong>Support:</strong>
+              <a href="{% url 'support' %}">Visit our Support Page</a>
+            </div>
+          </div>
+        </div>
+
+        <p class="policy-update-note">We may update this Privacy Policy from time to time. Any changes will be posted on this page with an updated revision date. We encourage you to review this policy periodically.</p>
+      </section>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-main">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <span>Franchise</span>Hub
+        </div>
+        <p>Connecting entrepreneurs with proven franchise opportunities.</p>
+      </div>
+      <div class="footer-columns">
+        <div class="footer-column">
+          <h4>Company</h4>
+          <a href="{% url 'about' %}">About</a>
+          <a href="{% url 'support' %}">Support</a>
+          <a href="{% url 'privacy' %}">Privacy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© FranchiseHub. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script>
+    // Animation on scroll
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('[data-fade]').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Sidebar navigation
+    const navItems = document.querySelectorAll('.nav-item');
+    const sections = document.querySelectorAll('.content-section');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 100) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href').slice(1) === current) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // Smooth scroll
+    navItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(item.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

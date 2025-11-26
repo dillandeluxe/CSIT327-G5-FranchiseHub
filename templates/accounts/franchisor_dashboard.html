@@ -178,6 +178,7 @@
   </div>
 </div>
 
+<script src="{% static 'accounts/modern_auth.js' %}"></script>
 <script>
 (function(){
   const modal = document.getElementById('decisionModal');
@@ -248,7 +249,7 @@
 
   // Page Load Animations
   document.addEventListener('DOMContentLoaded', function() {
-    const cards = document.querySelectorAll('.stat-card, .franchise-panel, .app-panel');
+    const cards = document.querySelectorAll('.stat-card, .franchise-panel, .app-panel, .modern-application-card');
     cards.forEach((card, i) => {
       setTimeout(() => {
         card.style.opacity = '1';

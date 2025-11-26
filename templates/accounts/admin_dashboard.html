@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Admin Dashboard</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -129,6 +132,7 @@
         </main>
     </div>
 
+    <script src="{% static 'accounts/modern_auth.js' %}"></script>
     {{ user_chart_labels|json_script:"data-user-labels" }}
     {{ user_chart_data|json_script:"data-user-data" }}
     {{ traffic_chart_labels|json_script:"data-traffic-labels" }}

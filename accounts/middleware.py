@@ -2,6 +2,7 @@ from django.http import HttpResponseForbidden
 from django.shortcuts import redirect
 from django.urls import reverse
 from accounts.models import AdminProfile
+from django.utils.deprecation import MiddlewareMixin
 
 class AdminAuthorizationMiddleware:
     """
@@ -29,3 +30,17 @@ class AdminAuthorizationMiddleware:
                 return redirect('/login/')
 
         return self.get_response(request)
+
+class NoCacheMiddleware(MiddlewareMixin):
+    """
+    Middleware to prevent caching of authenticated pages.
+    This ensures users can't go back to authenticated pages after logout.
+    """
+    def process_response(self, request, response):
+        # Only apply to authenticated users
+        if request.user.is_authenticated:
+            # Prevent caching of all authenticated pages
+            response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private, max-age=0'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
+        return response

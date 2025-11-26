@@ -67,16 +67,17 @@ INSTALLED_APPS = [
     "accounts",
 ]
 
+# ✅ ADD MIDDLEWARE TO PREVENT CACHING OF AUTHENTICATED PAGES
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",  # keep directly after SecurityMiddleware
-    "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
-    "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
-    "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "accounts.middleware.AdminAuthorizationMiddleware",
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accounts.middleware.NoCacheMiddleware',  # ✅ Add custom middleware
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -167,3 +168,10 @@ MESSAGE_TAGS = {
 # Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# ✅ SESSION SECURITY SETTINGS
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie
+SESSION_COOKIE_SECURE = not DEBUG  # Use HTTPS in production
+SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep session after browser close
+SESSION_COOKIE_AGE = 1209600  # 2 weeks

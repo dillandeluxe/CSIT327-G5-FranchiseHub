@@ -176,3 +176,113 @@ style.textContent = `
   }
 `;
 document.head.appendChild(style);
+
+// ✅ PREVENT BROWSER BACK BUTTON FROM BYPASSING LOGOUT
+(function() {
+    'use strict';
+
+    // Function to detect if user is on an authenticated page
+    function isAuthenticatedPage() {
+        const path = window.location.pathname;
+        const authPages = [
+            '/accounts/browse/',
+            '/accounts/profile/',
+            '/accounts/franchisor/dashboard/',
+            '/accounts/franchisee/dashboard/',
+            '/accounts/admin-dashboard/',
+            '/accounts/franchise/',
+            '/accounts/franchisor/',
+            '/accounts/application/'
+        ];
+        return authPages.some(page => path.includes(page));
+    }
+
+    // Prevent back navigation to authenticated pages after logout
+    if (isAuthenticatedPage()) {
+        // Push current state
+        window.history.pushState(null, null, window.location.href);
+        
+        // Handle back button
+        window.addEventListener('popstate', function(event) {
+            // Push state again to prevent going back
+            window.history.pushState(null, null, window.location.href);
+        });
+    }
+
+    // Clear any cached authentication state on logout
+    window.addEventListener('beforeunload', function() {
+        if (window.location.pathname.includes('/logout')) {
+            // Clear storage
+            sessionStorage.clear();
+            
+            // Prevent caching
+            if (window.performance && window.performance.navigation.type === 1) {
+                // Clear browser cache
+                window.location.reload(true);
+            }
+        }
+    });
+
+    // Redirect to login if accessing authenticated page when logged out
+    window.addEventListener('pageshow', function(event) {
+        // Check if page was loaded from cache
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+            // If on authenticated page but no session, redirect to login
+            const isAuthPage = isAuthenticatedPage();
+            if (isAuthPage) {
+                // Force reload to check authentication status
+                window.location.reload(true);
+            }
+        }
+    });
+
+})();
+
+// ✅ FORM VALIDATION AND ERROR HANDLING
+document.addEventListener('DOMContentLoaded', function() {
+    const forms = document.querySelectorAll('.auth-form');
+    
+    forms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const btnLoader = submitBtn.querySelector('.btn-loader');
+            
+            // Show loading state
+            if (btnText && btnLoader) {
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                btnLoader.style.display = 'inline-block';
+            }
+        });
+    });
+
+    // Real-time form validation
+    const inputs = document.querySelectorAll('.form-input');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+    });
+
+    function validateField(field) {
+        const formGroup = field.closest('.form-group');
+        const errorSpan = formGroup.querySelector('.form-error');
+        
+        if (field.hasAttribute('required') && !field.value.trim()) {
+            formGroup.classList.add('has-error');
+            if (errorSpan) {
+                errorSpan.textContent = 'This field is required';
+                errorSpan.style.display = 'block';
+            }
+            return false;
+        } else {
+            formGroup.classList.remove('has-error');
+            if (errorSpan) {
+                errorSpan.textContent = '';
+                errorSpan.style.display = 'none';
+            }
+            return true;
+        }
+    }
+});

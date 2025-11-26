@@ -106,20 +106,30 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            messages.success(request, f"Welcome back, {username}!")  # ✅ Success message
+            messages.success(request, f"Welcome back, {username}!")
 
+            # ✅ PREVENT BROWSER BACK BUTTON FROM LOGGING OUT
+            # Set cache control headers to prevent caching of authenticated pages
+            response = None
+            
             if user.is_superuser:
-                return redirect('admin_dashboard')
+                response = redirect('admin_dashboard')
             elif Franchisee.objects.filter(user=user).exists():
-                return redirect('franchisee_dashboard')
+                response = redirect('franchisee_dashboard')
             elif Franchisor.objects.filter(user=user).exists():
-                return redirect('franchisor_dashboard')
+                response = redirect('franchisor_dashboard')
             else:
-                messages.error(request, "No role assigned to this user.")  # ✅ Error message
+                messages.error(request, "No role assigned to this user.")
                 logout(request)
                 return redirect('login')
+            
+            # ✅ Disable browser caching for authenticated pages
+            response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+            response['Pragma'] = 'no-cache'
+            response['Expires'] = '0'
+            return response
         else:
-            messages.error(request, "Invalid username or password.")  # ✅ Error message
+            messages.error(request, "Invalid username or password.")
             return redirect('login')
 
     return render(request, 'accounts/login.html')
@@ -129,7 +139,13 @@ def logout_view(request):
     """Logs out the user."""
     logout(request)
     messages.info(request, "You have been logged out.")
-    return redirect('login')
+    
+    # ✅ Clear cache after logout
+    response = redirect('login')
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 
 # =========================================================================
@@ -178,11 +194,17 @@ def browse(request):
             FranchiseApplication.objects.filter(franchisee=fe).values_list('franchise_id', flat=True)
         )
 
-    return render(request, 'accounts/browse.html', {
+    response = render(request, 'accounts/browse.html', {
         'franchises': franchises,
         'q': q,
-        'applied_franchise_ids': applied_franchise_ids,  # used to toggle “Application Update”
+        'applied_franchise_ids': applied_franchise_ids,
     })
+    
+    # ✅ Prevent caching of browse page
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 
 # =========================================================================
@@ -291,10 +313,16 @@ def franchisor_dashboard(request):
     # Sort all applications by creation date descending and limit to latest 5
     applications = sorted(applications, key=lambda x: x.created_at, reverse=True)[:5]
 
-    return render(request, 'accounts/franchisor_dashboard.html', {
+    response = render(request, 'accounts/franchisor_dashboard.html', {
         'franchises': franchises,
         'applications': applications
     })
+    
+    # ✅ Prevent caching of dashboard
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 @login_required
 def add_franchise_view(request):
@@ -623,9 +651,15 @@ def franchisee_dashboard(request):
     # DO NOT filter by franchise.is_active - show all applications including soft-deleted
     applications = FranchiseApplication.objects.filter(franchisee=franchisee).select_related('franchise').order_by('-created_at')
 
-    return render(request, 'accounts/franchisee_dashboard.html', {
+    response = render(request, 'accounts/franchisee_dashboard.html', {
         'applications': applications
     })
+    
+    # ✅ Prevent caching of dashboard
+    response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
+    response['Pragma'] = 'no-cache'
+    response['Expires'] = '0'
+    return response
 
 @require_POST
 @login_required
