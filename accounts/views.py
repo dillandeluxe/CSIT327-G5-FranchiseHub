@@ -140,6 +140,20 @@ def home_view(request):
     """Landing page."""
     return render(request, 'accounts/home.html')
 
+# ✅ NEW: About page view
+def about_view(request):
+    """About page showing project overview, team, and tech stack."""
+    return render(request, 'accounts/about.html')
+
+# ✅ NEW: Support page view
+def support_view(request):
+    """Support page with FAQs, contact info, and help resources."""
+    return render(request, 'accounts/support.html')
+
+# ✅ NEW: Privacy Policy page view
+def privacy_view(request):
+    """Privacy policy page with data protection information."""
+    return render(request, 'accounts/privacy.html')
 
 @login_required
 def browse(request):

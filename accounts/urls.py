@@ -34,4 +34,8 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password_view, name='forgot_password'),
     path('forgot-password/questions/', views.forgot_password_questions_view, name='forgot_password_questions'),
     path('forgot-password/reset/', views.forgot_password_reset_view, name='forgot_password_reset'),
+    # ✅ About, Support, and Privacy page routes
+    path('about/', views.about_view, name='about'),
+    path('support/', views.support_view, name='support'),
+    path('privacy/', views.privacy_view, name='privacy'),
 ]

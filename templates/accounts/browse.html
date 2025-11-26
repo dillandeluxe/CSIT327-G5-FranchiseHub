@@ -255,3 +255,28 @@
 })();
 </script>
 {% endblock %}
+
+<!-- Add footer if it doesn't exist, or update existing footer -->
+{% block footer %}
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="footer-logo">
+        <span>Franchise</span>Hub
+      </div>
+      <p>Connecting entrepreneurs with proven franchise opportunities.</p>
+    </div>
+    <div class="footer-columns">
+      <div class="footer-column">
+        <h4>Company</h4>
+        <a href="{% url 'about' %}">About</a>
+        <a href="{% url 'support' %}">Support</a>
+        <a href="{% url 'privacy' %}">Privacy</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© FranchiseHub. All rights reserved.</div>
+  </div>
+</footer>
+{% endblock %}
