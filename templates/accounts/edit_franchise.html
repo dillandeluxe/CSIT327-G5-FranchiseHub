@@ -4,101 +4,196 @@
 {% block franchisor_title %}Edit Franchise | FranchiseHub{% endblock %}
 
 {% block franchisor_content %}
-<div class="add-franchise-container">
-  <div class="page-header">
-    <h1 class="page-title">Edit Franchise: {{ franchise.name }}</h1>
-    <p class="page-subtitle">Update your franchise details below</p>
+<div class="edit-franchise-container">
+  <!-- Modern Page Header -->
+  <div class="page-header-modern">
+    <div class="header-content">
+      <div class="header-back">
+        <a href="{% url 'franchisor_dashboard' %}" class="back-btn">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+          </svg>
+          Back to Dashboard
+        </a>
+      </div>
+      <h1 class="page-title-modern">Edit Franchise</h1>
+      <p class="page-subtitle-modern">{{ franchise.name }}</p>
+    </div>
   </div>
 
-  <div class="form-card">
-    <form method="POST" enctype="multipart/form-data" class="modern-form" novalidate>
+  <!-- Modern Form Card -->
+  <div class="form-card-modern">
+    <form method="POST" enctype="multipart/form-data" class="modern-form-enhanced" id="editForm" novalidate>
       {% csrf_token %}
       
-      {% for field in form %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-          <label for="{{ field.id_for_label }}" class="form-label">
-            {{ field.label }}
-            {% if field.field.required %}<span class="required-mark">*</span>{% endif %}
-          </label>
-          
-          {% if field.name == 'description' %}
-            <textarea 
-              name="{{ field.name }}" 
-              id="{{ field.id_for_label }}"
-              class="form-control form-textarea"
-              placeholder="Enter detailed description..."
-              {% if field.field.required %}required{% endif %}
-            >{{ field.value|default:'' }}</textarea>
-          
-          {% elif field.name == 'image' %}
-            <div class="image-upload-wrapper">
-              <!-- Show existing image if present -->
-              {% if franchise.image %}
-                <div id="existingImage" class="image-preview">
-                  <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
-                  <button type="button" class="remove-image" onclick="removeExistingImage()">
-                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                      <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                    </svg>
-                  </button>
-                </div>
-              {% endif %}
-              
-              <input 
-                type="file" 
-                name="{{ field.name }}" 
-                id="{{ field.id_for_label }}"
-                class="image-input"
-                accept="image/*"
-              >
-              <label for="{{ field.id_for_label }}" class="image-upload-label" {% if franchise.image %}style="display:none;"{% endif %}>
-                <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                </svg>
-                <span class="upload-text">Click to {% if franchise.image %}change{% else %}upload{% endif %} franchise image</span>
-                <span class="upload-hint">PNG, JPG, GIF up to 10MB</span>
-              </label>
-              <div id="imagePreview" class="image-preview" style="display: none;">
-                <img id="previewImg" src="" alt="Preview">
-                <button type="button" class="remove-image" onclick="removeImage()">
+      <!-- Image Upload Section (Full Width) -->
+      <div class="image-section-modern">
+        <h3 class="section-heading">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+          </svg>
+          Franchise Image
+        </h3>
+        
+        <div class="image-upload-modern">
+          <!-- Existing Image Display -->
+          {% if franchise.image %}
+            <div id="existingImage" class="existing-image-container">
+              <div class="image-badge">Current Image</div>
+              <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" class="existing-image">
+              <div class="image-overlay">
+                <button type="button" class="btn-change-image" onclick="triggerImageUpload()">
                   <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
                   </svg>
+                  Change Image
                 </button>
               </div>
             </div>
-          
-          {% else %}
-            <input 
-              type="{{ field.field.widget.input_type }}" 
-              name="{{ field.name }}" 
-              id="{{ field.id_for_label }}"
-              class="form-control"
-              value="{{ field.value|default:'' }}"
-              {% if field.field.required %}required{% endif %}
-              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"
-            >
           {% endif %}
           
-          {% if field.errors %}
-            <div class="error-message">
-              {% for error in field.errors %}
-                <span class="error-text">{{ error }}</span>
-              {% endfor %}
+          <!-- Upload Zone -->
+          <input 
+            type="file" 
+            name="image" 
+            id="imageInput"
+            class="image-input-hidden"
+            accept="image/*"
+          >
+          
+          <label for="imageInput" class="upload-zone" {% if franchise.image %}style="display:none;"{% endif %}>
+            <div class="upload-icon">
+              <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+              </svg>
             </div>
-          {% endif %}
+            <h4 class="upload-title">Click to upload or drag & drop</h4>
+            <p class="upload-hint">PNG, JPG, GIF up to 10MB</p>
+          </label>
+          
+          <!-- New Image Preview -->
+          <div id="newImagePreview" class="new-image-container" style="display:none;">
+            <div class="image-badge new-badge">New Image</div>
+            <img id="previewImg" src="" alt="Preview" class="preview-image">
+            <div class="image-actions">
+              <button type="button" class="btn-remove-new" onclick="removeNewImage()">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+                Remove
+              </button>
+            </div>
+          </div>
         </div>
-      {% endfor %}
+      </div>
 
-      <div class="form-actions">
-        <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'franchisor_dashboard' %}'">
+      <!-- Form Grid -->
+      <div class="form-grid-modern">
+        <!-- Franchise Name -->
+        <div class="form-group-modern full-width">
+          <label for="id_name" class="form-label-modern">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+            </svg>
+            Franchise Name
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="name" 
+            id="id_name"
+            class="form-input-modern"
+            value="{{ form.name.value|default:franchise.name }}"
+            placeholder="Enter franchise name"
+            required
+          >
+          <div class="form-feedback"></div>
+        </div>
+
+        <!-- Category -->
+        <div class="form-group-modern">
+          <label for="id_category" class="form-label-modern">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+            </svg>
+            Category
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            type="text" 
+            name="category" 
+            id="id_category"
+            class="form-input-modern"
+            value="{{ form.category.value|default:franchise.category }}"
+            placeholder="e.g., Food & Beverage"
+            required
+          >
+          <div class="form-feedback"></div>
+        </div>
+
+        <!-- Investment -->
+        <div class="form-group-modern">
+          <label for="id_investment" class="form-label-modern">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+            </svg>
+            Investment (₱)
+            <span class="required-star">*</span>
+          </label>
+          <input 
+            type="number" 
+            name="investment" 
+            id="id_investment"
+            class="form-input-modern"
+            value="{{ form.investment.value|default:franchise.investment }}"
+            placeholder="Minimum investment"
+            required
+            step="0.01"
+          >
+          <div class="form-feedback"></div>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group-modern full-width">
+          <label for="id_description" class="form-label-modern">
+            <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            Description
+          </label>
+          <textarea 
+            name="description" 
+            id="id_description"
+            class="form-textarea-modern"
+            placeholder="Provide a detailed description..."
+            rows="5"
+          >{{ form.description.value|default:franchise.description }}</textarea>
+          <div class="char-counter">
+            <span id="charCount">{{ form.description.value|default:franchise.description|length|default:0 }}</span> characters
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions-modern">
+        <button type="button" class="btn-cancel-modern" onclick="window.location.href='{% url 'franchisor_dashboard' %}'">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
           Cancel
         </button>
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn-save-modern" id="saveBtn">
           <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z"/>
           </svg>
-          Update Franchise
+          <span class="btn-text">Save Changes</span>
+          <span class="btn-loader" style="display:none;">
+            <svg class="spinner" width="18" height="18" viewBox="0 0 50 50">
+              <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+            Saving...
+          </span>
         </button>
       </div>
     </form>
@@ -106,20 +201,527 @@
 </div>
 
 <style>
-/* ...existing add_franchise.html styles... */
+/* Modern Edit Franchise Styles */
+.edit-franchise-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Modern Page Header */
+.page-header-modern {
+  margin-bottom: 40px;
+}
+
+.header-back {
+  margin-bottom: 20px;
+}
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #6b7280;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.back-btn:hover {
+  color: #d66900;
+  background: #fff7ed;
+}
+
+.page-title-modern {
+  font-size: 32px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 8px;
+}
+
+.page-subtitle-modern {
+  font-size: 16px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+/* Modern Form Card */
+.form-card-modern {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border: 1px solid #e5e7eb;
+}
+
+/* Image Section */
+.image-section-modern {
+  margin-bottom: 40px;
+  padding-bottom: 40px;
+  border-bottom: 2px solid #f3f4f6;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 24px;
+}
+
+.section-heading svg {
+  color: #d66900;
+}
+
+.image-upload-modern {
+  position: relative;
+}
+
+/* Existing Image */
+.existing-image-container {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 100%;
+  height: 400px;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.existing-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.existing-image-container:hover .existing-image {
+  transform: scale(1.05);
+}
+
+.image-badge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: rgba(0,0,0,0.7);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  z-index: 2;
+  backdrop-filter: blur(10px);
+}
+
+.image-badge.new-badge {
+  background: rgba(214, 105, 0, 0.9);
+}
+
+.image-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all 0.3s;
+}
+
+.existing-image-container:hover .image-overlay {
+  opacity: 1;
+  background: rgba(0,0,0,0.5);
+}
+
+.btn-change-image {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  color: #d66900;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.btn-change-image:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Upload Zone */
+.image-input-hidden {
+  display: none;
+}
+
+.upload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 40px;
+  border: 3px dashed #d1d5db;
+  border-radius: 16px;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.upload-zone:hover {
+  border-color: #d66900;
+  background: #fff7ed;
+}
+
+.upload-icon {
+  color: #9ca3af;
+  margin-bottom: 20px;
+  transition: all 0.3s;
+}
+
+.upload-zone:hover .upload-icon {
+  color: #d66900;
+  transform: scale(1.1);
+}
+
+.upload-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.upload-hint {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* New Image Preview */
+.new-image-container {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  height: 400px;
+  background: #f9fafb;
+  border: 2px solid #10b981;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.image-actions {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 2;
+}
+
+.btn-remove-new {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn-remove-new:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(239, 68, 68, 0.5);
+}
+
+/* Form Grid */
+.form-grid-modern {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.form-group-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-group-modern.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label-modern {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-label-modern svg {
+  color: #d66900;
+  flex-shrink: 0;
+}
+
+.required-star {
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.form-input-modern,
+.form-textarea-modern {
+  width: 100%;
+  padding: 14px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s;
+  background: #f9fafb;
+  color: #111827;
+}
+
+.form-input-modern:focus,
+.form-textarea-modern:focus {
+  outline: none;
+  border-color: #d66900;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(214, 105, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.form-input-modern:valid:not(:placeholder-shown) {
+  border-color: #10b981;
+  background: #f0fdf4;
+}
+
+.form-textarea-modern {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.6;
+}
+
+.char-counter {
+  font-size: 12px;
+  color: #9ca3af;
+  text-align: right;
+}
+
+.form-feedback {
+  font-size: 13px;
+  color: #ef4444;
+  min-height: 20px;
+}
+
+/* Form Actions */
+.form-actions-modern {
+  display: flex;
+  gap: 16px;
+  justify-content: flex-end;
+  padding-top: 32px;
+  border-top: 2px solid #f3f4f6;
+}
+
+.btn-cancel-modern,
+.btn-save-modern {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Poppins', sans-serif;
+  border: none;
+}
+
+.btn-cancel-modern {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.btn-cancel-modern:hover {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-save-modern {
+  background: linear-gradient(135deg, #d66900 0%, #b35c04 100%);
+  color: white;
+  box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-save-modern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.btn-save-modern:hover::before {
+  opacity: 1;
+}
+
+.btn-save-modern:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(214, 105, 0, 0.4);
+}
+
+.btn-save-modern:active {
+  transform: translateY(0);
+}
+
+.btn-save-modern:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Spinner Animation */
+.spinner {
+  animation: rotate 1s linear infinite;
+}
+
+.spinner .path {
+  stroke: white;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
+}
+
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .edit-franchise-container {
+    padding: 24px 16px 60px;
+  }
+
+  .form-card-modern {
+    padding: 24px 20px;
+  }
+
+  .page-title-modern {
+    font-size: 26px;
+  }
+
+  .form-grid-modern {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .existing-image-container,
+  .new-image-container {
+    height: 250px;
+  }
+
+  .form-actions-modern {
+    flex-direction: column-reverse;
+  }
+
+  .btn-cancel-modern,
+  .btn-save-modern {
+    width: 100%;
+    justify-content: center;
+  }
+}
 </style>
 
 <script>
 (function() {
-  // ...existing validation code...
-
-  // Image upload preview (new image)
-  const imageInput = document.querySelector('.image-input');
-  const uploadLabel = document.querySelector('.image-upload-label');
-  const imagePreview = document.getElementById('imagePreview');
-  const previewImg = document.getElementById('previewImg');
+  const imageInput = document.getElementById('imageInput');
+  const uploadZone = document.querySelector('.upload-zone');
   const existingImage = document.getElementById('existingImage');
+  const newImagePreview = document.getElementById('newImagePreview');
+  const previewImg = document.getElementById('previewImg');
+  const form = document.getElementById('editForm');
+  const saveBtn = document.getElementById('saveBtn');
+  const btnText = saveBtn.querySelector('.btn-text');
+  const btnLoader = saveBtn.querySelector('.btn-loader');
 
+  // Character counter
+  const textarea = document.getElementById('id_description');
+  const charCount = document.getElementById('charCount');
+  
+  if (textarea && charCount) {
+    textarea.addEventListener('input', function() {
+      charCount.textContent = this.value.length;
+    });
+  }
+
+  // Real-time validation
+  document.querySelectorAll('.form-input-modern').forEach(input => {
+    input.addEventListener('blur', validateField);
+    input.addEventListener('input', function() {
+      if (this.classList.contains('invalid')) {
+        validateField.call(this);
+      }
+    });
+  });
+
+  function validateField() {
+    const formGroup = this.closest('.form-group-modern');
+    const feedback = formGroup.querySelector('.form-feedback');
+    
+    if (this.hasAttribute('required') && !this.value.trim()) {
+      this.classList.add('invalid');
+      if (feedback) feedback.textContent = 'This field is required';
+    } else {
+      this.classList.remove('invalid');
+      if (feedback) feedback.textContent = '';
+    }
+  }
+
+  // Image upload handling
   if (imageInput) {
     imageInput.addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -127,33 +729,119 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           previewImg.src = e.target.result;
-          uploadLabel.style.display = 'none';
+          if (uploadZone) uploadZone.style.display = 'none';
           if (existingImage) existingImage.style.display = 'none';
-          imagePreview.style.display = 'block';
+          newImagePreview.style.display = 'block';
+          
+          // Animate preview
+          newImagePreview.style.animation = 'none';
+          setTimeout(() => {
+            newImagePreview.style.animation = 'fadeIn 0.4s ease-out';
+          }, 10);
         };
         reader.readAsDataURL(file);
       }
     });
   }
+
+  // Drag & drop support
+  if (uploadZone) {
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      uploadZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      uploadZone.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      uploadZone.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight() {
+      uploadZone.style.borderColor = '#d66900';
+      uploadZone.style.background = '#fff7ed';
+      uploadZone.style.transform = 'scale(1.02)';
+    }
+
+    function unhighlight() {
+      uploadZone.style.borderColor = '';
+      uploadZone.style.background = '';
+      uploadZone.style.transform = '';
+    }
+
+    uploadZone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      imageInput.files = files;
+      const event = new Event('change', { bubbles: true });
+      imageInput.dispatchEvent(event);
+    }
+  }
+
+  // Form submission
+  form.addEventListener('submit', function(e) {
+    // Validate all required fields
+    let isValid = true;
+    document.querySelectorAll('[required]').forEach(field => {
+      if (!field.value.trim()) {
+        isValid = false;
+        field.classList.add('invalid');
+        const formGroup = field.closest('.form-group-modern');
+        const feedback = formGroup.querySelector('.form-feedback');
+        if (feedback) feedback.textContent = 'This field is required';
+      }
+    });
+
+    if (!isValid) {
+      e.preventDefault();
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    // Show loading state
+    saveBtn.disabled = true;
+    btnText.style.display = 'none';
+    btnLoader.style.display = 'flex';
+  });
+
+  // Page load animation
+  document.addEventListener('DOMContentLoaded', function() {
+    const container = document.querySelector('.edit-franchise-container');
+    container.style.opacity = '0';
+    setTimeout(() => {
+      container.style.transition = 'opacity 0.5s ease-out';
+      container.style.opacity = '1';
+    }, 100);
+  });
 })();
 
-function removeExistingImage() {
-  const existingImage = document.getElementById('existingImage');
-  const uploadLabel = document.querySelector('.image-upload-label');
-  existingImage.style.display = 'none';
-  uploadLabel.style.display = 'flex';
+// Global functions for buttons
+function triggerImageUpload() {
+  document.getElementById('imageInput').click();
 }
 
-function removeImage() {
-  const imageInput = document.querySelector('.image-input');
-  const uploadLabel = document.querySelector('.image-upload-label');
-  const imagePreview = document.getElementById('imagePreview');
+function removeNewImage() {
+  const imageInput = document.getElementById('imageInput');
+  const uploadZone = document.querySelector('.upload-zone');
   const existingImage = document.getElementById('existingImage');
+  const newImagePreview = document.getElementById('newImagePreview');
   
   imageInput.value = '';
-  uploadLabel.style.display = 'flex';
-  imagePreview.style.display = 'none';
-  if (existingImage) existingImage.style.display = 'block';
+  newImagePreview.style.display = 'none';
+  
+  if (existingImage) {
+    existingImage.style.display = 'flex';
+  } else if (uploadZone) {
+    uploadZone.style.display = 'flex';
+  }
 }
 </script>
 {% endblock %}
