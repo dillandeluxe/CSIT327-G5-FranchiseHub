@@ -554,3 +554,39 @@ def remove_application(request, pk):
     app.delete()
     messages.success(request, f"'{franchise_name}' removed from your dashboard.")  # ✅ Success message
     return redirect('franchisee_dashboard')
+
+@login_required
+def franchisor_franchise_detail(request, franchise_id):
+    """
+    Franchisor-specific detailed view of their own franchise.
+    Shows management options and application statistics.
+    """
+    try:
+        franchisor = Franchisor.objects.get(user=request.user)
+    except Franchisor.DoesNotExist:
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('browse')
+
+    # Only show franchises owned by this franchisor
+    franchise = get_object_or_404(
+        Franchise, 
+        id=franchise_id, 
+        franchisor=franchisor,
+        is_active=True
+    )
+    
+    # Get application statistics
+    applications = franchise.applications.all().order_by('-created_at')
+    total_apps = applications.count()
+    pending_apps = applications.filter(status='Pending').count()
+    accepted_apps = applications.filter(status__in=['Accepted', 'Approved']).count()
+    rejected_apps = applications.filter(status='Rejected').count()
+    
+    return render(request, 'accounts/franchisor_franchise_detail.html', {
+        'franchise': franchise,
+        'applications': applications[:10],  # Show latest 10
+        'total_apps': total_apps,
+        'pending_apps': pending_apps,
+        'accepted_apps': accepted_apps,
+        'rejected_apps': rejected_apps,
+    })

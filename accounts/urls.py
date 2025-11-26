@@ -14,6 +14,7 @@ urlpatterns = [
     path('franchisor/delete-franchise/<uuid:franchise_id>/', views.delete_franchise, name='delete_franchise'),
     path('franchisor/edit-franchise/<uuid:franchise_id>/', views.edit_franchise_view, name='edit_franchise'),
     path('franchise/<uuid:franchise_id>/', views.franchise_detail, name='franchise_detail'),
+    path('franchisor/franchise/<uuid:franchise_id>/', views.franchisor_franchise_detail, name='franchisor_franchise_detail'),
     path('applications/', views.all_applications, name='all_applications'),
     # Application submit (Franchisee)
     path('franchise/<uuid:franchise_id>/apply/', views.franchise_apply, name='franchise_apply'),
