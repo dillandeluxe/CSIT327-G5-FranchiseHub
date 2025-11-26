@@ -16,8 +16,14 @@
       {% if user.is_authenticated %}
         {% if user.is_superuser %}
           <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+        {% elif user.franchisor_set.exists %}
+          <!-- ✅ Franchisor Navigation -->
+          <a href="{% url 'franchisor_dashboard' %}">Dashboard</a>
+        {% elif user.franchisee_set.exists %}
+          <!-- ✅ Franchisee Navigation -->
+          <a href="{% url 'browse' %}">Browse</a>
+          <a href="{% url 'franchisee_dashboard' %}">My Applications</a>
         {% endif %}
-        <a href="{% url 'browse' %}">Browse</a>
         <a href="{% url 'profile' %}" class="active">Profile</a>
         <a href="{% url 'logout' %}">Logout</a>
       {% else %}

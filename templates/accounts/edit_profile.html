@@ -13,7 +13,16 @@
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
     <div class="nav-links">
-      <a href="{% url 'profile' %}">Back to Profile</a>
+      <!-- ✅ Smart back navigation based on user role -->
+      {% if user.is_superuser %}
+        <a href="{% url 'admin_dashboard' %}">Back to Dashboard</a>
+      {% elif user.franchisor_set.exists %}
+        <a href="{% url 'franchisor_dashboard' %}">Back to Dashboard</a>
+      {% elif user.franchisee_set.exists %}
+        <a href="{% url 'franchisee_dashboard' %}">Back to Dashboard</a>
+      {% else %}
+        <a href="{% url 'profile' %}">Back to Profile</a>
+      {% endif %}
     </div>
   </nav>
 

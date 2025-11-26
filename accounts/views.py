@@ -192,7 +192,16 @@ def profile_view(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Profile updated successfully!")
-            return redirect('profile')
+            
+            # ✅ Redirect back to appropriate dashboard based on role
+            if user.is_superuser:
+                return redirect('admin_dashboard')
+            elif Franchisor.objects.filter(user=user).exists():
+                return redirect('franchisor_dashboard')
+            elif Franchisee.objects.filter(user=user).exists():
+                return redirect('franchisee_dashboard')
+            else:
+                return redirect('profile')
     else:
         form = ProfileForm(instance=user)
 
@@ -224,7 +233,16 @@ def edit_profile_view(request):
         profile.save()
         
         messages.success(request, "Profile updated successfully!")
-        return redirect('profile')
+        
+        # ✅ Redirect to appropriate dashboard based on role
+        if request.user.is_superuser:
+            return redirect('admin_dashboard')
+        elif Franchisor.objects.filter(user=request.user).exists():
+            return redirect('franchisor_dashboard')
+        elif Franchisee.objects.filter(user=request.user).exists():
+            return redirect('franchisee_dashboard')
+        else:
+            return redirect('profile')
     
     return render(request, 'accounts/edit_profile.html', {'profile': profile})
 
