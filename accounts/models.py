@@ -3,6 +3,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password as django_check_password
+from django.utils import timezone
 
 # This imports the default Django User model (defined by settings.AUTH_USER_MODEL)
 # via a Foreign Key to link profiles to users.
@@ -84,9 +85,15 @@ class AdminProfile(models.Model):
 
 
 # =========================
-#  FRANCHISE MODEL
+#  FRANCHISE MODEL (UPDATED)
 # =========================
 class Franchise(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     franchisor = models.ForeignKey(Franchisor, on_delete=models.CASCADE, related_name='franchises')
     name = models.CharField(max_length=150)
@@ -94,23 +101,35 @@ class Franchise(models.Model):
     investment = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='franchise_images/', blank=True, null=True)
-    is_active = models.BooleanField(default=True)
+    
+    # ✅ NEW STATUS FIELDS
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    is_active = models.BooleanField(default=True)  # For soft delete
+    
+    submitted_at = models.DateTimeField(auto_now_add=True)
+    reviewed_at = models.DateTimeField(null=True, blank=True)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='reviewed_franchises'
+    )
+    rejection_reason = models.TextField(blank=True, null=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'franchise'
-        managed = True  # ✅ this is your main “Franchise” table
+        managed = True
+        ordering = ['-submitted_at']
 
     def __str__(self):
-        return f"{self.name} ({self.franchisor.company_name})"
+        return f"{self.name} ({self.get_status_display()})"
 
-    # --- New helper properties for display on browse.html (no DB migration needed) ---
     @property
     def formatted_investment(self):
-        """
-        Returns an investment string close to the static card style.
-        Example: '₱450,000+ Investment'
-        """
         try:
             value = int(self.investment)
             return f"₱{value:,.0f}+ Investment"
@@ -119,57 +138,78 @@ class Franchise(models.Model):
 
     @property
     def short_description(self):
-        """
-        Truncates the description to fit the static card box aesthetic.
-        """
         text = (self.description or "").strip() or "No description provided."
         return (text[:110] + "…") if len(text) > 110 else text
-
+    
+    def approve(self, admin_user):
+        """Approve franchise and create notification"""
+        self.status = 'approved'
+        self.reviewed_at = timezone.now()
+        self.reviewed_by = admin_user
+        self.save(update_fields=['status', 'reviewed_at', 'reviewed_by'])
+        
+        # Create notification
+        Notification.objects.create(
+            user=self.franchisor.user,
+            title='Franchise Approved! 🎉',
+            message=f'Your franchise "{self.name}" has been approved and is now live on the platform!',
+            notification_type='approval',
+            related_franchise=self
+        )
+    
+    def reject(self, admin_user, reason=''):
+        """Reject franchise and create notification"""
+        self.status = 'rejected'
+        self.reviewed_at = timezone.now()
+        self.reviewed_by = admin_user
+        self.rejection_reason = reason
+        self.save(update_fields=['status', 'reviewed_at', 'reviewed_by', 'rejection_reason'])
+        
+        # Create notification
+        Notification.objects.create(
+            user=self.franchisor.user,
+            title='Franchise Review Update',
+            message=f'Your franchise request for "{self.name}" was not approved. {reason}',
+            notification_type='rejection',
+            related_franchise=self
+        )
 
 # =========================
-#  FRANCHISE APPLICATION MODEL
+#  NOTIFICATION MODEL (NEW)
 # =========================
-class FranchiseApplication(models.Model):
+class Notification(models.Model):
+    NOTIFICATION_TYPES = [
+        ('approval', 'Approval'),
+        ('rejection', 'Rejection'),
+        ('general', 'General'),
+    ]
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    franchise = models.ForeignKey(Franchise, on_delete=models.CASCADE, related_name='applications')
-    franchisee = models.ForeignKey(Franchisee, on_delete=models.CASCADE, related_name='applications')
-    full_name = models.CharField(max_length=100)
-    email = models.EmailField()
-    phone = models.CharField(max_length=20)
-    experience = models.TextField(blank=True, null=True)
-    status = models.CharField(
-        max_length=20,
-        default='Pending',
-        choices=[
-            ('Pending', 'Pending Review'),
-            ('Accepted', 'Accepted'),   # added
-            ('Approved', 'Approved'),   # kept for backward compatibility
-            ('Rejected', 'Rejected'),
-        ]
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='notifications'
     )
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default='general')
+    related_franchise = models.ForeignKey(
+        Franchise,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='notifications'
+    )
+    is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    # --- New fields ---
-    rejection_reason = models.TextField(null=True, blank=True)  # why rejected
-    approval_note = models.TextField(null=True, blank=True)     # optional acceptance note
-
+    
     class Meta:
-        db_table = 'franchise_application'
-        managed = True  # ✅ managed by Django
-        ordering = ['-created_at']  # New: newest first for dashboards
-
+        db_table = 'notification'
+        managed = True
+        ordering = ['-created_at']
+    
     def __str__(self):
-        return f"{self.full_name} → {self.franchise.name}"
-
-    # --- New helper methods for status transitions (convenience, optional) ---
-    def approve(self):
-        # legacy helper left as-is (sets Approved)
-        self.status = 'Approved'
-        self.save(update_fields=['status'])
-
-    def reject(self):
-        self.status = 'Rejected'
-        self.save(update_fields=['status'])
-
+        return f"{self.title} - {self.user.username}"
 
 # =========================
 #  PROFILE MODEL
@@ -277,4 +317,62 @@ class SecurityQuestion(models.Model):
         if self.locked_until and self.locked_until > timezone.now():
             return True
         return False
+
+# =========================
+#  FRANCHISE APPLICATION MODEL (MISSING - NOW ADDED)
+# =========================
+class FranchiseApplication(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Accepted', 'Accepted'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    franchise = models.ForeignKey(
+        Franchise,
+        on_delete=models.CASCADE,
+        related_name='applications'
+    )
+    franchisee = models.ForeignKey(
+        Franchisee,
+        on_delete=models.CASCADE,
+        related_name='applications'
+    )
+    
+    # Applicant Information
+    full_name = models.CharField(max_length=200)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    experience = models.TextField(blank=True, null=True, help_text="Business experience and background")
+    
+    # Application Status
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')
+    approval_note = models.TextField(blank=True, null=True)
+    rejection_reason = models.TextField(blank=True, null=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        db_table = 'franchise_application'
+        managed = True
+        ordering = ['-created_at']
+        verbose_name = 'Franchise Application'
+        verbose_name_plural = 'Franchise Applications'
+    
+    def __str__(self):
+        return f"{self.full_name} - {self.franchise.name} ({self.status})"
+    
+    def approve(self):
+        """Approve the application"""
+        self.status = 'Approved'
+        self.save(update_fields=['status'])
+    
+    def reject(self):
+        """Reject the application"""
+        self.status = 'Rejected'
+        self.save(update_fields=['status'])
 

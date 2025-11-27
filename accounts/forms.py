@@ -7,6 +7,7 @@ class ProfileForm(forms.ModelForm):
         fields = ['full_name', 'phone_number', 'location', 'bio', 'profile_picture']
 
 class FranchiseForm(forms.ModelForm):
+    """Form for creating and editing franchises"""
     class Meta:
         model = Franchise
         fields = ['name', 'category', 'investment', 'description', 'image']
@@ -21,11 +22,12 @@ class FranchiseForm(forms.ModelForm):
             }),
             'investment': forms.NumberInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Minimum investment required'
+                'placeholder': 'Minimum investment amount',
+                'step': '0.01'
             }),
             'description': forms.Textarea(attrs={
                 'class': 'form-control form-textarea',
-                'placeholder': 'Provide a detailed description of your franchise...',
+                'placeholder': 'Describe your franchise opportunity...',
                 'rows': 5
             }),
             'image': forms.FileInput(attrs={
@@ -42,10 +44,26 @@ class FranchiseForm(forms.ModelForm):
         }
 
 class FranchiseApplicationForm(forms.ModelForm):
-    """Franchisee-facing application form (franchise & franchisee set in view)."""
+    """Form for franchisee applications"""
     class Meta:
         model = FranchiseApplication
         fields = ['full_name', 'email', 'phone', 'experience']
         widgets = {
-            'experience': forms.Textarea(attrs={'rows': 3})
+            'full_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Your full name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'your@email.com'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Your phone number'
+            }),
+            'experience': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Tell us about your business experience...',
+                'rows': 4
+            })
         }

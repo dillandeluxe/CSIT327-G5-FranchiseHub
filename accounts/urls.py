@@ -38,4 +38,14 @@ urlpatterns = [
     path('about/', views.about_view, name='about'),
     path('support/', views.support_view, name='support'),
     path('privacy/', views.privacy_view, name='privacy'),
+    # ✅ NOTIFICATION ROUTES
+    path('notifications/', views.notifications_view, name='notifications'),
+    path('notifications/api/', views.get_notifications_api, name='notifications_api'),
+    path('notifications/<uuid:notification_id>/read/', views.mark_notification_read, name='mark_notification_read'),
+    path('notifications/mark-all-read/', views.mark_all_notifications_read, name='mark_all_notifications_read'),
+    # ✅ CUSTOM ADMIN FRANCHISE MANAGEMENT
+    path('admin/franchises/', views.admin_franchise_management, name='admin_franchise_management'),
+    path('admin/franchise/<uuid:franchise_id>/', views.admin_franchise_detail, name='admin_franchise_detail'),
+    path('admin/franchise/<uuid:franchise_id>/approve/', views.admin_approve_franchise, name='admin_approve_franchise'),
+    path('admin/franchise/<uuid:franchise_id>/reject/', views.admin_reject_franchise, name='admin_reject_franchise'),
 ]

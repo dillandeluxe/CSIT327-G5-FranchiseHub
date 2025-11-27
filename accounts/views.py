@@ -8,8 +8,17 @@ from django import forms
 from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.http import JsonResponse
+from django.utils import timezone
 
-from .models import Franchisee, Franchisor, Franchise, FranchiseApplication, SecurityQuestion, Profile
+from .models import (
+    Franchisee, 
+    Franchisor, 
+    Franchise, 
+    FranchiseApplication,  # ✅ Make sure this is imported
+    SecurityQuestion, 
+    Profile, 
+    Notification
+)
 from .forms import FranchiseForm, FranchiseApplicationForm
 from accounts.utils import get_user_role
 
@@ -173,9 +182,10 @@ def privacy_view(request):
 
 @login_required
 def browse(request):
-    """Displays all active franchises for franchisees."""
+    """Displays ONLY APPROVED franchises for franchisees."""
     q = request.GET.get('q', '').strip()
-    qs = Franchise.objects.filter(is_active=True)
+    # ✅ ONLY SHOW APPROVED FRANCHISES
+    qs = Franchise.objects.filter(is_active=True, status='approved')
     if q:
         qs = qs.filter(
             Q(name__icontains=q) |
@@ -186,7 +196,6 @@ def browse(request):
         )
     franchises = qs.order_by('-created_at')
 
-    # New: identify franchises the current user has already applied to
     applied_franchise_ids = []
     if Franchisee.objects.filter(user=request.user).exists():
         fe = Franchisee.objects.get(user=request.user)
@@ -200,7 +209,6 @@ def browse(request):
         'applied_franchise_ids': applied_franchise_ids,
     })
     
-    # ✅ Prevent caching of browse page
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
@@ -290,35 +298,40 @@ def edit_profile_view(request):
 @login_required
 def franchisor_dashboard(request):
     """
-    Displays the franchisor dashboard with:
-    - All active franchises of the logged-in franchisor
-    - Recent applications (latest 5)
+    Displays the franchisor dashboard - SHOWS ALL FRANCHISES WITH STATUS
     """
     try:
-        # Get the logged-in user's franchisor profile
         franchisor = Franchisor.objects.get(user=request.user)
     except Franchisor.DoesNotExist:
-        # Non-franchisor users are redirected with a message
         messages.error(request, "You are not registered as a franchisor.")
         return redirect('browse')
 
-    # Fetch all active franchises for this franchisor
-    franchises = franchisor.franchises.filter(is_active=True).order_by('-created_at')
+    # ✅ ALL FRANCHISES (for approval status section at top)
+    franchises = franchisor.franchises.filter(is_active=True).order_by('-submitted_at')
 
-    # Collect recent applications across all franchises
+    # ✅ ONLY APPROVED FRANCHISES (for "My Franchises" section at bottom)
+    approved_franchises = franchisor.franchises.filter(
+        is_active=True,
+        status='approved'
+    ).order_by('-created_at')
+
+    # Get unread notifications count
+    unread_count = Notification.objects.filter(user=request.user, is_read=False).count()
+
     applications = []
-    for franchise in franchises:
+    # Only get applications for APPROVED franchises
+    for franchise in approved_franchises:
         applications += list(franchise.applications.all().order_by('-created_at'))
 
-    # Sort all applications by creation date descending and limit to latest 5
     applications = sorted(applications, key=lambda x: x.created_at, reverse=True)[:5]
 
     response = render(request, 'accounts/franchisor_dashboard.html', {
-        'franchises': franchises,
-        'applications': applications
+        'franchises': franchises,  # All franchises for approval status section
+        'approved_franchises': approved_franchises,  # ✅ Only approved for "My Franchises"
+        'applications': applications,
+        'unread_notifications': unread_count,
     })
     
-    # ✅ Prevent caching of dashboard
     response['Cache-Control'] = 'no-cache, no-store, must-revalidate, private'
     response['Pragma'] = 'no-cache'
     response['Expires'] = '0'
@@ -326,7 +339,7 @@ def franchisor_dashboard(request):
 
 @login_required
 def add_franchise_view(request):
-    """Allows franchisors to create new franchises with image upload."""
+    """Allows franchisors to create new franchises - NOW PENDING BY DEFAULT"""
     try:
         franchisor = Franchisor.objects.get(user=request.user)
     except Franchisor.DoesNotExist:
@@ -334,12 +347,13 @@ def add_franchise_view(request):
         return redirect('browse')
 
     if request.method == 'POST':
-        form = FranchiseForm(request.POST, request.FILES)  # ✅ Include request.FILES
+        form = FranchiseForm(request.POST, request.FILES)
         if form.is_valid():
             franchise = form.save(commit=False)
             franchise.franchisor = franchisor
+            franchise.status = 'pending'  # ✅ ALWAYS PENDING
             franchise.save()
-            messages.success(request, f"Franchise '{franchise.name}' created successfully!")
+            messages.success(request, f"Franchise '{franchise.name}' submitted successfully! It is now awaiting admin approval.")
             return redirect('franchisor_dashboard')
         else:
             messages.error(request, "Please correct the errors below.")
@@ -825,3 +839,169 @@ def forgot_password_reset_view(request):
             return redirect('login')
 
     return render(request, 'accounts/forgot_password_reset.html')
+
+# =========================================================================
+# 10. NOTIFICATION VIEWS (NEW)
+# =========================================================================
+
+@login_required
+def notifications_view(request):
+    """View all notifications for the current user"""
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')
+    
+    return render(request, 'accounts/notifications.html', {
+        'notifications': notifications
+    })
+
+@login_required
+def mark_notification_read(request, notification_id):
+    """Mark a single notification as read"""
+    notification = get_object_or_404(Notification, id=notification_id, user=request.user)
+    notification.is_read = True
+    notification.save()
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success'})
+    
+    return redirect('notifications')
+
+@login_required
+def mark_all_notifications_read(request):
+    """Mark all notifications as read"""
+    Notification.objects.filter(user=request.user, is_read=False).update(is_read=True)
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success'})
+    
+    return redirect('notifications')
+
+@login_required
+def get_notifications_api(request):
+    """API endpoint for notification dropdown"""
+    notifications = Notification.objects.filter(user=request.user).order_by('-created_at')[:10]
+    unread_count = notifications.filter(is_read=False).count()
+    
+    data = {
+        'unread_count': unread_count,
+        'notifications': [
+            {
+                'id': str(n.id),
+                'title': n.title,
+                'message': n.message,
+                'type': n.notification_type,
+                'is_read': n.is_read,
+                'created_at': n.created_at.strftime('%b %d, %Y at %I:%M %p'),
+                'time_ago': get_time_ago(n.created_at),
+            }
+            for n in notifications
+        ]
+    }
+    
+    return JsonResponse(data)
+
+def get_time_ago(dt):
+    """Helper to get human-readable time difference"""
+    from django.utils import timezone
+    from datetime import timedelta
+    
+    now = timezone.now()
+    diff = now - dt
+    
+    if diff < timedelta(minutes=1):
+        return 'Just now'
+    elif diff < timedelta(hours=1):
+        mins = int(diff.total_seconds() / 60)
+        return f'{mins} min ago' if mins == 1 else f'{mins} mins ago'
+    elif diff < timedelta(days=1):
+        hours = int(diff.total_seconds() / 3600)
+        return f'{hours} hour ago' if hours == 1 else f'{hours} hours ago'
+    elif diff < timedelta(days=7):
+        days = diff.days
+        return f'{days} day ago' if days == 1 else f'{days} days ago'
+    else:
+        return dt.strftime('%b %d, %Y')
+
+# =========================================================================
+# 11. CUSTOM ADMIN DASHBOARD VIEWS (NEW)
+# =========================================================================
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_franchise_management(request):
+    """Custom Admin Dashboard - Franchise Management"""
+    # Get franchise counts
+    pending_count = Franchise.objects.filter(status='pending', is_active=True).count()
+    approved_count = Franchise.objects.filter(status='approved', is_active=True).count()
+    rejected_count = Franchise.objects.filter(status='rejected', is_active=True).count()
+    
+    # Get franchises by status
+    pending_franchises = Franchise.objects.filter(
+        status='pending', 
+        is_active=True
+    ).select_related('franchisor', 'franchisor__user').order_by('-submitted_at')
+    
+    approved_franchises = Franchise.objects.filter(
+        status='approved', 
+        is_active=True
+    ).select_related('franchisor', 'franchisor__user').order_by('-reviewed_at')[:10]
+    
+    rejected_franchises = Franchise.objects.filter(
+        status='rejected', 
+        is_active=True
+    ).select_related('franchisor', 'franchisor__user').order_by('-reviewed_at')[:10]
+    
+    return render(request, 'accounts/admin_franchise_management.html', {
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
+        'pending_franchises': pending_franchises,
+        'approved_franchises': approved_franchises,
+        'rejected_franchises': rejected_franchises,
+    })
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_franchise_detail(request, franchise_id):
+    """View detailed information about a franchise for admin review"""
+    franchise = get_object_or_404(Franchise, id=franchise_id)
+    
+    return render(request, 'accounts/admin_franchise_detail.html', {
+        'franchise': franchise
+    })
+
+@require_POST
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_approve_franchise(request, franchise_id):
+    """Admin approves a pending franchise"""
+    franchise = get_object_or_404(Franchise, id=franchise_id, status='pending')
+    
+    franchise.approve(request.user)
+    
+    messages.success(request, f"Franchise '{franchise.name}' has been approved!")
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success', 'message': 'Franchise approved'})
+    
+    return redirect('admin_franchise_management')
+
+@require_POST
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_reject_franchise(request, franchise_id):
+    """Admin rejects a pending franchise"""
+    franchise = get_object_or_404(Franchise, id=franchise_id, status='pending')
+    
+    reason = request.POST.get('rejection_reason', '').strip()
+    if not reason:
+        messages.error(request, "Rejection reason is required.")
+        return redirect('admin_franchise_detail', franchise_id=franchise_id)
+    
+    franchise.reject(request.user, reason)
+    
+    messages.success(request, f"Franchise '{franchise.name}' has been rejected.")
+    
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'status': 'success', 'message': 'Franchise rejected'})
+    
+    return redirect('admin_franchise_management')

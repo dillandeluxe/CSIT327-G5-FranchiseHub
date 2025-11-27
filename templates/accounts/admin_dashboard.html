@@ -1,135 +1,1157 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-gray-100">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard | FranchiseHub</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        .nav-link {
-            transition: background-color 0.2s, color 0.2s;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.2);
-            color: #ffffff;
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f8fafc;
+            color: #1a1a1a;
+            line-height: 1.6;
+        }
+
+        /* Modern Admin Navbar */
+        .admin-navbar {
+            background: linear-gradient(135deg, #ff6600 0%, #ff8c2b 100%);
+            box-shadow: 0 4px 20px rgba(255, 102, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-text {
+            font-size: 22px;
             font-weight: 700;
+            letter-spacing: -0.5px;
         }
-        /* Your Brand Gradient */
-        .bg-brand-gradient {
-            background: linear-gradient(90deg, #ff6600 40%, #b35c04 90%);
+
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-weight: 600;
+        }
+
+        /* Notification Bell */
+        .notification-bell {
+            position: relative;
+            padding: 10px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notification-bell:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            background: #ef4444;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            min-width: 18px;
+            text-align: center;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Notification Dropdown */
+        .notification-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 24px;
+            width: 420px;
+            max-height: 500px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .notification-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .notification-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .mark-all-read {
+            color: #ff6600;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .mark-all-read:hover {
+            color: #ff8c2b;
+        }
+
+        .notification-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .notification-item:hover {
+            background: #f9fafb;
+        }
+
+        .notification-item.unread {
+            background: #fff7ed;
+        }
+
+        .notification-content {
+            display: flex;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-icon.success {
+            background: #ecfdf5;
+            color: #10b981;
+        }
+
+        .notification-icon.warning {
+            background: #fff7ed;
+            color: #f59e0b;
+        }
+
+        .notification-icon.error {
+            background: #fef2f2;
+            color: #ef4444;
+        }
+
+        .notification-text {
+            flex: 1;
+        }
+
+        .notification-text h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .notification-text p {
+            font-size: 13px;
+            color: #6b7280;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #6b7280;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid #e5e7eb;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .tab-btn:hover {
+            color: #ff6600;
+        }
+
+        .tab-btn.active {
+            color: #ff6600;
+            border-bottom-color: #ff6600;
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-icon.pending {
+            background: linear-gradient(135deg, #fff7ed 0%, #fed7aa 100%);
+            color: #f59e0b;
+        }
+
+        .stat-icon.approved {
+            background: linear-gradient(135deg, #ecfdf5 0%, #a7f3d0 100%);
+            color: #10b981;
+        }
+
+        .stat-icon.rejected {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            color: #ef4444;
+        }
+
+        .stat-icon.users {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: #3b82f6;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1a1a1a;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+
+        .stat-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-top: 12px;
+        }
+
+        .stat-trend.up {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .stat-trend.down {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
+        /* Franchise Cards */
+        .franchise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 24px;
+        }
+
+        .franchise-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+            transition: all 0.3s;
+        }
+
+        .franchise-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+        }
+
+        .franchise-image {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .franchise-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .franchise-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            backdrop-filter: blur(10px);
+        }
+
+        .franchise-badge.pending {
+            background: rgba(251, 146, 60, 0.9);
+            color: white;
+        }
+
+        .franchise-body {
+            padding: 20px;
+        }
+
+        .franchise-header {
+            margin-bottom: 16px;
+        }
+
+        .franchise-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+        }
+
+        .franchise-owner {
+            font-size: 14px;
+            color: #6b7280;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .franchise-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .meta-label {
+            font-size: 12px;
+            color: #9ca3af;
+            font-weight: 500;
+        }
+
+        .meta-value {
+            font-size: 14px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .franchise-description {
+            font-size: 14px;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .franchise-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-view {
+            background: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+        }
+
+        .btn-view:hover {
+            background: #e5e7eb;
+            color: #1a1a1a;
+        }
+
+        /* Management Tables */
+        .management-section {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px;
+            background: #f9fafb;
+            font-size: 13px;
+            font-weight: 600;
+            color: #6b7280;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .data-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+            color: #1a1a1a;
+        }
+
+        .data-table tr:hover {
+            background: #f9fafb;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        .status-badge.pending {
+            background: #fff7ed;
+            color: #d97706;
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e5e7eb;
+            padding: 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+        }
+
+        .chart-header {
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .chart-subtitle {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 24px;
+        }
+
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            opacity: 0.3;
+        }
+
+        .empty-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .empty-message {
+            font-size: 14px;
+            color: #9ca3af;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 520px;
+            max-width: 95%;
+            padding: 32px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #9ca3af;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #1a1a1a;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ff6600;
+            box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.1);
+        }
+
+        textarea.form-control {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .franchise-grid {
+                grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            }
+
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: column;
+                height: auto;
+                padding: 16px;
+                gap: 16px;
+            }
+
+            .nav-menu {
+                width: 100%;
+                justify-content: space-around;
+            }
+
+            .nav-link {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+
+            .notification-dropdown {
+                right: 16px;
+                left: 16px;
+                width: auto;
+            }
+
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .page-title {
+                font-size: 26px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .franchise-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-nav {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .data-table {
+                display: block;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
-<body class="h-full font-sans text-gray-900">
-    <div class="min-h-full">
-        
-        <nav class="bg-brand-gradient shadow-md">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="flex h-16 items-center justify-between">
-                    <div class="flex items-center">
-                        <div class="flex-shrink-0">
-                            <span class="font-bold text-white text-xl tracking-wide">System Admin</span>
+<body>
+    <!-- Admin Navbar -->
+    <nav class="admin-navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <span class="brand-text">System Admin</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active" data-tab="dashboard">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                    </svg>
+                    Overview
+                </a>
+                <a href="#" class="nav-link" data-tab="franchises">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                    </svg>
+                    Franchises
+                </a>
+                <a href="#" class="nav-link" data-tab="analytics">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                    Analytics
+                </a>
+                <div class="notification-bell" id="notificationBell">
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
+                    </svg>
+                    <span class="notification-badge" id="notificationCount">0</span>
+                </div>
+                <!-- ✅ LOGOUT LINK -->
+                <a href="{% url 'logout' %}" class="nav-link logout-link">
+                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                    </svg>
+                    Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Notification Dropdown -->
+    <div class="notification-dropdown" id="notificationDropdown">
+        <div class="notification-header">
+            <h3 class="notification-title">Notifications</h3>
+            <span class="mark-all-read" id="markAllRead">Mark all as read</span>
+        </div>
+        <div class="notification-list" id="notificationList">
+            <div class="empty-state">
+                <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <p class="empty-title">No notifications</p>
+                <p class="empty-message">You're all caught up!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h1 class="page-title">Admin Dashboard</h1>
+            <p class="page-subtitle">Manage franchise submissions and monitor platform activity</p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" data-target="dashboard">Dashboard</button>
+            <button class="tab-btn" data-target="franchises">Franchise Management</button>
+            <button class="tab-btn" data-target="analytics">Analytics</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" id="dashboard">
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="pendingCount">0</div>
+                            <div class="stat-label">Pending Review</div>
+                            <div class="stat-trend up">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                                </svg>
+                                Needs attention
+                            </div>
                         </div>
-                        <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="#" id="nav-dashboard" class="nav-link active text-white hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Dashboard</a>
-                            <a href="#" id="nav-analytics" class="nav-link text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Analytics</a>
-                            <a href="{% url 'browse' %}" class="text-orange-100 hover:bg-orange-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Browse Franchises</a>
+                        <div class="stat-icon pending">⏳</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="approvedCount">0</div>
+                            <div class="stat-label">Approved</div>
+                            <div class="stat-trend up">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                                </svg>
+                                This month
+                            </div>
                         </div>
+                        <div class="stat-icon approved">✓</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="rejectedCount">0</div>
+                            <div class="stat-label">Rejected</div>
+                            <div class="stat-trend down">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12 13a1 1 0 100 2h5a1 1 0 001-1V9a1 1 0 10-2 0v2.586l-4.293-4.293a1 1 0 00-1.414 0L8 9.586 3.707 5.293a1 1 0 00-1.414 1.414l5 5a1 1 0 001.414 0L11 9.414 14.586 13H12z" clip-rule="evenodd"/>
+                                </svg>
+                                This month
+                            </div>
+                        </div>
+                        <div class="stat-icon rejected">✗</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value">{{ recent_users|length }}</div>
+                            <div class="stat-label">Active Users</div>
+                            <div class="stat-trend up">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
+                                </svg>
+                                Growing
+                            </div>
+                        </div>
+                        <div class="stat-icon users">👥</div>
                     </div>
                 </div>
             </div>
-        </nav>
 
-        <header class="bg-white shadow">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <h1 id="page-title" class="text-3xl font-bold tracking-tight text-gray-900">Admin Dashboard</h1>
+            <!-- Management Sections -->
+            <div class="management-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Users</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td><strong>{{ u.username }}</strong></td>
+                            <td>{{ u.email|default:"No email" }}</td>
+                            <td>{{ u.date_joined|date:"M d, Y" }}</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <p class="empty-message">No users yet.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        </header>
 
-        <main>
-            <div class="mx-auto max-w-7xl py-6 sm:px-6 lg:px-8">
-                
-                <div id="page-dashboard">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Management Interface</h2>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        
-                        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-blue-500">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Pending Applications</h3>
-                            {% if recent_approvals %}
-                            <ul class="space-y-3 divide-y divide-gray-100">
-                                {% for app in recent_approvals %}
-                                <li class="flex justify-between items-center pt-2">
-                                    <div class="flex flex-col">
-                                        <span class="font-semibold text-sm text-gray-700">{{ app.franchise.name }}</span>
-                                        <span class="text-xs text-gray-500">{{ app.full_name }}</span>
-                                    </div>
-                                    <a href="{% url 'application_set_status' app.id 'approve' %}" class="text-xs bg-blue-600 hover:bg-blue-700 text-white py-1.5 px-3 rounded-full transition">Approve</a>
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            {% else %}
-                                <p class="text-gray-500 text-sm italic">No pending applications.</p>
-                            {% endif %}
-                        </div>
-                        
-                        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-green-500">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Users</h3>
-                            <ul class="space-y-3 divide-y divide-gray-100">
-                                {% for u in recent_users %}
-                                <li class="pt-2 flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-700">{{ u.username }}</span>
-                                    <span class="text-xs text-gray-400">{{ u.date_joined|date:"M d" }}</span>
-                                </li>
-                                {% empty %}
-                                <li class="text-gray-500 text-sm italic">No users yet.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
-                        
-                        <div class="bg-white rounded-lg shadow-md p-6 border-t-4 border-purple-500">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Newest Franchises</h3>
-                             <ul class="space-y-3 divide-y divide-gray-100">
-                                {% for f in active_franchises %}
-                                <li class="pt-2 flex justify-between items-center">
-                                    <span class="text-sm font-medium text-gray-700">{{ f.name }}</span>
-                                    <span class="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded-full">Active</span>
-                                </li>
-                                {% empty %}
-                                <li class="text-gray-500 text-sm italic">No active franchises.</li>
-                                {% endfor %}
-                            </ul>
-                        </div>
+            <div class="management-section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Applications</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Applicant</th>
+                            <th>Franchise</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in recent_approvals %}
+                        <tr>
+                            <td><strong>{{ app.full_name }}</strong></td>
+                            <td>{{ app.franchise.name }}</td>
+                            <td>{{ app.created_at|date:"M d, Y" }}</td>
+                            <td><span class="status-badge pending">{{ app.status }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4">
+                                <div class="empty-state">
+                                    <p class="empty-message">No pending applications.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
+        <!-- Franchise Management Tab -->
+        <div class="tab-content" id="franchises">
+            <div class="franchise-grid" id="franchiseGrid">
+                <!-- Franchises will be loaded here dynamically -->
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-content" id="analytics">
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">New Users (Monthly)</h3>
+                        <p class="chart-subtitle">User registration trends</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="userChart"></canvas>
                     </div>
                 </div>
 
-                <div id="page-analytics" class="hidden">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Data Analytics</h2>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">New Users (Monthly)</h3>
-                            <div class="w-full h-64"><canvas id="barChart"></canvas></div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Applications (Monthly)</h3>
-                            <div class="w-full h-64"><canvas id="lineChart"></canvas></div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-md p-6 lg:col-span-2">
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Popular Franchises</h3>
-                            <div class="w-full h-80"><canvas id="columnChart"></canvas></div>
-                        </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Applications Activity</h3>
+                        <p class="chart-subtitle">Application submissions over time</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="applicationsChart"></canvas>
                     </div>
                 </div>
 
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Popular Franchises</h3>
+                        <p class="chart-subtitle">Top franchises by applications</p>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="popularChart"></canvas>
+                    </div>
+                </div>
             </div>
-        </main>
+        </div>
+    </main>
+
+    <!-- Rejection Modal -->
+    <div class="modal-overlay" id="rejectModal">
+        <div class="modal">
+            <button class="modal-close" onclick="closeRejectModal()">✕</button>
+            <h2 class="modal-title">Reject Franchise</h2>
+            <form id="rejectForm" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label class="form-label">Rejection Reason *</label>
+                    <textarea class="form-control" name="rejection_reason" required placeholder="Please provide a clear reason for rejection..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-view" onclick="closeRejectModal()">Cancel</button>
+                    <button type="submit" class="btn btn-reject">
+                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm8-8a8 8 0 11-16 0 8 8 0 0116 0zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                        </svg>
+                        Reject Franchise
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <script src="{% static 'accounts/modern_auth.js' %}"></script>
@@ -141,58 +1163,278 @@
     {{ sales_chart_data|json_script:"data-sales-data" }}
 
     <script>
-        const navDashboard = document.getElementById('nav-dashboard');
-        const navAnalytics = document.getElementById('nav-analytics');
-        const pageDashboard = document.getElementById('page-dashboard');
-        const pageAnalytics = document.getElementById('page-analytics');
-        const pageTitle = document.getElementById('page-title');
+        // Tab switching
+        document.querySelectorAll('[data-tab], [data-target]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = btn.dataset.tab || btn.dataset.target;
+                
+                // Update nav links
+                document.querySelectorAll('.nav-link, .tab-btn').forEach(link => {
+                    link.classList.remove('active');
+                });
+                btn.classList.add('active');
+                
+                // Show target tab
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.getElementById(target).classList.add('active');
+                
+                // Load franchises when franchise tab is opened
+                if (target === 'franchises' && !window.franchisesLoaded) {
+                    loadFranchises();
+                    window.franchisesLoaded = true;
+                }
+            });
+        });
 
-        navDashboard.addEventListener('click', (e) => { e.preventDefault(); showPage('dashboard'); });
-        navAnalytics.addEventListener('click', (e) => { e.preventDefault(); showPage('analytics'); });
+        // Notification toggle
+        document.getElementById('notificationBell').addEventListener('click', () => {
+            document.getElementById('notificationDropdown').classList.toggle('active');
+        });
 
-        function showPage(pageName) {
-            pageDashboard.classList.add('hidden');
-            pageAnalytics.classList.add('hidden');
-            navDashboard.classList.remove('active');
-            navAnalytics.classList.remove('active');
-            if (pageName === 'dashboard') {
-                pageDashboard.classList.remove('hidden');
-                navDashboard.classList.add('active');
-                pageTitle.textContent = 'Admin Dashboard';
-            } else {
-                pageAnalytics.classList.remove('hidden');
-                navAnalytics.classList.add('active');
-                pageTitle.textContent = 'Analytics';
+        // Close notification dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const bell = document.getElementById('notificationBell');
+            const dropdown = document.getElementById('notificationDropdown');
+            if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Load franchises via AJAX
+        async function loadFranchises() {
+            const grid = document.getElementById('franchiseGrid');
+            grid.innerHTML = '<div class="empty-state"><p class="empty-message">Loading franchises...</p></div>';
+            
+            try {
+                const response = await fetch('/accounts/admin/franchises/');
+                const html = await response.text();
+                
+                // Extract franchise data from the response (you'll need to adjust this based on your API)
+                // For now, we'll create sample cards based on Django context
+                grid.innerHTML = `
+                    {% for franchise in active_franchises %}
+                    <div class="franchise-card">
+                        <div class="franchise-image">
+                            {% if franchise.image %}
+                                <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
+                            {% else %}
+                                <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                </svg>
+                            {% endif %}
+                            <div class="franchise-badge {{ franchise.status }}">{{ franchise.get_status_display }}</div>
+                        </div>
+                        <div class="franchise-body">
+                            <div class="franchise-header">
+                                <h3 class="franchise-name">{{ franchise.name }}</h3>
+                                <div class="franchise-owner">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ franchise.franchisor.company_name }}
+                                </div>
+                            </div>
+                            <div class="franchise-meta">
+                                <div class="meta-item">
+                                    <span class="meta-label">Category</span>
+                                    <span class="meta-value">{{ franchise.category }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Investment</span>
+                                    <span class="meta-value">{{ franchise.formatted_investment }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Submitted</span>
+                                    <span class="meta-value">{{ franchise.submitted_at|date:"M d, Y" }}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <span class="meta-label">Status</span>
+                                    <span class="meta-value">{{ franchise.get_status_display }}</span>
+                                </div>
+                            </div>
+                            <p class="franchise-description">{{ franchise.short_description }}</p>
+                            {% if franchise.status == 'pending' %}
+                            <div class="franchise-actions">
+                                <button class="btn btn-approve" onclick="approveFranchise('{{ franchise.id }}')">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Approve
+                                </button>
+                                <button class="btn btn-reject" onclick="openRejectModal('{{ franchise.id }}')">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    Reject
+                                </button>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                        <h3 class="empty-title">No franchises found</h3>
+                        <p class="empty-message">Franchise submissions will appear here</p>
+                    </div>
+                    {% endfor %}
+                `;
+                
+                // Update counts
+                updateStats();
+            } catch (error) {
+                grid.innerHTML = '<div class="empty-state"><p class="empty-message">Error loading franchises</p></div>';
             }
         }
 
-        function loadDjangoData(id) { return JSON.parse(document.getElementById(id).textContent); }
+        // Update statistics
+        function updateStats() {
+            // You can fetch actual counts via AJAX or use Django context
+            const pending = {{ active_franchises|length }};
+            document.getElementById('pendingCount').textContent = pending;
+        }
 
-        new Chart(document.getElementById('barChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: loadDjangoData('data-user-labels'),
-                datasets: [{ label: 'New Users', data: loadDjangoData('data-user-data'), backgroundColor: 'rgba(54, 162, 235, 0.6)' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
+        // Approve franchise
+        async function approveFranchise(franchiseId) {
+            if (!confirm('Are you sure you want to approve this franchise?')) return;
+            
+            try {
+                const response = await fetch(`/accounts/admin/franchise/${franchiseId}/approve/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    alert('Franchise approved successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error approving franchise');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        // Reject modal
+        function openRejectModal(franchiseId) {
+            document.getElementById('rejectModal').classList.add('active');
+            document.getElementById('rejectForm').action = `/accounts/admin/franchise/${franchiseId}/reject/`;
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.remove('active');
+        }
+
+        // Handle reject form submission
+        document.getElementById('rejectForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch(e.target.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('Franchise rejected successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error rejecting franchise');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
         });
 
-        new Chart(document.getElementById('lineChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: loadDjangoData('data-traffic-labels'),
-                datasets: [{ label: 'Applications', data: loadDjangoData('data-traffic-data'), borderColor: 'rgba(75, 192, 192, 1)', tension: 0.3 }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
-        });
+        // Initialize charts
+        function initCharts() {
+            const userLabels = JSON.parse(document.getElementById('data-user-labels').textContent);
+            const userData = JSON.parse(document.getElementById('data-user-data').textContent);
+            const trafficLabels = JSON.parse(document.getElementById('data-traffic-labels').textContent);
+            const trafficData = JSON.parse(document.getElementById('data-traffic-data').textContent);
+            const salesLabels = JSON.parse(document.getElementById('data-sales-labels').textContent);
+            const salesData = JSON.parse(document.getElementById('data-sales-data').textContent);
 
-        new Chart(document.getElementById('columnChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: loadDjangoData('data-sales-labels'),
-                datasets: [{ label: 'Applications', data: loadDjangoData('data-sales-data'), backgroundColor: 'rgba(255, 99, 132, 0.6)' }]
-            },
-            options: { responsive: true, maintainAspectRatio: false }
+            // User Chart
+            new Chart(document.getElementById('userChart'), {
+                type: 'bar',
+                data: {
+                    labels: userLabels,
+                    datasets: [{
+                        label: 'New Users',
+                        data: userData,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Applications Chart
+            new Chart(document.getElementById('applicationsChart'), {
+                type: 'line',
+                data: {
+                    labels: trafficLabels,
+                    datasets: [{
+                        label: 'Applications',
+                        data: trafficData,
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // Popular Franchises Chart
+            new Chart(document.getElementById('popularChart'), {
+                type: 'bar',
+                data: {
+                    labels: salesLabels,
+                    datasets: [{
+                        label: 'Applications',
+                        data: salesData,
+                        backgroundColor: 'rgba(255, 102, 0, 0.8)',
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            updateStats();
         });
     </script>
 </body>
