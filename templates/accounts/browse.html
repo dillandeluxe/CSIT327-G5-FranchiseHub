@@ -103,13 +103,12 @@
             <div class="franchise-actions" onclick="event.preventDefault(); event.stopPropagation();">
               {% if user.is_authenticated %}
                 {% if franchise.id in applied_franchise_ids %}
-                  <a href="{% url 'application_status' %}?franchise={{ franchise.id }}" class="btn-secondary" onclick="event.stopPropagation();">
+                  <button class="btn-primary applied-btn" disabled>
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                      <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                      <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                     </svg>
-                    View Status
-                  </a>
+                    Applied
+                  </button>
                 {% else %}
                   <button type="button" class="btn-primary js-open-apply" onclick="event.stopPropagation();">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
