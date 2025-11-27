@@ -376,3 +376,35 @@ class FranchiseApplication(models.Model):
         self.status = 'Rejected'
         self.save(update_fields=['status'])
 
+# =========================
+#  USER FAVORITES MODEL (NEW)
+# =========================
+class UserFavorites(models.Model):
+    """
+    Stores franchises that users have favorited/bookmarked.
+    Each user can favorite multiple franchises.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='favorites'
+    )
+    franchise = models.ForeignKey(
+        Franchise,
+        on_delete=models.CASCADE,
+        related_name='favorited_by'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        db_table = 'user_favorites'
+        managed = True
+        unique_together = ['user', 'franchise']  # Prevent duplicate favorites
+        ordering = ['-created_at']
+        verbose_name = 'User Favorite'
+        verbose_name_plural = 'User Favorites'
+    
+    def __str__(self):
+        return f"{self.user.username} - {self.franchise.name}"
+

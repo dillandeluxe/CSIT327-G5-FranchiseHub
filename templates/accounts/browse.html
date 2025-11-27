@@ -6,6 +6,54 @@
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
+<style>
+/* ...existing styles... */
+
+/* ✅ NEW: Favorite Button Styles */
+.favorite-btn-wrapper {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+}
+
+.favorite-btn-browse {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.favorite-btn-browse:hover {
+  transform: scale(1.1);
+  background: white;
+}
+
+.favorite-btn-browse.active {
+  background: #ef4444;
+  color: white;
+}
+
+.favorite-btn-browse svg {
+  transition: all 0.3s;
+}
+
+.favorite-btn-browse.active svg {
+  fill: currentColor;
+}
+
+.favorite-btn-browse:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+</style>
 {% endblock %}
 
 {% block content %}
@@ -20,6 +68,13 @@
           <a href="{% url 'admin_dashboard' %}" class="nav-link">Admin Dashboard</a>
         {% endif %}
         <a href="{% url 'browse' %}" class="nav-link active">Browse</a>
+        <!-- ✅ NEW: Favorites Link -->
+        <a href="{% url 'favorites' %}" class="nav-link">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+          </svg>
+          Favorites
+        </a>
         {% if not user.is_superuser %}
           <a href="{% url 'franchisee_dashboard' %}" class="nav-link">My Applications</a>
         {% endif %}
@@ -64,8 +119,17 @@
     {% if franchises %}
       <div class="franchises-grid">
         {% for franchise in franchises %}
-          <a href="{% url 'franchise_detail' franchise.id %}" class="franchise-card" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}">
+          <a href="{% url 'franchise_detail' franchise.id %}" class="franchise-card" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}" style="position: relative;">
             
+            <!-- ✅ NEW: Favorite Button -->
+            <div class="favorite-btn-wrapper">
+              <button class="favorite-btn-browse" data-franchise-id="{{ franchise.id }}" aria-label="Add to favorites">
+                <svg width="20" height="20" viewBox="0 0 20 20">
+                  <path fill="currentColor" fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+
             <!-- Franchise Image/Cover -->
             <div class="franchise-cover">
               {% if franchise.image %}
@@ -252,7 +316,119 @@
       this.style.transform = 'translateY(0) scale(1)';
     });
   });
+
+  // Initialize favorite buttons on page load
+  const favoriteButtons = document.querySelectorAll('.favorite-btn-browse');
+  
+  // Check initial favorite status for each franchise
+  favoriteButtons.forEach(async btn => {
+    const franchiseId = btn.dataset.franchiseId;
+    try {
+      const response = await fetch(`/accounts/favorites/check/${franchiseId}/`);
+      const data = await response.json();
+      if (data.is_favorited) {
+        btn.classList.add('active');
+      }
+    } catch (error) {
+      console.error('Error checking favorite status:', error);
+    }
+  });
+  
+  // Handle favorite toggle
+  favoriteButtons.forEach(btn => {
+    btn.addEventListener('click', async function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const franchiseId = this.dataset.franchiseId;
+      
+      // Disable button during request
+      this.disabled = true;
+      
+      try {
+        const response = await fetch(`/accounts/favorites/toggle/${franchiseId}/`, {
+          method: 'POST',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'added') {
+          this.classList.add('active');
+        } else if (data.status === 'removed') {
+          this.classList.remove('active');
+        }
+        
+        // Show toast notification
+        showToast(data.status === 'added' ? 'success' : 'info', data.message);
+        
+      } catch (error) {
+        console.error('Error toggling favorite:', error);
+        showToast('error', 'Failed to update favorite. Please try again.');
+      } finally {
+        this.disabled = false;
+      }
+    });
+  });
 })();
+
+// Toast notification function
+function showToast(type, message) {
+  // Check if toast container exists, create if not
+  let container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.style.cssText = 'position: fixed; top: 24px; right: 24px; z-index: 10000;';
+    document.body.appendChild(container);
+  }
+  
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.style.cssText = `
+    background: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-out 2.7s forwards;
+    border-left: 4px solid ${type === 'success' ? '#10b981' : '#3b82f6'};
+  `;
+  
+  const icon = type === 'success'
+    ? '<svg width="20" height="20" fill="#10b981" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>'
+    : '<svg width="20" height="20" fill="#3b82f6" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>';
+  
+  toast.innerHTML = `${icon}<span style="font-size: 14px; font-weight: 500;">${message}</span>`;
+  
+  container.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.remove();
+  }, 3000);
+}
+
+// Add animations if not already present
+if (!document.getElementById('toastAnimations')) {
+  const style = document.createElement('style');
+  style.id = 'toastAnimations';
+  style.textContent = `
+    @keyframes slideInRight {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(400px); }
+    }
+  `;
+  document.head.appendChild(style);
+}
 </script>
 {% endblock %}
 

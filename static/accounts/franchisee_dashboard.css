@@ -62,6 +62,9 @@ body {
   font-size: 15px;
   transition: color 0.2s;
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .nav-link:hover,
@@ -81,6 +84,41 @@ body {
 
 .logout-link {
   color: var(--error);
+}
+
+/* ✅ NEW: Favorites Link with Heart Icon */
+.nav-link svg {
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.nav-link:hover svg {
+  transform: scale(1.1);
+}
+
+/* ✅ Special hover effect for Favorites link */
+.nav-link:has(svg path[fill-rule="evenodd"][d*="5.172"]):hover {
+  color: #ef4444;
+}
+
+.nav-link:has(svg path[fill-rule="evenodd"][d*="5.172"]):hover svg {
+  fill: #ef4444;
+  transform: scale(1.15);
+}
+
+.nav-link:has(svg path[fill-rule="evenodd"][d*="5.172"]).active {
+  color: #ef4444;
+}
+
+.nav-link:has(svg path[fill-rule="evenodd"][d*="5.172"]).active svg {
+  fill: #ef4444;
+  animation: heartbeat 1s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1); }
 }
 
 /* Hero Header */

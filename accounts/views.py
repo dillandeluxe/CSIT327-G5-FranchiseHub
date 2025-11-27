@@ -17,7 +17,8 @@ from .models import (
     FranchiseApplication,  # ✅ Make sure this is imported
     SecurityQuestion, 
     Profile, 
-    Notification
+    Notification,
+    UserFavorites  # ✅ Add this to imports
 )
 from .forms import FranchiseForm, FranchiseApplicationForm
 from accounts.utils import get_user_role
@@ -1104,3 +1105,94 @@ def admin_permanent_delete_all_franchises(request):
         
         messages.error(request, f'Error deleting franchises: {str(e)}')
         return redirect('admin_dashboard')
+
+# =========================================================================
+# 12. FAVORITES/WATCHLIST VIEWS (NEW)
+# =========================================================================
+
+@login_required
+def favorites_view(request):
+    """
+    Display user's favorited franchises in a modern, responsive grid layout
+    """
+    # Get all favorites for current user
+    favorites = UserFavorites.objects.filter(
+        user=request.user
+    ).select_related('franchise', 'franchise__franchisor').order_by('-created_at')
+    
+    # Get only active and approved franchises
+    active_favorites = [
+        fav for fav in favorites 
+        if fav.franchise.is_active and fav.franchise.status == 'approved'
+    ]
+    
+    context = {
+        'favorites': active_favorites,
+        'total_count': len(active_favorites)
+    }
+    
+    return render(request, 'accounts/favorites.html', context)
+
+
+@require_http_methods(["POST"])
+@login_required
+def toggle_favorite(request, franchise_id):
+    """
+    AJAX endpoint to add or remove a franchise from favorites
+    Returns JSON response for dynamic UI updates
+    """
+    try:
+        franchise = get_object_or_404(
+            Franchise, 
+            id=franchise_id, 
+            is_active=True, 
+            status='approved'
+        )
+        
+        # Check if already favorited
+        favorite = UserFavorites.objects.filter(
+            user=request.user,
+            franchise=franchise
+        ).first()
+        
+        if favorite:
+            # Remove from favorites
+            favorite.delete()
+            return JsonResponse({
+                'status': 'removed',
+                'message': f'{franchise.name} removed from favorites',
+                'is_favorited': False
+            })
+        else:
+            # Add to favorites
+            UserFavorites.objects.create(
+                user=request.user,
+                franchise=franchise
+            )
+            return JsonResponse({
+                'status': 'added',
+                'message': f'{franchise.name} added to favorites',
+                'is_favorited': True
+            })
+            
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+
+@login_required
+def check_favorite(request, franchise_id):
+    """
+    Check if a franchise is favorited by the current user
+    Used for initial page load state
+    """
+    is_favorited = UserFavorites.objects.filter(
+        user=request.user,
+        franchise_id=franchise_id
+    ).exists()
+    
+    return JsonResponse({
+        'is_favorited': is_favorited
+    })
