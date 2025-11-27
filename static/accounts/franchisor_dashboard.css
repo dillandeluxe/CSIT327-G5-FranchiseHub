@@ -233,47 +233,26 @@ body {
   transform: scale(1.05);
 }
 
-.btn-delete {
-  background: #fee2e2;
-  color: #991b1b;
-}
-
-.btn-delete:hover {
-  background: #fecaca;
-  transform: scale(1.05);
-}
-
-.btn-modern-accept, .btn-modern-reject {
+.btn-approval-edit {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 16px;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
   border-radius: 10px;
-  font-size: 14px;
   font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-modern-accept {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: white;
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
 }
 
-.btn-modern-accept:hover {
+.btn-approval-edit:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
-}
-
-.btn-modern-reject {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-  color: white;
-}
-
-.btn-modern-reject:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
 }
 
 /* Status Badges */
@@ -628,6 +607,36 @@ body {
 
 .app-btn-reject:active {
   transform: translateY(0) scale(1);
+}
+
+/* ✅ Spinner Animation for Loading States */
+@keyframes rotate {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 150;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -35;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -124;
+  }
+}
+
+.spinner {
+  animation: rotate 1s linear infinite;
+}
+
+.spinner .path {
+  stroke: currentColor;
+  stroke-linecap: round;
+  animation: dash 1.5s ease-in-out infinite;
 }
 
 /* Responsive Design */

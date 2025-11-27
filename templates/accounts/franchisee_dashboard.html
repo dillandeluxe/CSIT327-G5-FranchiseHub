@@ -94,6 +94,8 @@
                       <strong>Application Approved!</strong>
                       {% if application.approval_note %}
                         <p>{{ application.approval_note }}</p>
+                      {% else %}
+                        <p>Congratulations! Your application has been accepted by the franchisor.</p>
                       {% endif %}
                     </div>
                   </div>
@@ -106,6 +108,8 @@
                       <strong>Application Not Approved</strong>
                       {% if application.rejection_reason %}
                         <p>{{ application.rejection_reason }}</p>
+                      {% else %}
+                        <p>Unfortunately, your application was not approved at this time.</p>
                       {% endif %}
                     </div>
                   </div>
@@ -116,7 +120,7 @@
                     </svg>
                     <div>
                       <strong>Under Review</strong>
-                      <p>The franchisor is reviewing your application.</p>
+                      <p>The franchisor is reviewing your application. You'll be notified once a decision is made.</p>
                     </div>
                   </div>
                 {% endif %}

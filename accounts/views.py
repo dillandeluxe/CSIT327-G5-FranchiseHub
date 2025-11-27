@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db import transaction
 from django.contrib.auth.decorators import login_required
 from django import forms
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_http_methods
 from django.db.models import Q
 from django.http import JsonResponse
 from django.utils import timezone
@@ -367,14 +367,27 @@ def add_franchise_view(request):
 def delete_franchise(request, franchise_id):
     franchisor = Franchisor.objects.filter(user=request.user).first()
     if not franchisor:
-        messages.error(request, "You are not registered as a franchisor.")  # ✅ Error message
+        messages.error(request, "You are not registered as a franchisor.")
         return redirect('browse')
 
     franchise = get_object_or_404(Franchise, id=franchise_id, franchisor=franchisor)
-    franchise.is_active = False  # Soft delete
+    
+    # ✅ Soft delete - keep in database but mark as inactive
+    franchise.is_active = False
     franchise.save()
+    
+    # ✅ Create notification for admin users about the deletion
+    admin_users = User.objects.filter(is_superuser=True)
+    for admin in admin_users:
+        Notification.objects.create(
+            user=admin,
+            title='Franchise Deleted by Franchisor',
+            message=f'Franchisor "{franchisor.company_name}" deleted franchise "{franchise.name}"',
+            notification_type='general',
+            related_franchise=franchise
+        )
 
-    messages.success(request, f"Franchise '{franchise.name}' removed successfully.")  # ✅ Success message
+    messages.success(request, f"Franchise '{franchise.name}' removed successfully.")
     return redirect('franchisor_dashboard')
 
 
@@ -602,29 +615,26 @@ def admin_dashboard_view(request):
     # 2. Recent Users (Admin, Franchisee, etc)
     recent_users = User.objects.all().order_by('-date_joined')[:5]
     
-    # 3. Active Franchises
+    # 3. Active Franchises (ONLY ACTIVE ONES)
     active_franchises = Franchise.objects.filter(is_active=True).order_by('-created_at')[:5]
-
+    
+    # ✅ 4. Deleted/Soft-deleted Franchises (NEW)
+    deleted_franchises = Franchise.objects.filter(is_active=False).order_by('-updated_at')[:10]
 
     # --- PART 2: ANALYTICS CHART DATA ---
 
     # CHART 1: New Users Per Month (Bar Chart)
-    # Group users by month joined
     users_by_month = User.objects.annotate(month=TruncMonth('date_joined')).values('month').annotate(count=Count('id')).order_by('month')
-    
-    # Prepare data lists for Chart.js
     user_chart_labels = [item['month'].strftime('%b') for item in users_by_month] # e.g. ['Jan', 'Feb']
     user_chart_data = [item['count'] for item in users_by_month]
 
     # CHART 2: Applications Activity (Line Chart) - Replacing "Website Traffic"
-    # Since we don't track page views, we track Applications created per month
     apps_by_month = FranchiseApplication.objects.annotate(month=TruncMonth('created_at')).values('month').annotate(count=Count('id')).order_by('month')
     traffic_chart_labels = [item['month'].strftime('%b') for item in apps_by_month]
     traffic_chart_data = [item['count'] for item in apps_by_month]
 
     # CHART 3: Top Franchises by Popularity (Applications count) - Replacing "Sales"
-    # We count how many applications each franchise has received
-    popular_franchises = Franchise.objects.annotate(app_count=Count('applications')).order_by('-app_count')[:5]
+    popular_franchises = Franchise.objects.filter(is_active=True).annotate(app_count=Count('applications')).order_by('-app_count')[:5]
     sales_chart_labels = [f.name for f in popular_franchises]
     sales_chart_data = [f.app_count for f in popular_franchises]
 
@@ -633,8 +643,9 @@ def admin_dashboard_view(request):
         'recent_approvals': recent_approvals,
         'recent_users': recent_users,
         'active_franchises': active_franchises,
+        'deleted_franchises': deleted_franchises,  # ✅ NEW: Soft-deleted franchises
         
-        # Charts - SEND RAW LISTS (Remove json.dumps here!)
+        # Charts
         'user_chart_labels': user_chart_labels,
         'user_chart_data': user_chart_data,
         
@@ -929,12 +940,15 @@ def get_time_ago(dt):
 @user_passes_test(is_admin, login_url='home')
 def admin_franchise_management(request):
     """Custom Admin Dashboard - Franchise Management"""
-    # Get franchise counts
+    # Get franchise counts (ONLY ACTIVE)
     pending_count = Franchise.objects.filter(status='pending', is_active=True).count()
     approved_count = Franchise.objects.filter(status='approved', is_active=True).count()
     rejected_count = Franchise.objects.filter(status='rejected', is_active=True).count()
     
-    # Get franchises by status
+    # ✅ NEW: Count deleted franchises
+    deleted_count = Franchise.objects.filter(is_active=False).count()
+    
+    # Get franchises by status (ONLY ACTIVE)
     pending_franchises = Franchise.objects.filter(
         status='pending', 
         is_active=True
@@ -950,13 +964,20 @@ def admin_franchise_management(request):
         is_active=True
     ).select_related('franchisor', 'franchisor__user').order_by('-reviewed_at')[:10]
     
+    # ✅ NEW: Get deleted franchises
+    deleted_franchises = Franchise.objects.filter(
+        is_active=False
+    ).select_related('franchisor', 'franchisor__user').order_by('-updated_at')[:20]
+    
     return render(request, 'accounts/admin_franchise_management.html', {
         'pending_count': pending_count,
         'approved_count': approved_count,
         'rejected_count': rejected_count,
+        'deleted_count': deleted_count,  # ✅ NEW
         'pending_franchises': pending_franchises,
         'approved_franchises': approved_franchises,
         'rejected_franchises': rejected_franchises,
+        'deleted_franchises': deleted_franchises,  # ✅ NEW
     })
 
 @login_required
@@ -1005,3 +1026,81 @@ def admin_reject_franchise(request, franchise_id):
         return JsonResponse({'status': 'success', 'message': 'Franchise rejected'})
     
     return redirect('admin_franchise_management')
+
+# ✅ NEW: Permanent Delete Functions for Admin
+@require_http_methods(["DELETE", "POST"])  # Allow both DELETE and POST
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_permanent_delete_franchise(request, franchise_id):
+    """Permanently delete a soft-deleted franchise from database"""
+    try:
+        # Only allow deleting soft-deleted franchises
+        franchise = get_object_or_404(Franchise, id=franchise_id, is_active=False)
+        
+        franchise_name = franchise.name
+        
+        # Permanently delete from database
+        franchise.delete()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'success',
+                'message': f'Franchise "{franchise_name}" permanently deleted'
+            })
+        
+        messages.success(request, f'Franchise "{franchise_name}" permanently deleted.')
+        return redirect('admin_dashboard')
+        
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+        
+        messages.error(request, f'Error deleting franchise: {str(e)}')
+        return redirect('admin_dashboard')
+
+
+@require_http_methods(["DELETE", "POST"])  # Allow both DELETE and POST
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_permanent_delete_all_franchises(request):
+    """Permanently delete ALL soft-deleted franchises from database"""
+    try:
+        # Get all soft-deleted franchises
+        deleted_franchises = Franchise.objects.filter(is_active=False)
+        count = deleted_franchises.count()
+        
+        if count == 0:
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'No deleted franchises found'
+                }, status=404)
+            
+            messages.warning(request, 'No deleted franchises to remove.')
+            return redirect('admin_dashboard')
+        
+        # Permanently delete all
+        deleted_franchises.delete()
+        
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'success',
+                'message': f'{count} franchise(s) permanently deleted',
+                'count': count
+            })
+        
+        messages.success(request, f'{count} franchise(s) permanently deleted.')
+        return redirect('admin_dashboard')
+        
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+        
+        messages.error(request, f'Error deleting franchises: {str(e)}')
+        return redirect('admin_dashboard')

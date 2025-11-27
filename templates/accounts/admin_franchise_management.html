@@ -1,264 +1,391 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Franchise Management | Admin Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'accounts/admin_franchise_management.css' %}">
-</head>
-<body>
-    <!-- Admin Navbar -->
-    <nav class="admin-navbar">
-        <div class="nav-brand">
-            <svg width="28" height="28" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
-            </svg>
-            <span>Admin Dashboard</span>
+
+{% block title %}Franchise Management | Admin Dashboard{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    /* Base styles from admin_dashboard.html */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+        font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: #f8fafc;
+        color: #1a1a1a;
+    }
+    
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 24px;
+    }
+    
+    .page-header {
+        margin-bottom: 32px;
+    }
+    
+    .page-title {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    .page-subtitle {
+        font-size: 16px;
+        color: #6b7280;
+    }
+    
+    /* Stats Overview */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+    
+    .stat-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    }
+    
+    .stat-label {
+        font-size: 13px;
+        color: #9ca3af;
+        font-weight: 500;
+        margin-bottom: 8px;
+    }
+    
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+    
+    .stat-card.pending { border-left: 4px solid #f59e0b; }
+    .stat-card.approved { border-left: 4px solid #10b981; }
+    .stat-card.rejected { border-left: 4px solid #ef4444; }
+    .stat-card.deleted { border-left: 4px solid #6b7280; }
+    
+    /* Section */
+    .section {
+        background: white;
+        border-radius: 16px;
+        border: 1px solid #e5e7eb;
+        padding: 24px;
+        margin-bottom: 32px;
+    }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #f3f4f6;
+    }
+    
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1a1a;
+    }
+    
+    /* Franchise Grid */
+    .franchise-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+        gap: 24px;
+    }
+    
+    .franchise-card {
+        background: white;
+        border-radius: 16px;
+        border: 2px solid #e5e7eb;
+        overflow: hidden;
+        transition: all 0.3s;
+    }
+    
+    .franchise-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+    }
+    
+    .franchise-card.deleted {
+        background: #fef2f2;
+        border-color: #fecaca;
+        opacity: 0.9;
+    }
+    
+    .franchise-image {
+        width: 100%;
+        height: 180px;
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        position: relative;
+    }
+    
+    .franchise-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .franchise-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        backdrop-filter: blur(10px);
+    }
+    
+    .franchise-badge.pending { background: rgba(251, 146, 60, 0.9); color: white; }
+    .franchise-badge.approved { background: rgba(16, 185, 129, 0.9); color: white; }
+    .franchise-badge.rejected { background: rgba(239, 68, 68, 0.9); color: white; }
+    .franchise-badge.deleted { background: rgba(107, 114, 128, 0.9); color: white; }
+    
+    .franchise-body {
+        padding: 20px;
+    }
+    
+    .franchise-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+    }
+    
+    .franchise-card.deleted .franchise-name {
+        color: #991b1b;
+        text-decoration: line-through;
+    }
+    
+    .franchise-owner {
+        font-size: 14px;
+        color: #6b7280;
+        margin-bottom: 16px;
+    }
+    
+    .franchise-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+    
+    .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .meta-label {
+        font-size: 12px;
+        color: #9ca3af;
+        font-weight: 500;
+    }
+    
+    .meta-value {
+        font-size: 14px;
+        color: #1a1a1a;
+        font-weight: 600;
+    }
+    
+    .deleted-notice {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #991b1b;
+        font-size: 13px;
+        font-weight: 500;
+    }
+    
+    .franchise-actions {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .btn {
+        flex: 1;
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        font-family: inherit;
+    }
+    
+    .btn-approve {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+    
+    .btn-reject {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+    
+    .btn-view {
+        background: #f3f4f6;
+        color: #6b7280;
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 24px;
+        color: #9ca3af;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<main class="main-content">
+    <div class="page-header">
+        <h1 class="page-title">Franchise Management</h1>
+        <p class="page-subtitle">Review and manage franchise submissions</p>
+    </div>
+    
+    <!-- Stats Overview -->
+    <div class="stats-row">
+        <div class="stat-card pending">
+            <div class="stat-label">Pending Review</div>
+            <div class="stat-value">{{ pending_count }}</div>
         </div>
-        <div class="nav-menu">
-            <a href="{% url 'admin_dashboard' %}" class="nav-link">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
-                </svg>
-                Dashboard
-            </a>
-            <a href="{% url 'admin_franchise_management' %}" class="nav-link active">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
-                </svg>
-                Franchises
-            </a>
-            <a href="{% url 'browse' %}" class="nav-link">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
-                </svg>
-                Browse
-            </a>
-            <a href="{% url 'logout' %}" class="nav-link logout">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
-                </svg>
-                Logout
-            </a>
+        <div class="stat-card approved">
+            <div class="stat-label">Approved</div>
+            <div class="stat-value">{{ approved_count }}</div>
         </div>
-    </nav>
-
-    <div class="admin-container">
-        <!-- Page Header -->
-        <div class="page-header">
-            <div>
-                <h1 class="page-title">Franchise Management</h1>
-                <p class="page-subtitle">Review and manage franchise submissions</p>
-            </div>
+        <div class="stat-card rejected">
+            <div class="stat-label">Rejected</div>
+            <div class="stat-value">{{ rejected_count }}</div>
         </div>
-
-        <!-- Statistics Cards -->
-        <div class="stats-grid">
-            <div class="stat-card pending-card">
-                <div class="stat-icon">
-                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Pending Review</div>
-                    <div class="stat-value">{{ pending_count }}</div>
-                </div>
-            </div>
-
-            <div class="stat-card approved-card">
-                <div class="stat-icon">
-                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Approved</div>
-                    <div class="stat-value">{{ approved_count }}</div>
-                </div>
-            </div>
-
-            <div class="stat-card rejected-card">
-                <div class="stat-icon">
-                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                    </svg>
-                </div>
-                <div class="stat-content">
-                    <div class="stat-label">Rejected</div>
-                    <div class="stat-value">{{ rejected_count }}</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pending Franchises Section -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
-                    </svg>
-                    Pending Review ({{ pending_count }})
-                </h2>
-            </div>
-
-            {% if pending_franchises %}
-                <div class="franchise-grid">
-                    {% for franchise in pending_franchises %}
-                        <div class="franchise-card" data-franchise-id="{{ franchise.id }}">
-                            <!-- Franchise Image -->
-                            <div class="franchise-image">
-                                {% if franchise.image %}
-                                    <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
-                                {% else %}
-                                    <div class="image-placeholder">
-                                        <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                                        </svg>
-                                    </div>
-                                {% endif %}
-                                <div class="status-badge status-pending">Pending</div>
-                            </div>
-
-                            <!-- Franchise Info -->
-                            <div class="franchise-info">
-                                <h3 class="franchise-name">{{ franchise.name }}</h3>
-                                <div class="franchise-category">{{ franchise.category }}</div>
-                                <div class="franchise-meta">
-                                    <div class="meta-item">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                                            <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span>{{ franchise.formatted_investment }}</span>
-                                    </div>
-                                    <div class="meta-item">
-                                        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                                        </svg>
-                                        <span>{{ franchise.franchisor.company_name }}</span>
-                                    </div>
-                                </div>
-                                <div class="franchise-date">
-                                    Submitted {{ franchise.submitted_at|timesince }} ago
-                                </div>
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="franchise-actions">
-                                <a href="{% url 'admin_franchise_detail' franchise.id %}" class="btn-view">
-                                    <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
-                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"/>
-                                    </svg>
-                                    View Details
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <div class="empty-state">
-                    <svg width="80" height="80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    <p>No pending franchises to review</p>
-                </div>
-            {% endif %}
-        </div>
-
-        <!-- Approved Franchises Section -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                    </svg>
-                    Recently Approved
-                </h2>
-            </div>
-
-            {% if approved_franchises %}
-                <div class="list-view">
-                    {% for franchise in approved_franchises %}
-                        <div class="list-item">
-                            <div class="list-icon">
-                                {% if franchise.image %}
-                                    <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
-                                {% else %}
-                                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                                    </svg>
-                                {% endif %}
-                            </div>
-                            <div class="list-info">
-                                <h4>{{ franchise.name }}</h4>
-                                <p>{{ franchise.category }} • Reviewed {{ franchise.reviewed_at|timesince }} ago</p>
-                            </div>
-                            <div class="status-badge status-approved">Approved</div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="empty-message">No approved franchises yet.</p>
-            {% endif %}
-        </div>
-
-        <!-- Rejected Franchises Section -->
-        <div class="section">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-                    </svg>
-                    Recently Rejected
-                </h2>
-            </div>
-
-            {% if rejected_franchises %}
-                <div class="list-view">
-                    {% for franchise in rejected_franchises %}
-                        <div class="list-item">
-                            <div class="list-icon">
-                                {% if franchise.image %}
-                                    <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
-                                {% else %}
-                                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                                    </svg>
-                                {% endif %}
-                            </div>
-                            <div class="list-info">
-                                <h4>{{ franchise.name }}</h4>
-                                <p>{{ franchise.category }} • Reviewed {{ franchise.reviewed_at|timesince }} ago</p>
-                            </div>
-                            <div class="status-badge status-rejected">Rejected</div>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="empty-message">No rejected franchises.</p>
-            {% endif %}
+        <div class="stat-card deleted">
+            <div class="stat-label">Deleted</div>
+            <div class="stat-value">{{ deleted_count }}</div>
         </div>
     </div>
-
-    <script src="{% static 'accounts/modern_auth.js' %}"></script>
-    <script>
-        // Page load animations
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.franchise-card, .stat-card');
-            cards.forEach((card, index) => {
-                setTimeout(() => {
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 50);
-            });
-        });
-    </script>
-</body>
-</html>
+    
+    <!-- Pending Franchises -->
+    {% if pending_franchises %}
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Pending Review ({{ pending_count }})</h2>
+        </div>
+        <div class="franchise-grid">
+            {% for franchise in pending_franchises %}
+            <div class="franchise-card">
+                <div class="franchise-image">
+                    {% if franchise.image %}
+                        <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
+                    {% else %}
+                        <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                        </svg>
+                    {% endif %}
+                    <div class="franchise-badge pending">Pending</div>
+                </div>
+                <div class="franchise-body">
+                    <h3 class="franchise-name">{{ franchise.name }}</h3>
+                    <p class="franchise-owner">by {{ franchise.franchisor.company_name }}</p>
+                    <div class="franchise-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Category</span>
+                            <span class="meta-value">{{ franchise.category }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Investment</span>
+                            <span class="meta-value">₱{{ franchise.investment|floatformat:0 }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Submitted</span>
+                            <span class="meta-value">{{ franchise.submitted_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Applications</span>
+                            <span class="meta-value">{{ franchise.applications.count }}</span>
+                        </div>
+                    </div>
+                    <div class="franchise-actions">
+                        <form method="POST" action="{% url 'admin_approve_franchise' franchise.id %}" style="flex:1;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-approve">Approve</button>
+                        </form>
+                        <button type="button" class="btn btn-reject" onclick="openRejectModal('{{ franchise.id }}')">Reject</button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- ✅ Deleted Franchises -->
+    {% if deleted_franchises %}
+    <div class="section">
+        <div class="section-header">
+            <h2 class="section-title">Deleted Franchises ({{ deleted_count }})</h2>
+        </div>
+        <div class="franchise-grid">
+            {% for franchise in deleted_franchises %}
+            <div class="franchise-card deleted">
+                <div class="franchise-image">
+                    {% if franchise.image %}
+                        <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" style="opacity: 0.6;">
+                    {% else %}
+                        <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20" style="opacity: 0.3;">
+                            <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                        </svg>
+                    {% endif %}
+                    <div class="franchise-badge deleted">Deleted</div>
+                </div>
+                <div class="franchise-body">
+                    <div class="deleted-notice">
+                        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Deleted by franchisor on {{ franchise.updated_at|date:"M d, Y" }}
+                    </div>
+                    <h3 class="franchise-name">{{ franchise.name }}</h3>
+                    <p class="franchise-owner">by {{ franchise.franchisor.company_name }}</p>
+                    <div class="franchise-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">Category</span>
+                            <span class="meta-value">{{ franchise.category }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Status Before Delete</span>
+                            <span class="meta-value">{{ franchise.get_status_display }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Applications Affected</span>
+                            <span class="meta-value">{{ franchise.applications.count }}</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">Deleted</span>
+                            <span class="meta-value">{{ franchise.updated_at|timesince }} ago</span>
+                        </div>
+                    </div>
+                    <div class="franchise-actions">
+                        <a href="{% url 'admin_franchise_detail' franchise.id %}" class="btn btn-view">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</main>
+{% endblock %}

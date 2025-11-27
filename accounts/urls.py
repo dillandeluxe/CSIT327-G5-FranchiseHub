@@ -48,4 +48,7 @@ urlpatterns = [
     path('admin/franchise/<uuid:franchise_id>/', views.admin_franchise_detail, name='admin_franchise_detail'),
     path('admin/franchise/<uuid:franchise_id>/approve/', views.admin_approve_franchise, name='admin_approve_franchise'),
     path('admin/franchise/<uuid:franchise_id>/reject/', views.admin_reject_franchise, name='admin_reject_franchise'),
+    # ✅ NEW: Permanent delete routes for admin
+    path('admin/franchise/permanent-delete/<uuid:franchise_id>/', views.admin_permanent_delete_franchise, name='admin_permanent_delete_franchise'),
+    path('admin/franchise/permanent-delete-all/', views.admin_permanent_delete_all_franchises, name='admin_permanent_delete_all_franchises'),
 ]
