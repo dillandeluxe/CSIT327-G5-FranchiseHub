@@ -9,6 +9,8 @@ from django.views.decorators.http import require_POST
 from django.db.models import Q
 from django.http import JsonResponse
 from django.utils import timezone
+from django.db import IntegrityError
+from django.contrib.auth import update_session_auth_hash
 
 from .models import (
     Franchisee, 
@@ -1005,3 +1007,187 @@ def admin_reject_franchise(request, franchise_id):
         return JsonResponse({'status': 'success', 'message': 'Franchise rejected'})
     
     return redirect('admin_franchise_management')
+
+# =========================================================================
+# 12. CUSTOM USER MANAGEMENT (CRUD)
+# =========================================================================
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_user_list(request):
+    """
+    Lists all users with filters.
+    """
+    # Base Query
+    users = User.objects.all().order_by('-date_joined')
+
+    # Simple Filtering Logic
+    staff_filter = request.GET.get('staff')
+    superuser_filter = request.GET.get('superuser')
+    active_filter = request.GET.get('active')
+
+    if staff_filter == 'yes':
+        users = users.filter(is_staff=True)
+    elif staff_filter == 'no':
+        users = users.filter(is_staff=False)
+
+    if superuser_filter == 'yes':
+        users = users.filter(is_superuser=True)
+    elif superuser_filter == 'no':
+        users = users.filter(is_superuser=False)
+
+    if active_filter == 'yes':
+        users = users.filter(is_active=True)
+    elif active_filter == 'no':
+        users = users.filter(is_active=False)
+
+    context = {
+        'users': users,
+        'count': users.count(),
+        'filters': {
+            'staff': staff_filter,
+            'superuser': superuser_filter,
+            'active': active_filter
+        }
+    }
+    return render(request, 'accounts/userlist.html', context)
+
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_add_user(request):
+    """
+    Creates a new user with Username and Password.
+    """
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # Basic Validation
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'accounts/adduser.html')
+        
+        if len(password) < 8:
+            messages.error(request, "Password must be at least 8 characters.")
+            return render(request, 'accounts/adduser.html')
+
+        try:
+            # ✅ Use create_user to handle password hashing automatically
+            User.objects.create_user(username=username, password=password)
+            messages.success(request, f"User '{username}' was added successfully.")
+            
+            if 'save_add_another' in request.POST:
+                return redirect('admin_add_user')
+            elif 'save_continue' in request.POST:
+                # We need the ID of the user just created to redirect to edit
+                new_user = User.objects.get(username=username)
+                return redirect('admin_change_user', user_id=new_user.id)
+            else:
+                return redirect('admin_user_list')
+
+        except IntegrityError:
+            messages.error(request, "A user with that username already exists.")
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+
+    return render(request, 'accounts/adduser.html')
+
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_change_user(request, user_id):
+    """
+    Edits an existing user (Personal Info & Permissions).
+    """
+    target_user = get_object_or_404(User, pk=user_id)
+
+    if request.method == 'POST':
+        try:
+            # 1. Update Basic Fields
+            target_user.username = request.POST.get('username')
+            target_user.first_name = request.POST.get('first_name', '')
+            target_user.last_name = request.POST.get('last_name', '')
+            target_user.email = request.POST.get('email', '')
+
+            # 2. Update Permissions (Checkboxes don't send 'False' if unchecked, so we check for existence)
+            target_user.is_active = 'is_active' in request.POST
+            target_user.is_staff = 'is_staff' in request.POST
+            target_user.is_superuser = 'is_superuser' in request.POST
+
+            target_user.save()
+            messages.success(request, f"User '{target_user.username}' was changed successfully.")
+
+            if 'save_add_another' in request.POST:
+                return redirect('admin_add_user')
+            elif 'save_continue' in request.POST:
+                return redirect('admin_change_user', user_id=target_user.id)
+            else:
+                return redirect('admin_user_list')
+
+        except IntegrityError:
+            messages.error(request, "Username already exists.")
+
+    return render(request, 'accounts/changeuser.html', {'target_user': target_user})
+
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_delete_user(request, user_id):
+    """
+    Deletes a user.
+    """
+    if request.method == 'POST':
+        user_to_delete = get_object_or_404(User, pk=user_id)
+        
+        # Prevent deleting yourself
+        if user_to_delete == request.user:
+            messages.error(request, "You cannot delete your own account while logged in.")
+            return redirect('admin_change_user', user_id=user_id)
+
+        username = user_to_delete.username
+        user_to_delete.delete()
+        messages.success(request, f"User '{username}' was deleted successfully.")
+        
+    return redirect('admin_user_list')
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_index_view(request):
+    """
+    The main landing page for the Custom Admin (Lists all modules).
+    """
+    return render(request, 'accounts/mainadmin.html')
+
+@login_required
+@user_passes_test(is_admin, login_url='home')
+def admin_password_change(request):
+    """Allows the logged-in admin to change their own password."""
+    if request.method == 'POST':
+        old_password = request.POST.get('old_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        # 1. Validate Old Password
+        if not request.user.check_password(old_password):
+            messages.error(request, "Your old password was incorrect.")
+        
+        # 2. Validate Match
+        elif new_password != confirm_password:
+            messages.error(request, "New passwords do not match.")
+        
+        # 3. Validate Length
+        elif len(new_password) < 8:
+            messages.error(request, "New password must be at least 8 characters.")
+        
+        # 4. Success!
+        else:
+            request.user.set_password(new_password)
+            request.user.save()
+            # Important: This keeps the user logged in after password change
+            update_session_auth_hash(request, request.user) 
+            messages.success(request, "Your password was changed successfully.")
+            return redirect('admin_index')
+            
+    return render(request, 'accounts/passwordchange.html')

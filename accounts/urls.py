@@ -48,4 +48,12 @@ urlpatterns = [
     path('admin/franchise/<uuid:franchise_id>/', views.admin_franchise_detail, name='admin_franchise_detail'),
     path('admin/franchise/<uuid:franchise_id>/approve/', views.admin_approve_franchise, name='admin_approve_franchise'),
     path('admin/franchise/<uuid:franchise_id>/reject/', views.admin_reject_franchise, name='admin_reject_franchise'),
+
+    # ✅ CUSTOM USER MANAGEMENT (Only for Superusers)
+    path('admin/index/', views.admin_index_view, name='admin_index'), # ✅ Main Admin Menu
+    path('admin/users/', views.admin_user_list, name='admin_user_list'),
+    path('admin/users/add/', views.admin_add_user, name='admin_add_user'),
+    path('admin/users/<int:user_id>/change/', views.admin_change_user, name='admin_change_user'),
+    path('admin/users/<int:user_id>/delete/', views.admin_delete_user, name='admin_delete_user'),
+    path('admin/password_change/', views.admin_password_change, name='admin_password_change'),
 ]

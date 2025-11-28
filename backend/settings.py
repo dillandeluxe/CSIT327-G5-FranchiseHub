@@ -103,10 +103,18 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # --------------------------------------------------------------------
 # DATABASE (Supabase)
 # --------------------------------------------------------------------
+raw_db_url = os.environ.get("DATABASE_URL")
+ 
+if raw_db_url is None:
+    raise ValueError("❌ ERROR: DATABASE_URL environment variable is missing!")
+ 
+# Force Django to use Transaction Pooler instead of Session Pooler
+safe_db_url = raw_db_url.replace(":5432/", ":6543/")
+ 
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL"),
-        conn_max_age=600,
+        default=safe_db_url,
+        conn_max_age=0,
         ssl_require=True,
     )
 }

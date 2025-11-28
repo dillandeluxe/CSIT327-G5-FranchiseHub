@@ -1,0 +1,351 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change user | System Admin</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* ========================================= */
+        /* 1. MODERN ADMIN NAVBAR STYLES            */
+        /* ========================================= */
+        .admin-navbar * {
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .admin-navbar {
+            background: linear-gradient(135deg, #ff6600 0%, #ff8c2b 100%);
+            box-shadow: 0 4px 20px rgba(255, 102, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            color: white;
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .brand-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-link:hover {
+            background: rgba(255,255,255,0.15);
+            color: white;
+        }
+
+        .nav-link.active {
+            background: rgba(255,255,255,0.25);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-link.logout {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            margin-left: 12px;
+        }
+        .nav-link.logout:hover {
+            background: #ef4444;
+            border-color: #ef4444;
+        }
+
+        /* Responsive */
+        @media (max-width: 1100px) {
+            .nav-link { font-size: 12px; padding: 8px 10px; }
+            .nav-link svg { display: none; }
+        }
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; height: auto; padding: 16px; gap: 16px; }
+            .nav-menu { flex-wrap: wrap; justify-content: center; }
+        }
+
+        /* ========================================= */
+        /* 2. FORM & PAGE STYLES                    */
+        /* ========================================= */
+        .django-module-header { background-color: #ed8936; }
+        .django-button-default { background-color: #c05621; }
+        .django-button-default:hover { background-color: #9c4221; }
+        .form-row { border-bottom: 1px solid #eee; }
+        .form-row:last-child { border-bottom: none; }
+        .help-text { color: #666; font-size: 11px; margin-top: 4px; }
+        .field-label { font-size: 13px; font-weight: bold; color: #333; }
+        .section-header { background-color: #ed8936; color: white; padding: 8px 12px; font-size: 13px; text-transform: uppercase; font-weight: bold; }
+        .sidebar-link.active { background-color: #ed8936; color: white; }
+    </style>
+</head>
+<body class="bg-white font-sans antialiased text-gray-800">
+
+    <nav class="admin-navbar">
+        <div class="nav-container">
+            <a href="{% url 'admin_index' %}" class="nav-brand">
+                <div class="brand-icon">
+                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <span class="brand-text">System Admin</span>
+            </a>
+
+            <div class="nav-menu">
+                
+                <a href="{% url 'admin_index' %}" class="nav-link active">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
+                    Admin
+                </a>
+
+                <a href="{% url 'admin_dashboard' %}" class="nav-link">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                    OVERVIEW
+                </a>
+
+                <a href="{% url 'admin_franchise_management' %}" class="nav-link">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/><path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/></svg>
+                    Franchises
+                </a>
+
+                
+
+                <a href="{% url 'browse' %}" class="nav-link">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4.083 9h1.946c.089-1.546.383-2.97.837-4.118A6.002 6.002 0 004.083 9zM10 2a8 8 0 100 16 8 8 0 000-16zm0 2c-.076 0-.232.032-.465.262-.238.234-.497.623-.737 1.182-.389.907-.67 2.142-.766 3.556h3.936c-.096-1.414-.377-2.649-.766-3.556-.24-.56-.5-.948-.737-1.182C10.232 4.032 10.076 4 10 4zm3.971 5c-.089-1.546-.383-2.97-.837-4.118A6.002 6.002 0 0115.917 9h-1.946zm-2.003 2H8.032c.096 1.414.377 2.649.766 3.556.24.56.5.948.737 1.182.233.23.389.262.465.262.076 0 .232-.032.465-.262.238-.234.497-.623.737-1.182.389-.907.67-2.142.766-3.556zm1.166 4.118c.454-1.147.748-2.572.837-4.118h1.946a6.002 6.002 0 01-2.783 4.118zm-6.268 0C6.412 13.97 6.118 12.546 6.03 11H4.083a6.002 6.002 0 002.783 4.118z" clip-rule="evenodd"/></svg>
+                    View Site
+                </a>
+
+                <a href="{% url 'admin_password_change' %}" class="nav-link">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/></svg>
+                    Change Password
+                </a>
+
+                <a href="{% url 'logout' %}" class="nav-link logout">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/></svg>
+                    Log Out
+                </a>
+            </div>
+        </div>
+    </nav>
+    <div class="bg-orange-50 border-b border-orange-100 px-8 py-3 text-xs font-medium text-gray-500">
+        <div class="max-w-7xl mx-auto">
+            <a href="{% url 'admin_dashboard' %}" class="text-orange-700 hover:underline">Home</a>
+            <span class="mx-2">&rsaquo;</span>
+            <a href="{% url 'admin_user_list' %}" class="text-orange-700 hover:underline">Users</a>
+            <span class="mx-2">&rsaquo;</span>
+            <span class="text-gray-500">{{ target_user.username }}</span>
+        </div>
+    </div>
+
+    <div class="flex min-h-screen">
+        
+        <aside class="w-64 bg-gray-50 border-r border-gray-200 hidden md:block flex-shrink-0">
+            <div class="mb-4">
+                <div class="django-module-header px-3 py-2 text-white text-xs font-bold uppercase tracking-wider">Authentication and Authorization</div>
+                <ul>
+                    <li>
+                        <a href="{% url 'admin_user_list' %}" class="sidebar-link active block px-3 py-2 text-sm font-semibold flex justify-between items-center">
+                            <span>Users</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="flex-grow p-8 pb-20">
+            <div class="flex justify-between items-center mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800 font-[Poppins]">Change user</h1>
+                    <div class="text-lg text-gray-600 font-normal mt-1">{{ target_user.username }}</div>
+                </div>
+            </div>
+
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="mb-4 p-3 rounded border text-sm {{ message.tags }} bg-green-50 text-green-700 border-green-200">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="w-full max-w-4xl">
+                {% csrf_token %}
+                
+                <div class="form-row py-4 border-t border-gray-200">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-1"><label class="field-label required">Username:</label></div>
+                        <div class="md:col-span-3">
+                            <input type="text" name="username" value="{{ target_user.username }}" class="w-full md:w-96 border border-gray-300 rounded-sm px-3 py-1.5 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row py-4">
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="md:col-span-1"><label class="field-label">Password:</label></div>
+                        <div class="md:col-span-3">
+                            <span class="text-xs text-gray-500">
+                                <strong>Raw passwords are not stored.</strong><br>
+                                <span class="bg-gray-100 px-1">password hash...</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 mb-0 section-header rounded-t-sm">Personal info</div>
+                <div class="border border-gray-200 border-t-0 rounded-b-sm bg-white mb-8">
+                    
+                    <div class="form-row p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1"><label class="field-label">First name:</label></div>
+                            <div class="md:col-span-3">
+                                <input type="text" name="first_name" value="{{ target_user.first_name }}" class="w-full md:w-96 border border-gray-300 rounded-sm px-3 py-1.5 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1"><label class="field-label">Last name:</label></div>
+                            <div class="md:col-span-3">
+                                <input type="text" name="last_name" value="{{ target_user.last_name }}" class="w-full md:w-96 border border-gray-300 rounded-sm px-3 py-1.5 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row p-4 border-b-0">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1"><label class="field-label">Email address:</label></div>
+                            <div class="md:col-span-3">
+                                <input type="email" name="email" value="{{ target_user.email }}" class="w-full md:w-96 border border-gray-300 rounded-sm px-3 py-1.5 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-orange-400 focus:border-orange-400">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-8 mb-0 section-header rounded-t-sm">Permissions</div>
+                <div class="border border-gray-200 border-t-0 rounded-b-sm bg-white mb-8">
+                    
+                    <div class="form-row p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1"></div>
+                            <div class="md:col-span-3">
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" name="is_active" {% if target_user.is_active %}checked{% endif %} class="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300 rounded">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label class="font-bold text-gray-700 block">Active</label>
+                                        <span class="text-gray-500 text-xs block mt-1">Designates whether this user should be treated as active.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row p-4">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1"></div>
+                            <div class="md:col-span-3">
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" name="is_staff" {% if target_user.is_staff %}checked{% endif %} class="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300 rounded">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label class="font-bold text-gray-700 block">Staff status</label>
+                                        <span class="text-gray-500 text-xs block mt-1">Designates whether the user can log into the admin site.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row p-4 border-b-0">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="md:col-span-1"></div>
+                            <div class="md:col-span-3">
+                                <div class="flex items-start">
+                                    <div class="flex items-center h-5">
+                                        <input type="checkbox" name="is_superuser" {% if target_user.is_superuser %}checked{% endif %} class="focus:ring-orange-500 h-4 w-4 text-orange-600 border-gray-300 rounded">
+                                    </div>
+                                    <div class="ml-3 text-sm">
+                                        <label class="font-bold text-gray-700 block">Superuser status</label>
+                                        <span class="text-gray-500 text-xs block mt-1">Grants all permissions without explicit assignment.</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="fixed bottom-0 left-0 w-full bg-gray-100 border-t border-gray-300 p-3 z-10 md:pl-72 flex justify-between items-center">
+                    
+                    <a href="javascript:void(0)" onclick="if(confirm('Are you sure you want to delete {{ target_user.username }}?')) { document.getElementById('delete-form').submit(); }" class="text-red-600 hover:text-red-800 text-xs font-bold uppercase tracking-wider px-4 py-2 border border-transparent hover:bg-red-50 rounded-sm transition-colors">
+                        Delete
+                    </a>
+
+                    <div class="flex items-center space-x-3">
+                        <button type="submit" name="save" class="django-button-default text-white px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider shadow-sm transition-colors">Save</button>
+                        <button type="submit" name="save_add_another" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider border border-gray-300 shadow-sm transition-colors">Save and add another</button>
+                        <button type="submit" name="save_continue" class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-sm text-xs font-bold uppercase tracking-wider border border-gray-300 shadow-sm transition-colors">Save and continue editing</button>
+                    </div>
+                </div>
+            </form>
+
+            <form id="delete-form" action="{% url 'admin_delete_user' target_user.id %}" method="POST" style="display: none;">
+                {% csrf_token %}
+            </form>
+
+        </main>
+    </div>
+</body>
+</html>
