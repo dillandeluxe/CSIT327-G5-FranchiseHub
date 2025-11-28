@@ -172,6 +172,15 @@
         margin-bottom: 16px;
     }
     
+    .franchise-location {
+        font-size: 14px;
+        color: #4b5563;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
     .franchise-meta {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -300,6 +309,17 @@
                 <div class="franchise-body">
                     <h3 class="franchise-name">{{ franchise.name }}</h3>
                     <p class="franchise-owner">by {{ franchise.franchisor.company_name }}</p>
+                    
+                    <!-- ✅ NEW: Location Display -->
+                    {% if franchise.franchisor.location %}
+                        <p class="franchise-location">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                            </svg>
+                            {{ franchise.franchisor.location }}
+                        </p>
+                    {% endif %}
+                    
                     <div class="franchise-meta">
                         <div class="meta-item">
                             <span class="meta-label">Category</span>

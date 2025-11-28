@@ -183,18 +183,30 @@ def privacy_view(request):
 
 @login_required
 def browse(request):
-    """Displays ONLY APPROVED franchises for franchisees."""
+    """Enhanced browse with location filtering - ONLY APPROVED franchises."""
     q = request.GET.get('q', '').strip()
+    location_filter = request.GET.get('location', '').strip()
+    
     # ✅ ONLY SHOW APPROVED FRANCHISES
-    qs = Franchise.objects.filter(is_active=True, status='approved')
+    qs = Franchise.objects.filter(is_active=True, status='approved').select_related('franchisor')
+    
     if q:
         qs = qs.filter(
             Q(name__icontains=q) |
             Q(category__icontains=q) |
             Q(description__icontains=q) |
             Q(franchisor__company_name__icontains=q) |
-            Q(franchisor__country__icontains=q)
+            Q(franchisor__country__icontains=q) |
+            Q(franchisor__location__icontains=q)  # ✅ Include location in search
         )
+    
+    # ✅ Location filtering
+    if location_filter:
+        qs = qs.filter(
+            Q(franchisor__location__icontains=location_filter) |
+            Q(franchisor__country__icontains=location_filter)
+        )
+    
     franchises = qs.order_by('-created_at')
 
     applied_franchise_ids = []
@@ -207,6 +219,7 @@ def browse(request):
     response = render(request, 'accounts/browse.html', {
         'franchises': franchises,
         'q': q,
+        'location_filter': location_filter,
         'applied_franchise_ids': applied_franchise_ids,
     })
     
@@ -349,11 +362,20 @@ def add_franchise_view(request):
 
     if request.method == 'POST':
         form = FranchiseForm(request.POST, request.FILES)
+        # ✅ Handle location field separately
+        location = request.POST.get('location', '').strip()
+        
         if form.is_valid():
             franchise = form.save(commit=False)
             franchise.franchisor = franchisor
             franchise.status = 'pending'  # ✅ ALWAYS PENDING
             franchise.save()
+            
+            # ✅ Update franchisor location if provided
+            if location and location != franchisor.location:
+                franchisor.location = location
+                franchisor.save(update_fields=['location'])
+            
             messages.success(request, f"Franchise '{franchise.name}' submitted successfully! It is now awaiting admin approval.")
             return redirect('franchisor_dashboard')
         else:

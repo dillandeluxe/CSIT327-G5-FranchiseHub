@@ -1,5 +1,5 @@
 from django import forms
-from .models import Profile, Franchise, FranchiseApplication
+from .models import Profile, Franchise, FranchiseApplication, Franchisor  # ✅ ADD Franchisor import
 
 class ProfileForm(forms.ModelForm):
     class Meta:
@@ -42,6 +42,40 @@ class FranchiseForm(forms.ModelForm):
             'description': 'Description',
             'image': 'Franchise Image/Logo'
         }
+
+# ✅ NEW: Franchisor Form with Location
+class FranchisorForm(forms.ModelForm):
+    class Meta:
+        model = Franchisor  # ✅ Now this will work since Franchisor is imported
+        fields = ['company_name', 'email', 'phone', 'country', 'location']
+        widgets = {
+            'company_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter company name'
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'company@example.com'
+            }),
+            'phone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '+1 234 567 8900'
+            }),
+            'country': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'e.g., Philippines, United States'
+            }),
+            'location': forms.TextInput(attrs={
+                'class': 'form-control location-input',
+                'placeholder': 'e.g., Manila, Philippines or New York, NY, USA'
+            })
+        }
+    
+    def clean_location(self):
+        location = self.cleaned_data.get('location')
+        if location and len(location.strip()) < 2:
+            raise forms.ValidationError("Location must be at least 2 characters long.")
+        return location
 
 class FranchiseApplicationForm(forms.ModelForm):
     """Form for franchisee applications"""

@@ -5,231 +5,777 @@
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
-<link rel="stylesheet" href="{% static 'accounts/franchisee_dashboard.css' %}">
+<style>
+:root {
+  --primary: #d66900;
+  --primary-hover: #b35c04;
+  --primary-light: #fff7ed;
+  --success: #10b981;
+  --error: #ef4444;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --shadow: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ===== NAVBAR ===== */
+.modern-navbar {
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  padding: 16px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+.brand-logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+}
+
+.brand-logo span {
+  color: var(--primary);
+}
+
+.nav-menu {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+}
+
+.nav-link {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: var(--primary);
+}
+
+/* ===== HERO IMAGE ===== */
+.detail-hero {
+  height: 500px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  inset: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.hero-title {
+  font-size: 48px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: 20px;
+  opacity: 0.95;
+  font-weight: 400;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.detail-container {
+  max-width: 1200px;
+  margin: -60px auto 0;
+  padding: 0 24px;
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== TOP CARD ===== */
+.detail-top-card {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.detail-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.detail-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Location Section */
+.location-section {
+  padding: 24px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 16px;
+  border: 2px solid #fbbf24;
+}
+
+.location-icon {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #92400e;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.location-icon svg {
+  flex-shrink: 0;
+}
+
+.location-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.location-country {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* Franchisor Card */
+.franchisor-card {
+  padding: 24px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-radius: 16px;
+  border: 2px solid #86efac;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.franchisor-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 32px;
+  flex-shrink: 0;
+  box-shadow: 0 8px 24px rgba(214, 105, 0, 0.3);
+}
+
+.franchisor-info h4 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.franchisor-info p {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Stats Grid */
+.stats-grid-detail {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.stat-item {
+  padding: 20px;
+  background: var(--bg);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.stat-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ===== DESCRIPTION SECTION ===== */
+.description-section {
+  background: var(--card-bg);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: var(--shadow);
+  margin-bottom: 60px;
+}
+
+.section-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-title svg {
+  color: var(--primary);
+}
+
+.description-text {
+  font-size: 16px;
+  color: var(--text-muted);
+  line-height: 1.8;
+}
+
+/* ===== CTA SECTION ===== */
+.cta-section {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  border-radius: 24px;
+  padding: 48px;
+  color: white;
+  text-align: center;
+  margin-bottom: 60px;
+  box-shadow: 0 20px 60px rgba(214, 105, 0, 0.3);
+}
+
+.cta-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.cta-subtitle {
+  font-size: 18px;
+  opacity: 0.95;
+  margin-bottom: 32px;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 16px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  border: none;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: white;
+  color: var(--primary);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ===== BACK BUTTON ===== */
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  margin-bottom: 32px;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.back-button:hover {
+  background: var(--bg);
+  color: var(--text);
+  border-color: var(--primary);
+  gap: 12px;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .detail-top-card {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .modern-navbar {
+    padding: 14px 24px;
+  }
+
+  .brand-logo {
+    font-size: 20px;
+  }
+
+  .nav-menu {
+    gap: 16px;
+  }
+
+  .nav-link {
+    font-size: 13px;
+  }
+
+  .detail-hero {
+    height: 350px;
+  }
+
+  .hero-title {
+    font-size: 32px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .detail-container {
+    padding: 0 16px;
+    margin: -40px auto 0;
+  }
+
+  .detail-top-card,
+  .description-section,
+  .cta-section {
+    padding: 24px;
+  }
+
+  .section-title {
+    font-size: 24px;
+  }
+
+  .cta-title {
+    font-size: 26px;
+  }
+
+  .cta-subtitle {
+    font-size: 16px;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+  }
+
+  .btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .stats-grid-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .franchisor-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .detail-hero {
+    height: 300px;
+  }
+
+  .hero-title {
+    font-size: 24px;
+  }
+
+  .detail-container {
+    padding: 0 12px;
+  }
+
+  .detail-top-card,
+  .description-section {
+    padding: 20px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .cta-section {
+    padding: 32px 20px;
+  }
+
+  .cta-title {
+    font-size: 22px;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.detail-top-card,
+.description-section,
+.cta-section {
+  animation: fadeInUp 0.6s ease-out;
+}
+</style>
 {% endblock %}
 
 {% block content %}
-  <!-- Modern Navbar -->
-  <nav class="modern-navbar">
-    <a href="{% url 'home' %}" class="brand-logo">
-      <span>Franchise</span>Hub
+<!-- Modern Navbar -->
+<nav class="modern-navbar">
+  <a href="{% url 'browse' %}" class="brand-logo">
+    <span>Franchise</span>Hub
+  </a>
+  <div class="nav-menu">
+    <a href="{% url 'browse' %}" class="nav-link">Browse</a>
+    <a href="{% url 'favorites' %}" class="nav-link">
+      <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+      </svg>
+      Favorites
     </a>
-    <div class="nav-menu">
-      {% if user.is_authenticated %}
-        <a href="{% url 'browse' %}" class="nav-link">Browse</a>
-        {% if not user.is_superuser %}
-          <a href="{% url 'franchisee_dashboard' %}" class="nav-link">My Applications</a>
+    <a href="{% url 'franchisee_dashboard' %}" class="nav-link">My Applications</a>
+    <a href="{% url 'profile' %}" class="nav-link">Profile</a>
+    <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
+  </div>
+</nav>
+
+<!-- Hero Image -->
+<div class="detail-hero">
+  {% if franchise.image %}
+    <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" class="hero-image">
+  {% else %}
+    <div class="hero-image" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);"></div>
+  {% endif %}
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-badge">{{ franchise.category }}</div>
+    <h1 class="hero-title">{{ franchise.name }}</h1>
+    <p class="hero-subtitle">{{ franchise.franchisor.company_name }}</p>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="detail-container">
+  <!-- Back Button -->
+  <a href="{% url 'browse' %}" class="back-button">
+    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+      <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+    </svg>
+    Back to Browse
+  </a>
+
+  <!-- Top Card with Location, Franchisor, and Stats -->
+  <div class="detail-top-card">
+    <div class="detail-left">
+      <!-- ✅ LOCATION SECTION (PROMINENT) -->
+      <div class="location-section">
+        <div class="location-icon">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+          </svg>
+          Business Location
+        </div>
+        <div class="location-text">{{ franchise.franchisor.location }}</div>
+        {% if franchise.franchisor.country %}
+          <div class="location-country">{{ franchise.franchisor.country }}</div>
         {% endif %}
-        <a href="{% url 'profile' %}" class="nav-link">Profile</a>
-        <a href="{% url 'logout' %}" class="nav-link logout-link">Logout</a>
-      {% else %}
-        <a href="{% url 'login' %}" class="nav-link">Login</a>
-        <a href="{% url 'register' %}" class="nav-link signup-link">Get Started</a>
-      {% endif %}
-    </div>
-  </nav>
+      </div>
 
-  <!-- Main Content -->
-  <div class="dashboard-container">
-    <div class="detail-container">
-      <!-- Back Button -->
-      <a href="{% url 'browse' %}" class="back-link">
-        <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
-        </svg>
-        Back to Browse
-      </a>
-
-      <!-- Franchise Detail Card -->
-      <div class="detail-card">
-        <!-- Franchise Hero Image -->
-        {% if franchise.image %}
-          <div class="detail-hero-image">
-            <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}">
-          </div>
-        {% endif %}
-
-        <div class="detail-content">
-          <!-- Header Section -->
-          <div class="detail-header">
-            <div>
-              <h1 class="detail-title">{{ franchise.name }}</h1>
-              <span class="detail-category">{{ franchise.category }}</span>
-            </div>
-            <div class="detail-investment">
-              <span class="investment-label">Investment Required</span>
-              <span class="investment-amount">{{ franchise.formatted_investment }}</span>
-            </div>
-          </div>
-
-          <!-- Meta Information -->
-          <div class="detail-meta-grid">
-            <div class="meta-card">
-              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
-              </svg>
-              <div>
-                <span class="meta-label">Established</span>
-                <span class="meta-value">{{ franchise.created_at|date:"Y" }}</span>
-              </div>
-            </div>
-
-            <div class="meta-card">
-              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
-              </svg>
-              <div>
-                <span class="meta-label">Category</span>
-                <span class="meta-value">{{ franchise.category }}</span>
-              </div>
-            </div>
-
-            <div class="meta-card">
-              <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-              </svg>
-              <div>
-                <span class="meta-label">Status</span>
-                <span class="meta-value status-active">Active</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Description Section -->
-          <div class="detail-section">
-            <h2 class="section-title">About This Franchise</h2>
-            <p class="description-text">
-              {{ franchise.description|default:"No description available." }}
-            </p>
-          </div>
-
-          <!-- Investment Breakdown -->
-          <div class="detail-section">
-            <h2 class="section-title">Investment Details</h2>
-            <div class="investment-breakdown">
-              <div class="breakdown-item">
-                <span class="breakdown-label">Total Investment</span>
-                <span class="breakdown-value">{{ franchise.formatted_investment }}</span>
-              </div>
-              <div class="breakdown-item">
-                <span class="breakdown-label">Created</span>
-                <span class="breakdown-value">{{ franchise.created_at|date:"M d, Y" }}</span>
-              </div>
-              <div class="breakdown-note">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                </svg>
-                <span>Contact the franchisor for detailed cost breakdown and financing options.</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="detail-actions">
-            {% if has_applied %}
-              <a href="{% url 'application_status' %}?franchise={{ franchise.id }}" class="btn-detail-secondary">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                  <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
-                </svg>
-                View Application Status
-              </a>
+      <!-- Franchisor Card -->
+      <div class="franchisor-card">
+        <div class="franchisor-avatar">
+          {{ franchise.franchisor.company_name|first|upper }}
+        </div>
+        <div class="franchisor-info">
+          <h4>{{ franchise.franchisor.company_name }}</h4>
+          <p>
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20" style="display: inline; margin-right: 4px;">
+              <path fill-rule="evenodd" d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773c.346.681 1.322 2.105 2.633 3.416 1.311 1.31 2.735 2.287 3.416 2.633l.773-1.548a1 1 0 011.06-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2.57C6.75 18 1 12.25 1 5.57V3z" clip-rule="evenodd"/>
+            </svg>
+            {% if franchise.franchisor.phone %}
+              {{ franchise.franchisor.phone }}
             {% else %}
-              <button type="button" class="btn-detail-primary js-open-apply" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}">
-                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"/>
-                </svg>
-                Apply to This Franchise
-              </button>
+              Available
             {% endif %}
-          </div>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-right">
+      <!-- Stats Grid -->
+      <div class="stats-grid-detail">
+        <div class="stat-item">
+          <div class="stat-value">{{ franchise.formatted_investment }}</div>
+          <div class="stat-label">Investment</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ franchise.category }}</div>
+          <div class="stat-label">Category</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">✓</div>
+          <div class="stat-label">Verified</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">{{ franchise.applications.count }}</div>
+          <div class="stat-label">Applications</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Application Modal -->
-  {% if not has_applied %}
-  <div id="applyModal" class="modal-overlay">
-    <div class="modal-card">
-      <button type="button" id="applyModalClose" class="modal-close-btn">✕</button>
-      <h2 class="modal-title">Apply to {{ franchise.name }}</h2>
-      <form id="applyForm" method="post" action="{% url 'franchise_apply' franchise.id %}" class="modal-form">
-        {% csrf_token %}
-        
-        <div class="form-group">
-          <label>Full Name</label>
-          <input name="full_name" type="text" required value="{{ user.get_full_name|default:user.username }}" class="form-control">
-        </div>
-        
-        <div class="form-group">
-          <label>Email</label>
-          <input name="email" type="email" required value="{{ user.email }}" class="form-control">
-        </div>
-        
-        <div class="form-group">
-          <label>Phone</label>
-          <input name="phone" type="tel" class="form-control">
-        </div>
-        
-        <div class="form-group">
-          <label>Experience / Background</label>
-          <textarea name="experience" rows="3" class="form-control" placeholder="Tell us about your business experience..."></textarea>
-        </div>
-        
-        <div class="modal-actions">
-          <button type="button" id="modalCancel" class="btn-cancel">Cancel</button>
-          <button type="submit" class="btn-submit">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-            </svg>
-            Submit Application
-          </button>
-        </div>
-      </form>
+  <!-- Description Section -->
+  {% if franchise.description %}
+    <div class="description-section">
+      <h2 class="section-title">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M4.3 4.3a1 1 0 011.4 0L10 8.6l4.3-4.3a1 1 0 011.4 1.4L11.4 10l4.3 4.3a1 1 0 01-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 01-1.4-1.4L8.6 10 4.3 5.7a1 1 0 010-1.4z" clip-rule="evenodd"/>
+        </svg>
+        About This Opportunity
+      </h2>
+      <div class="description-text">{{ franchise.description }}</div>
+    </div>
+  {% endif %}
+
+  <!-- CTA Section -->
+  <div class="cta-section">
+    <h2 class="cta-title">Ready to Start Your Journey?</h2>
+    <p class="cta-subtitle">Join {{ franchise.franchisor.company_name }} and become part of a thriving franchise network</p>
+    <div class="cta-buttons">
+      {% if has_applied %}
+        <a href="{% url 'franchisee_dashboard' %}" class="btn btn-primary">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          View Your Applications
+        </a>
+      {% else %}
+        <a href="{% url 'franchise_apply' franchise.id %}" class="btn btn-primary">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+          </svg>
+          Apply Now
+        </a>
+      {% endif %}
+      <button class="btn btn-secondary" id="favoriteBtn" data-franchise-id="{{ franchise.id }}">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+        </svg>
+        <span id="favoriteText">Add to Favorites</span>
+      </button>
     </div>
   </div>
-  {% endif %}
-{% endblock %}
+</div>
 
-{% block extra_js %}
 <script>
-(function() {
-  // Page load animations
-  document.addEventListener('DOMContentLoaded', function() {
-    const card = document.querySelector('.detail-card');
-    if (card) {
-      setTimeout(() => {
-        card.style.opacity = '1';
-        card.style.transform = 'translateY(0)';
-      }, 100);
+document.addEventListener('DOMContentLoaded', function() {
+  const franchiseId = "{{ franchise.id }}";
+  const favoriteBtn = document.getElementById('favoriteBtn');
+  const favoriteText = document.getElementById('favoriteText');
+
+  // Check if already favorited
+  fetch(`/accounts/favorites/check/${franchiseId}/`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.is_favorited) {
+        favoriteBtn.style.background = '#10b981';
+        favoriteBtn.style.borderColor = 'white';
+        favoriteText.textContent = '♥ Saved to Favorites';
+      }
+    });
+
+  // Toggle favorite
+  favoriteBtn.addEventListener('click', async function(e) {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch(`/accounts/favorites/toggle/${franchiseId}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.status === 'added') {
+        favoriteBtn.style.background = '#10b981';
+        favoriteBtn.style.borderColor = 'white';
+        favoriteText.textContent = '♥ Saved to Favorites';
+      } else if (data.status === 'removed') {
+        favoriteBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+        favoriteBtn.style.borderColor = 'white';
+        favoriteText.textContent = 'Add to Favorites';
+      }
+
+      // Show toast
+      showToast(data.message, data.status === 'error' ? 'error' : 'success');
+    } catch (error) {
+      showToast('Error updating favorite', 'error');
     }
   });
 
-  {% if not has_applied %}
-  // Modal handling
-  const modal = document.getElementById('applyModal');
-  const openBtn = document.querySelector('.js-open-apply');
-  const closeBtn = document.getElementById('applyModalClose');
-  const cancelBtn = document.getElementById('modalCancel');
-
-  if (openBtn) {
-    openBtn.addEventListener('click', function() {
-      modal.classList.add('active');
-    });
+  function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: ${type === 'error' ? '#ef4444' : '#10b981'};
+      color: white;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-weight: 500;
+      font-family: Poppins, sans-serif;
+      z-index: 10000;
+      animation: slideInUp 0.3s ease-out;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.animation = 'slideOutDown 0.3s ease-out forwards';
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
   }
-
-  function closeModal() {
-    modal.classList.remove('active');
-  }
-
-  closeBtn.addEventListener('click', closeModal);
-  cancelBtn.addEventListener('click', closeModal);
-  modal.addEventListener('click', function(e) {
-    if (e.target === modal) closeModal();
-  });
-  {% endif %}
-})();
+});
 </script>
+
+<style>
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOutDown {
+  to {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
+</style>
 {% endblock %}
