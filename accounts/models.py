@@ -1,4 +1,4 @@
-import uuid
+import uuid  # ✅ ADD missing import
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -49,6 +49,12 @@ class Franchisor(models.Model):
     email = models.EmailField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     country = models.TextField(null=True, blank=True)
+    location = models.CharField(
+        max_length=255, 
+        null=True, 
+        blank=True, 
+        help_text="City, State/Province, Country (e.g., Manila, Philippines)"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -130,16 +136,17 @@ class Franchise(models.Model):
 
     @property
     def formatted_investment(self):
-        try:
-            value = int(self.investment)
-            return f"₱{value:,.0f}+ Investment"
-        except Exception:
-            return "₱— Investment"
+        """Format investment amount with currency symbol"""
+        if self.investment:
+            return f"₱{self.investment:,.0f}"
+        return "₱0"
 
     @property
     def short_description(self):
-        text = (self.description or "").strip() or "No description provided."
-        return (text[:110] + "…") if len(text) > 110 else text
+        """Return shortened description for cards"""
+        if self.description and len(self.description) > 100:
+            return self.description[:100] + "..."
+        return self.description or "No description available."
     
     def approve(self, admin_user):
         """Approve franchise and create notification"""
@@ -224,11 +231,10 @@ class Profile(models.Model):
 
     class Meta:
         db_table = 'profile'
-        managed = True  # ✅ new table managed by Django
+        managed = True
 
     def __str__(self):
         return self.full_name or self.user.username
-
 
 # =========================
 #  SECURITY QUESTION MODEL
@@ -367,14 +373,14 @@ class FranchiseApplication(models.Model):
         return f"{self.full_name} - {self.franchise.name} ({self.status})"
     
     def approve(self):
-        """Approve the application"""
+        """Approve application"""
         self.status = 'Approved'
-        self.save(update_fields=['status'])
+        self.save()
     
     def reject(self):
-        """Reject the application"""
+        """Reject application"""
         self.status = 'Rejected'
-        self.save(update_fields=['status'])
+        self.save()
 
 # =========================
 #  USER FAVORITES MODEL (NEW)
@@ -400,10 +406,8 @@ class UserFavorites(models.Model):
     class Meta:
         db_table = 'user_favorites'
         managed = True
-        unique_together = ['user', 'franchise']  # Prevent duplicate favorites
+        unique_together = ('user', 'franchise')
         ordering = ['-created_at']
-        verbose_name = 'User Favorite'
-        verbose_name_plural = 'User Favorites'
     
     def __str__(self):
         return f"{self.user.username} - {self.franchise.name}"

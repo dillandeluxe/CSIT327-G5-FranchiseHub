@@ -54,4 +54,37 @@
 }
 
 /* Note: Most styling is handled by Tailwind classes in the HTML.
-   This file is for custom overrides only.
+   This file is for custom overrides only. */
+
+/* Admin dashboard custom styles */
+
+.franchise-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #d66900;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.franchise-location svg {
+    flex-shrink: 0;
+}
+
+/* Location input styling */
+.location-input {
+    position: relative;
+}
+
+.location-input:focus {
+    border-color: #d66900;
+    box-shadow: 0 0 0 3px rgba(214, 105, 0, 0.1);
+}
+
+/* Form field help text */
+.field-help {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}

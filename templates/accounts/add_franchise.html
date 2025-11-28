@@ -1,312 +1,472 @@
 {% extends 'accounts/base_franchisor.html' %}
 {% load static %}
 
-{% block franchisor_title %}Add Franchise | FranchiseHub{% endblock %}
+{% block franchisor_title %}Add New Franchise | FranchiseHub{% endblock %}
 
-{% block franchisor_content %}
-<div class="add-franchise-container">
-  <div class="page-header">
-    <h1 class="page-title">Add New Franchise</h1>
-    <p class="page-subtitle">Fill in the details below to create a new franchise listing</p>
-  </div>
-
-  <div class="form-card">
-    <form method="POST" enctype="multipart/form-data" class="modern-form" novalidate>
-      {% csrf_token %}
-      
-      {% for field in form %}
-        <div class="form-group {% if field.errors %}has-error{% endif %}">
-          <label for="{{ field.id_for_label }}" class="form-label">
-            {{ field.label }}
-            {% if field.field.required %}<span class="required-mark">*</span>{% endif %}
-          </label>
-          
-          {% if field.name == 'description' %}
-            <textarea 
-              name="{{ field.name }}" 
-              id="{{ field.id_for_label }}"
-              class="form-control form-textarea"
-              placeholder="Enter detailed description..."
-              {% if field.field.required %}required{% endif %}
-            >{{ field.value|default:'' }}</textarea>
-          
-          {% elif field.name == 'image' %}
-            <div class="image-upload-wrapper">
-              <input 
-                type="file" 
-                name="{{ field.name }}" 
-                id="{{ field.id_for_label }}"
-                class="image-input"
-                accept="image/*"
-              >
-              <label for="{{ field.id_for_label }}" class="image-upload-label">
-                <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
-                </svg>
-                <span class="upload-text">Click to upload franchise image</span>
-                <span class="upload-hint">PNG, JPG, GIF up to 10MB</span>
-              </label>
-              <div id="imagePreview" class="image-preview" style="display: none;">
-                <img id="previewImg" src="" alt="Preview">
-                <button type="button" class="remove-image" onclick="removeImage()">
-                  <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          
-          {% else %}
-            <input 
-              type="{{ field.field.widget.input_type }}" 
-              name="{{ field.name }}" 
-              id="{{ field.id_for_label }}"
-              class="form-control"
-              value="{{ field.value|default:'' }}"
-              {% if field.field.required %}required{% endif %}
-              placeholder="{{ field.field.widget.attrs.placeholder|default:'' }}"
-            >
-          {% endif %}
-          
-          {% if field.errors %}
-            <div class="error-message">
-              {% for error in field.errors %}
-                <span class="error-text">{{ error }}</span>
-              {% endfor %}
-            </div>
-          {% endif %}
-          
-          {% if field.help_text %}
-            <small class="help-text">{{ field.help_text }}</small>
-          {% endif %}
-        </div>
-      {% endfor %}
-
-      <div class="form-actions">
-        <button type="button" class="btn-secondary" onclick="window.location.href='{% url 'franchisor_dashboard' %}'">
-          Cancel
-        </button>
-        <button type="submit" class="btn-primary">
-          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-          </svg>
-          Create Franchise
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-/* Add Franchise Page Styles */
-.add-franchise-container {
-  max-width: 800px;
-  margin: 40px auto;
+:root {
+  --primary: #d66900;
+  --primary-hover: #b35c04;
+  --primary-light: #fff7ed;
+  --success: #10b981;
+  --error: #ef4444;
+  --warning: #f59e0b;
+  --text: #111827;
+  --text-muted: #6b7280;
+  --text-light: #9ca3af;
+  --bg: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow: 0 4px 16px rgba(0,0,0,0.06);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,0.1);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: linear-gradient(135deg, var(--bg) 0%, #e2e8f0 100%);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ===== MODERN HERO HEADER ===== */
+.page-hero {
+  text-align: center;
+  margin-bottom: 48px;
+  padding: 40px 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  border-radius: 24px;
+  opacity: 0.95;
+}
+
+.hero-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1.5'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  border-radius: 24px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  color: white;
   padding: 0 24px;
 }
 
-.page-header {
-  margin-bottom: 32px;
-  text-align: center;
+.hero-icon {
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
 }
 
 .page-title {
-  font-size: 28px;
+  font-size: 36px;
   font-weight: 700;
-  color: #111827;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
 }
 
 .page-subtitle {
-  font-size: 15px;
-  color: #6b7280;
+  font-size: 18px;
+  opacity: 0.95;
+  font-weight: 400;
 }
 
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 20px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.breadcrumb a {
+  color: white;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.breadcrumb a:hover {
+  opacity: 0.8;
+}
+
+/* ===== MAIN CONTAINER ===== */
+.add-franchise-container {
+  max-width: 900px;
+  margin: -60px auto 0;
+  padding: 0 24px;
+  position: relative;
+  z-index: 10;
+}
+
+/* ===== MODERN FORM CARD ===== */
 .form-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 40px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 0;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.modern-form {
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-header {
+  background: linear-gradient(135deg, var(--bg) 0%, #f1f5f9 100%);
+  padding: 32px 40px;
+  border-bottom: 1px solid var(--border-light);
+  text-align: center;
+}
+
+.form-header h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.form-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+
+.form-body {
+  padding: 40px;
+}
+
+.franchise-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
+}
+
+/* ===== PROGRESS INDICATOR ===== */
+.progress-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding: 20px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border-light);
+}
+
+.progress-step {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.progress-step.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
+}
+
+.progress-step.completed {
+  background: var(--success);
+  color: white;
+}
+
+.progress-step.inactive {
+  color: var(--text-muted);
+}
+
+.step-divider {
+  width: 20px;
+  height: 2px;
+  background: var(--border);
+  border-radius: 1px;
+}
+
+.step-divider.completed {
+  background: var(--success);
+}
+
+/* ===== FORM SECTIONS ===== */
+.form-section {
+  background: white;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.form-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--primary);
+  transform: translateX(-4px);
+  transition: transform 0.3s;
+}
+
+.form-section:hover::before {
+  transform: translateX(0);
+}
+
+.form-section:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(214, 105, 0, 0.1);
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.section-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-light);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.section-description {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-left: auto;
+  font-style: italic;
+}
+
+/* ===== FORM LAYOUT ===== */
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.form-row.single {
+  grid-template-columns: 1fr;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
 }
 
 .form-label {
   font-size: 14px;
   font-weight: 600;
-  color: #374151;
+  color: var(--text);
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 
 .required-mark {
-  color: #ef4444;
+  color: var(--error);
   font-size: 16px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .form-control {
   width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid #d1d5db;
-  border-radius: 10px;
-  font-size: 14px;
-  font-family: 'Poppins', sans-serif;
-  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
-  background: #f9fafb;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 400;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #fafbfc;
+  position: relative;
 }
 
 .form-control:focus {
   outline: none;
-  border-color: #d66900;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(214, 105, 0, 0.1);
+  border-color: var(--primary);
+  background: white;
+  box-shadow: 0 0 0 4px rgba(214, 105, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .form-control:valid:not(:placeholder-shown) {
-  border-color: #10b981;
+  border-color: var(--success);
   background: #f0fdf4;
 }
 
-.form-group.has-error .form-control {
-  border-color: #ef4444;
+.form-control.error {
+  border-color: var(--error);
   background: #fef2f2;
+  animation: shake 0.5s;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* ===== TEXTAREA ENHANCEMENT ===== */
 .form-textarea {
   min-height: 120px;
   resize: vertical;
-  font-family: 'Poppins', sans-serif;
+  font-family: inherit;
+  line-height: 1.6;
 }
 
-.form-control[type="number"],
-.form-control[type="text"],
-.form-control[type="email"] {
-  -webkit-appearance: none;
-  -moz-appearance: textfield;
-}
-
-/* Select Styling */
-select.form-control {
-  cursor: pointer;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
-  background-position: right 12px center;
-  background-repeat: no-repeat;
-  background-size: 20px;
-  padding-right: 40px;
-}
-
-/* File Upload */
-.file-upload-wrapper {
-  position: relative;
-}
-
-.file-upload-wrapper input[type="file"] {
+.character-count {
   position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
+  bottom: -20px;
+  right: 0;
+  font-size: 12px;
+  color: var(--text-light);
 }
 
-.file-upload-label {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 12px 20px;
-  border: 2px dashed #d1d5db;
-  border-radius: 10px;
-  background: #f9fafb;
-  color: #6b7280;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.file-upload-label:hover {
-  border-color: #d66900;
-  background: #fff7ed;
-  color: #d66900;
-}
-
-/* Image Upload Styles */
-.image-upload-wrapper {
-  position: relative;
-}
-
-.image-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.image-upload-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+/* ===== FILE UPLOAD ENHANCEMENT ===== */
+.file-upload-area {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
   padding: 40px 20px;
-  border: 2px dashed #d1d5db;
-  border-radius: 12px;
-  background: #f9fafb;
-  color: #6b7280;
+  text-align: center;
+  background: #fafbfc;
   cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.file-upload-area:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+
+.file-upload-area.dragover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: scale(1.02);
+}
+
+.upload-icon {
+  width: 60px;
+  height: 60px;
+  background: var(--primary-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  color: var(--primary);
   transition: all 0.3s;
 }
 
-.image-upload-label:hover {
-  border-color: #d66900;
-  background: #fff7ed;
-}
-
-.image-upload-label svg {
-  color: #9ca3af;
-  transition: color 0.3s;
-}
-
-.image-upload-label:hover svg {
-  color: #d66900;
+.file-upload-area:hover .upload-icon {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.1);
 }
 
 .upload-text {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
-  color: #374151;
+  color: var(--text);
+  margin-bottom: 8px;
 }
 
 .upload-hint {
   font-size: 13px;
-  color: #9ca3af;
+  color: var(--text-muted);
 }
 
+.file-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ===== IMAGE PREVIEW ===== */
 .image-preview {
-  position: relative;
   margin-top: 16px;
-  border-radius: 12px;
+  border-radius: var(--radius);
   overflow: hidden;
-  border: 2px solid #10b981;
-  background: #f0fdf4;
+  background: white;
+  border: 2px solid var(--success);
+  position: relative;
+  animation: fadeIn 0.5s;
 }
 
-.image-preview img {
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.preview-image {
   width: 100%;
-  height: auto;
-  max-height: 300px;
-  object-fit: contain;
+  height: 200px;
+  object-fit: cover;
   display: block;
 }
 
@@ -314,18 +474,18 @@ select.form-control {
   position: absolute;
   top: 12px;
   right: 12px;
-  background: #ef4444;
+  width: 32px;
+  height: 32px;
+  background: var(--error);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 36px;
-  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 .remove-image:hover {
@@ -333,58 +493,111 @@ select.form-control {
   transform: scale(1.1);
 }
 
-/* Error Messages */
-.error-message {
+/* ===== VALIDATION ===== */
+.field-help {
+  font-size: 12px;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.validation-message {
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-top: 4px;
-}
-
-.error-text {
   font-size: 13px;
-  color: #ef4444;
   font-weight: 500;
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  animation: slideIn 0.3s;
 }
 
-.error-text::before {
-  content: "⚠ ";
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-/* Help Text */
-.help-text {
-  font-size: 12px;
-  color: #9ca3af;
-  margin-top: 4px;
+.validation-message.error {
+  background: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
 }
 
-/* Form Actions */
+.validation-message.success {
+  background: #f0fdf4;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+/* ===== FORM ACTIONS ===== */
 .form-actions {
   display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 16px;
-  padding-top: 24px;
-  border-top: 1px solid #e5e7eb;
+  gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 40px;
+  background: var(--bg);
+  border-top: 1px solid var(--border-light);
+  margin: 0 -40px -40px;
 }
 
-.btn-primary,
-.btn-secondary {
+.actions-left {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 28px;
-  border-radius: 10px;
+  gap: 12px;
+}
+
+.actions-right {
+  display: flex;
+  gap: 12px;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
   font-size: 15px;
   font-weight: 600;
-  border: none;
+  font-family: inherit;
   cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s;
+  border: none;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: all 0.3s;
+}
+
+.btn:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #d66900 0%, #b35c04 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
   color: white;
   box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
 }
@@ -399,117 +612,706 @@ select.form-control {
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+  background: white;
+  color: var(--text-muted);
+  border: 2px solid var(--border);
 }
 
 .btn-secondary:hover {
-  background: #e5e7eb;
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
 }
 
-/* Responsive */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+.btn-loading {
+  position: relative;
+  color: transparent !important;
+}
+
+.btn-loading::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
   .add-franchise-container {
     padding: 0 16px;
+    margin: -40px auto 0;
   }
 
-  .form-card {
+  .page-hero {
+    margin-bottom: 32px;
+    padding: 32px 0;
+  }
+
+  .hero-content {
+    padding: 0 16px;
+  }
+
+  .page-title {
+    font-size: 28px;
+  }
+
+  .form-body {
     padding: 24px 20px;
+  }
+
+  .form-header {
+    padding: 24px 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+    gap: 12px;
+    padding: 20px;
+    margin: 0 -20px -24px;
+  }
+
+  .actions-left,
+  .actions-right {
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .progress-indicator {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .progress-step {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-icon {
+    width: 60px;
+    height: 60px;
   }
 
   .page-title {
     font-size: 24px;
   }
 
-  .form-actions {
-    flex-direction: column-reverse;
+  .form-section {
+    padding: 20px;
   }
 
-  .btn-primary,
-  .btn-secondary {
-    width: 100%;
-    justify-content: center;
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .section-description {
+    margin-left: 0;
   }
 }
 
-/* Animation on Page Load */
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
+/* ===== ADVANCED ANIMATIONS ===== */
+.form-section {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: sectionFadeIn 0.6s ease-out forwards;
+}
+
+.form-section:nth-child(2) { animation-delay: 0.1s; }
+.form-section:nth-child(3) { animation-delay: 0.2s; }
+.form-section:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes sectionFadeIn {
   to {
     opacity: 1;
     transform: translateY(0);
   }
 }
-
-.form-card {
-  animation: slideInUp 0.4s ease-out;
-}
 </style>
+{% endblock %}
+
+{% block franchisor_content %}
+<div class="add-franchise-container">
+    <!-- Modern Hero Header -->
+    <div class="page-hero">
+        <div class="hero-bg"></div>
+        <div class="hero-pattern"></div>
+        <div class="hero-content">
+            <div class="hero-icon">
+                <svg width="40" height="40" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+            <h1 class="page-title">Add New Franchise</h1>
+            <p class="page-subtitle">Create your franchise listing and showcase your business opportunity</p>
+            <div class="breadcrumb">
+                <a href="{% url 'franchisor_dashboard' %}">Dashboard</a>
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                </svg>
+                <span>Add Franchise</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Form Card -->
+    <div class="form-card">
+        <div class="form-header">
+            <h2>Franchise Details</h2>
+            <p>Fill in the information below to create your franchise listing</p>
+        </div>
+
+        <div class="form-body">
+            <!-- Progress Indicator -->
+            <div class="progress-indicator">
+                <div class="progress-step active" data-step="1">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2v8h12V6H4z" clip-rule="evenodd"/>
+                    </svg>
+                    Basic Info
+                </div>
+                <div class="step-divider"></div>
+                <div class="progress-step" data-step="2">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 6a2 2 0 11-4 0 2 2 0 014 0zm-2-4a2 2 0 100 4 2 2 0 000-4z" clip-rule="evenodd"/>
+                    </svg>
+                    Description
+                </div>
+                <div class="step-divider"></div>
+                <div class="progress-step" data-step="3">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                    </svg>
+                    Media
+                </div>
+            </div>
+
+            <form method="post" enctype="multipart/form-data" class="franchise-form" id="franchiseForm">
+                {% csrf_token %}
+                
+                <!-- Basic Information Section -->
+                <div class="form-section" data-step="1">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 2v8h12V6H4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="section-title">Basic Information</h3>
+                        </div>
+                        <span class="section-description">Essential franchise details</span>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.name.id_for_label }}">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Franchise Name
+                                <span class="required-mark">*</span>
+                            </label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="validation-message error">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.name.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="field-help">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Enter your franchise brand name
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.category.id_for_label }}">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                                </svg>
+                                Business Category
+                                <span class="required-mark">*</span>
+                            </label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                                <div class="validation-message error">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.category.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="field-help">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                e.g., Food & Beverage, Retail, Services
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.investment.id_for_label }}">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                                </svg>
+                                Investment Required (₱)
+                                <span class="required-mark">*</span>
+                            </label>
+                            {{ form.investment }}
+                            {% if form.investment.errors %}
+                                <div class="validation-message error">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.investment.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="field-help">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Minimum investment amount required
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="id_location">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                                </svg>
+                                Business Location
+                            </label>
+                            <input 
+                                type="text" 
+                                name="location" 
+                                id="id_location"
+                                class="form-control"
+                                placeholder="e.g., Manila, Philippines"
+                                value="{{ request.user.franchisor.location|default:'' }}"
+                                autocomplete="off"
+                            >
+                            <div class="field-help">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Where is your franchise business located?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description Section -->
+                <div class="form-section" data-step="2">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm2 6a2 2 0 11-4 0 2 2 0 014 0zm-2-4a2 2 0 100 4 2 2 0 000-4z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="section-title">Description & Details</h3>
+                        </div>
+                        <span class="section-description">Tell your story</span>
+                    </div>
+                    
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.description.id_for_label }}">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                                Franchise Description
+                                <span class="required-mark">*</span>
+                            </label>
+                            {{ form.description }}
+                            {% if form.description.errors %}
+                                <div class="validation-message error">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.description.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <div class="character-count">
+                                <span id="descriptionCount">0</span> / 1000 characters
+                            </div>
+                            <div class="field-help">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Provide a detailed description of your franchise opportunity
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div class="form-section" data-step="3">
+                    <div class="section-header">
+                        <div class="section-icon">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="section-title">Franchise Image</h3>
+                        </div>
+                        <span class="section-description">Visual representation</span>
+                    </div>
+                    
+                    <div class="form-row single">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
+                                </svg>
+                                Upload Image
+                            </label>
+                            
+                            <div class="file-upload-area" id="uploadArea">
+                                <div class="upload-icon">
+                                    <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 010-1.414l3-3a1 1 0 011.414 0l3 3a1 1 0 01-1.414 1.414L11 5.414V13a1 1 0 11-2 0V5.414L7.707 6.707a1 1 0 01-1.414 0z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="upload-text">Drop your image here or click to browse</div>
+                                <div class="upload-hint">Supports: JPG, PNG, GIF (max 5MB)</div>
+                                {{ form.image }}
+                            </div>
+                            
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImage" class="preview-image" alt="Preview">
+                                <button type="button" class="remove-image" onclick="removeImage()">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
+                            {% if form.image.errors %}
+                                <div class="validation-message error">
+                                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                    </svg>
+                                    {{ form.image.errors.0 }}
+                                </div>
+                            {% endif %}
+                            
+                            <div class="field-help">
+                                <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                                </svg>
+                                Upload a high-quality image (optional but recommended)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <div class="actions-left">
+                <div class="field-help">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+                    </svg>
+                    Your franchise will be pending admin approval
+                </div>
+            </div>
+            <div class="actions-right">
+                <a href="{% url 'franchisor_dashboard' %}" class="btn btn-secondary">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Cancel
+                </a>
+                <button type="submit" form="franchiseForm" class="btn btn-primary" id="submitBtn">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                    </svg>
+                    Create Franchise
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-(function() {
-  // Real-time validation feedback
-  const inputs = document.querySelectorAll('.form-control');
-  
-  inputs.forEach(input => {
-    input.addEventListener('input', function() {
-      const formGroup = this.closest('.form-group');
-      
-      if (this.validity.valid && this.value.trim() !== '') {
-        formGroup.classList.remove('has-error');
-      }
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation and enhancement
+    const form = document.getElementById('franchiseForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const inputs = form.querySelectorAll('input, textarea, select');
+    const progressSteps = document.querySelectorAll('.progress-step');
+    const sections = document.querySelectorAll('.form-section');
+
+    // Real-time validation
+    inputs.forEach(input => {
+        input.addEventListener('input', function() {
+            validateField(this);
+            updateProgress();
+        });
+        
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
     });
+
+    function validateField(field) {
+        const group = field.closest('.form-group');
+        const existing = group.querySelector('.validation-message');
+        if (existing) existing.remove();
+
+        field.classList.remove('error');
+
+        let isValid = true;
+        let message = '';
+
+        // Required field validation
+        if (field.hasAttribute('required') && !field.value.trim()) {
+            isValid = false;
+            message = 'This field is required';
+        }
+        // Email validation
+        else if (field.type === 'email' && field.value && !isValidEmail(field.value)) {
+            isValid = false;
+            message = 'Please enter a valid email address';
+        }
+        // Number validation
+        else if (field.type === 'number' && field.value) {
+            const num = parseFloat(field.value);
+            if (isNaN(num) || num < 0) {
+                isValid = false;
+                message = 'Please enter a valid positive number';
+            }
+        }
+
+        if (!isValid) {
+            field.classList.add('error');
+            const validationMsg = document.createElement('div');
+            validationMsg.className = 'validation-message error';
+            validationMsg.innerHTML = `
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                </svg>
+                ${message}
+            `;
+            group.appendChild(validationMsg);
+        } else if (field.value.trim()) {
+            const validationMsg = document.createElement('div');
+            validationMsg.className = 'validation-message success';
+            validationMsg.innerHTML = `
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                Looks good!
+            `;
+            group.appendChild(validationMsg);
+        }
+
+        return isValid;
+    }
+
+    function updateProgress() {
+        sections.forEach((section, index) => {
+            const sectionInputs = section.querySelectorAll('input, textarea, select');
+            const filledInputs = Array.from(sectionInputs).filter(input => {
+                return input.value.trim() !== '' || !input.hasAttribute('required');
+            });
+            
+            const step = progressSteps[index];
+            const divider = step.nextElementSibling;
+            
+            if (filledInputs.length === sectionInputs.length) {
+                step.classList.add('completed');
+                step.classList.remove('active', 'inactive');
+                if (divider && divider.classList.contains('step-divider')) {
+                    divider.classList.add('completed');
+                }
+            } else if (filledInputs.length > 0) {
+                step.classList.add('active');
+                step.classList.remove('completed', 'inactive');
+            } else {
+                step.classList.add('inactive');
+                step.classList.remove('active', 'completed');
+                if (divider && divider.classList.contains('step-divider')) {
+                    divider.classList.remove('completed');
+                }
+            }
+        });
+    }
+
+    function isValidEmail(email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Character count for description
+    const descriptionField = document.querySelector('textarea[name="description"]');
+    const countDisplay = document.getElementById('descriptionCount');
     
-    input.addEventListener('blur', function() {
-      if (this.hasAttribute('required') && this.value.trim() === '') {
-        this.closest('.form-group').classList.add('has-error');
-      }
+    if (descriptionField && countDisplay) {
+        descriptionField.addEventListener('input', function() {
+            const count = this.value.length;
+            countDisplay.textContent = count;
+            
+            if (count > 1000) {
+                countDisplay.style.color = 'var(--error)';
+            } else if (count > 800) {
+                countDisplay.style.color = 'var(--warning)';
+            } else {
+                countDisplay.style.color = 'var(--text-light)';
+            }
+        });
+        
+        // Initial count
+        countDisplay.textContent = descriptionField.value.length;
+    }
+
+    // Image upload handling
+    const imageInput = document.querySelector('input[type="file"]');
+    const uploadArea = document.getElementById('uploadArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImage = document.getElementById('previewImage');
+
+    if (imageInput && uploadArea) {
+        // Click to upload
+        uploadArea.addEventListener('click', () => imageInput.click());
+
+        // File change handler
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    uploadArea.style.display = 'none';
+                    imagePreview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Drag and drop
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            uploadArea.classList.remove('dragover');
+        }
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            imageInput.files = files;
+            const event = new Event('change', { bubbles: true });
+            imageInput.dispatchEvent(event);
+        }
+    }
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        // Validate all required fields
+        let isValid = true;
+        const requiredFields = form.querySelectorAll('[required]');
+        
+        requiredFields.forEach(field => {
+            if (!validateField(field)) {
+                isValid = false;
+            }
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            // Scroll to first error
+            const firstError = form.querySelector('.validation-message.error');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            return;
+        }
+
+        // Show loading state
+        submitBtn.disabled = true;
+        submitBtn.classList.add('btn-loading');
+        submitBtn.innerHTML = `
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+            </svg>
+            Creating...
+        `;
     });
-  });
 
-  // Image upload preview
-  const imageInput = document.querySelector('.image-input');
-  const uploadLabel = document.querySelector('.image-upload-label');
-  const imagePreview = document.getElementById('imagePreview');
-  const previewImg = document.getElementById('previewImg');
+    // Initialize progress
+    updateProgress();
+});
 
-  if (imageInput) {
-    imageInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          previewImg.src = e.target.result;
-          uploadLabel.style.display = 'none';
-          imagePreview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-
-  // Form submission loading state
-  const form = document.querySelector('.modern-form');
-  form.addEventListener('submit', function(e) {
-    const submitBtn = this.querySelector('.btn-primary');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span>Creating...</span>';
-  });
-})();
-
-// Remove image function
+// Global function for remove image button
 function removeImage() {
-  const imageInput = document.querySelector('.image-input');
-  const uploadLabel = document.querySelector('.image-upload-label');
-  const imagePreview = document.getElementById('imagePreview');
-  
-  imageInput.value = '';
-  uploadLabel.style.display = 'flex';
-  imagePreview.style.display = 'none';
+    const imageInput = document.querySelector('input[type="file"]');
+    const uploadArea = document.getElementById('uploadArea');
+    const imagePreview = document.getElementById('imagePreview');
+    
+    if (imageInput) {
+        imageInput.value = '';
+        uploadArea.style.display = 'flex';
+        imagePreview.style.display = 'none';
+    }
 }
 </script>
 {% endblock %}
