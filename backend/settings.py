@@ -65,6 +65,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_extensions",
     "accounts",
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 # ✅ ADD MIDDLEWARE TO PREVENT CACHING OF AUTHENTICATED PAGES
@@ -103,14 +105,21 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # --------------------------------------------------------------------
 # DATABASE (Supabase)
 # --------------------------------------------------------------------
+raw_db_url = os.environ.get("DATABASE_URL")
+
+if raw_db_url is None:
+    raise ValueError("❌ ERROR: DATABASE_URL environment variable is missing!")
+
+# Force Django to use Transaction Pooler instead of Session Pooler
+safe_db_url = raw_db_url.replace(":5432/", ":6543/")
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=os.environ.get("DATABASE_URL").replace(":5432/", ":6543/"),
-        conn_max_age=0,      # Prevent long-lived DB connections
+        default=safe_db_url,
+        conn_max_age=0,
         ssl_require=True,
     )
 }
-
 # --------------------------------------------------------------------
 # PASSWORD VALIDATION
 # --------------------------------------------------------------------
@@ -175,3 +184,27 @@ SESSION_COOKIE_SECURE = not DEBUG  # Use HTTPS in production
 SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
 SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep session after browser close
 SESSION_COOKIE_AGE = 1209600  # 2 weeks
+
+import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+# ✅ FIXED: Cloudinary Configuration
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
+}
+
+# Configure cloudinary
+cloudinary.config(
+    cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
+    api_key=os.getenv('CLOUDINARY_API_KEY'),
+    api_secret=os.getenv('CLOUDINARY_API_SECRET'),
+    secure=True
+)
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+
+MEDIA_URL = '/media/'

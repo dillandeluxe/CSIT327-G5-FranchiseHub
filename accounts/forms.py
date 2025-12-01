@@ -31,7 +31,7 @@ class FranchiseForm(forms.ModelForm):
                 'rows': 5
             }),
             'image': forms.FileInput(attrs={
-                'class': 'form-control',
+                'class': 'file-input',
                 'accept': 'image/*'
             })
         }
@@ -42,6 +42,19 @@ class FranchiseForm(forms.ModelForm):
             'description': 'Description',
             'image': 'Franchise Image/Logo'
         }
+
+    def clean_image(self):
+        image = self.cleaned_data.get('image')
+        if image:
+            # Validate file size (5MB limit)
+            if image.size > 5 * 1024 * 1024:
+                raise forms.ValidationError("Image file too large ( > 5MB )")
+            
+            # Validate file type
+            if not image.content_type.startswith('image/'):
+                raise forms.ValidationError("Only image files are allowed.")
+                
+        return image
 
 # ✅ NEW: Franchisor Form with Location
 class FranchisorForm(forms.ModelForm):

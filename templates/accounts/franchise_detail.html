@@ -558,9 +558,12 @@ body {
 <!-- Hero Image -->
 <div class="detail-hero">
   {% if franchise.image %}
-    <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" class="hero-image">
-  {% else %}
-    <div class="hero-image" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);"></div>
+    <img 
+      src="{{ franchise.image.url }}" 
+      alt="{{ franchise.name }}" 
+      class="hero-image"
+      onerror="this.style.display='none'; this.parentNode.style.background='linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)';"
+    >
   {% endif %}
   <div class="hero-overlay"></div>
   <div class="hero-content">

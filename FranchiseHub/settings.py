@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password as django_check_password
 from django.utils import timezone
+import os
 
 # This imports the default Django User model (defined by settings.AUTH_USER_MODEL)
 # via a Foreign Key to link profiles to users.
@@ -379,5 +380,22 @@ class FranchiseApplication(models.Model):
 # =========================
 #  MEDIA FILES CONFIGURATION
 # =========================
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# ✅ FIXED: Cloudinary Configuration
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dkx1x4zpe'),
+    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '176911795492528'), 
+    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'mAbMWwzwE2ynNNYcx2vLxSTzV5s'),
+}
+
+# ✅ FIXED: Use Cloudinary in production, local storage in development
+if 'RENDER' in os.environ:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Don't set MEDIA_ROOT for Cloudinary
+else:
+    # Local development
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'

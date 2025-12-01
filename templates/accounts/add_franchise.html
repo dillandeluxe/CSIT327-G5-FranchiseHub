@@ -1011,7 +1011,15 @@ body {
                                 </div>
                                 <div class="upload-text">Drop your image here or click to browse</div>
                                 <div class="upload-hint">Supports: JPG, PNG, GIF (max 5MB)</div>
-                                {{ form.image }}
+                                <!-- ✅ This is correct - Django will handle Cloudinary upload automatically -->
+                                <input 
+                                    type="file" 
+                                    name="image" 
+                                    id="{{ form.image.id_for_label }}"
+                                    accept="image/*"
+                                    class="file-input"
+                                    style="position: absolute; opacity: 0; pointer-events: none;"
+                                >
                             </div>
                             
                             <div class="image-preview" id="imagePreview" style="display: none;">
@@ -1204,19 +1212,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Image upload handling
-    const imageInput = document.querySelector('input[type="file"]');
+    const imageInput = document.querySelector('input[name="image"]');
     const uploadArea = document.getElementById('uploadArea');
     const imagePreview = document.getElementById('imagePreview');
     const previewImage = document.getElementById('previewImage');
 
     if (imageInput && uploadArea) {
         // Click to upload
-        uploadArea.addEventListener('click', () => imageInput.click());
+        uploadArea.addEventListener('click', () => {
+            imageInput.click();
+        });
 
         // File change handler
         imageInput.addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file && file.type.startsWith('image/')) {
+                // Validate file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('File size must be less than 5MB');
+                    this.value = '';
+                    return;
+                }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     previewImage.src = e.target.result;
@@ -1227,9 +1244,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Drag and drop
+        // ✅ FIXED: Drag and drop functionality
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
             uploadArea.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
         });
 
         function preventDefaults(e) {
@@ -1258,9 +1276,12 @@ document.addEventListener('DOMContentLoaded', function() {
         function handleDrop(e) {
             const dt = e.dataTransfer;
             const files = dt.files;
-            imageInput.files = files;
-            const event = new Event('change', { bubbles: true });
-            imageInput.dispatchEvent(event);
+            
+            if (files.length > 0) {
+                imageInput.files = files;
+                const event = new Event('change', { bubbles: true });
+                imageInput.dispatchEvent(event);
+            }
         }
     }
 
@@ -1301,9 +1322,9 @@ document.addEventListener('DOMContentLoaded', function() {
     updateProgress();
 });
 
-// Global function for remove image button
+// ✅ FIXED: Global function for remove image button
 function removeImage() {
-    const imageInput = document.querySelector('input[type="file"]');
+    const imageInput = document.querySelector('input[name="image"]');
     const uploadArea = document.getElementById('uploadArea');
     const imagePreview = document.getElementById('imagePreview');
     
