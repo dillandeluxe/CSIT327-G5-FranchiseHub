@@ -6,516 +6,6 @@
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'accounts/browse.css' %}">
-<style>
-  /* ✅ NEW: Modern Applied Badge */
-  .applied-badge {
-    position: absolute;
-    top: 16px;
-    left: 16px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
-    z-index: 10;
-    animation: slideIn 0.4s ease-out;
-  }
-
-  @keyframes slideIn {
-    from {
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateX(0);
-    }
-  }
-
-  .applied-badge svg {
-    width: 16px;
-    height: 16px;
-  }
-
-  /* ✅ ENHANCED: Modern Filter Section */
-  .filters-sidebar {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    padding: 24px;
-    height: fit-content;
-    position: sticky;
-    top: 80px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
-  }
-
-  .filters-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 24px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid #f3f4f6;
-  }
-
-  .filters-title {
-    font-size: 18px;
-    font-weight: 700;
-    color: #111827;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .filters-title svg {
-    color: #d66900;
-    flex-shrink: 0;
-  }
-
-  .close-filters {
-    display: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #6b7280;
-    padding: 4px;
-    font-size: 20px;
-    transition: color 0.2s;
-  }
-
-  .close-filters:hover {
-    color: #111827;
-  }
-
-  .filters-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .filter-label {
-    font-size: 13px;
-    font-weight: 700;
-    color: #111827;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .filter-label svg {
-    width: 16px;
-    height: 16px;
-    color: #d66900;
-    flex-shrink: 0;
-  }
-
-  .filter-input {
-    width: 100%;
-    padding: 12px 14px;
-    border: 2px solid #e5e7eb;
-    border-radius: 10px;
-    font-size: 14px;
-    font-family: inherit;
-    transition: all 0.3s;
-    background: #f9fafb;
-  }
-
-  .filter-input:focus {
-    outline: none;
-    border-color: #d66900;
-    background: white;
-    box-shadow: 0 0 0 4px rgba(214, 105, 0, 0.1);
-  }
-
-  .filter-input.small {
-    flex: 1;
-  }
-
-  .range-inputs {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-  }
-
-  .range-dash {
-    color: #9ca3af;
-    font-weight: 600;
-    flex: 0 0 auto;
-  }
-
-  .filter-actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-  }
-
-  .btn-apply,
-  .btn-reset {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-family: inherit;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-
-  .btn-apply {
-    background: linear-gradient(135deg, #d66900 0%, #b35c04 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
-  }
-
-  .btn-apply:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(214, 105, 0, 0.4);
-  }
-
-  .btn-reset {
-    background: #f3f4f6;
-    color: #6b7280;
-    border: 1px solid #e5e7eb;
-  }
-
-  .btn-reset:hover {
-    background: #e5e7eb;
-    color: #111827;
-  }
-
-  /* ✅ ENHANCED: Modern Card Design */
-  .franchise-card {
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 16px;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    height: 100%;
-  }
-
-  .franchise-card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-    border-color: #d66900;
-  }
-
-  .franchise-card.has-applied {
-    border-color: #10b981;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, rgba(16, 185, 129, 0.01) 100%);
-  }
-
-  /* Favorite Button */
-  .favorite-btn-wrapper {
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    z-index: 5;
-  }
-
-  .favorite-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: rgba(255, 255, 255, 0.95);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    color: #d1d5db;
-  }
-
-  .favorite-btn:hover {
-    transform: scale(1.1);
-    background: white;
-    color: #d66900;
-  }
-
-  .favorite-btn.active {
-    background: #ef4444;
-    color: white;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  }
-
-  /* Image Section */
-  .franchise-image {
-    width: 100%;
-    height: 160px;
-    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .franchise-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  .image-placeholder {
-    color: #d1d5db;
-    opacity: 0.5;
-  }
-
-  /* Card Body */
-  .card-body {
-    padding: 16px;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-  }
-
-  .franchise-name {
-    font-size: 16px;
-    font-weight: 700;
-    color: #111827;
-    margin-bottom: 8px;
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .franchise-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
-  }
-
-  .meta-badge {
-    background: #fff7ed;
-    color: #d66900;
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 12px;
-    font-weight: 600;
-  }
-
-  .meta-location {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: #d66900;
-    font-weight: 500;
-  }
-
-  .franchise-company {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 10px;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .franchise-investment {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    color: #10b981;
-    font-weight: 700;
-    font-size: 14px;
-    margin-bottom: 10px;
-  }
-
-  .franchise-description {
-    font-size: 13px;
-    color: #6b7280;
-    line-height: 1.5;
-    flex: 1;
-    margin-bottom: 12px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* Card Actions */
-  .card-actions {
-    padding-top: 12px;
-    border-top: 1px solid #f3f4f6;
-  }
-
-  .btn-view,
-  .btn-applied {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 13px;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    font-family: inherit;
-  }
-
-  .btn-view {
-    background: linear-gradient(135deg, #d66900 0%, #b35c04 100%);
-    color: white;
-    box-shadow: 0 2px 8px rgba(214, 105, 0, 0.2);
-  }
-
-  .btn-view:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
-  }
-
-  .btn-applied {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: white;
-    cursor: default;
-    opacity: 0.9;
-  }
-
-  .no-results {
-    grid-column: 1 / -1;
-    text-align: center;
-    padding: 60px 40px;
-  }
-
-  .no-results-icon {
-    width: 80px;
-    height: 80px;
-    margin: 0 auto 20px;
-    opacity: 0.3;
-  }
-
-  .no-results h3 {
-    font-size: 20px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    color: #111827;
-  }
-
-  .no-results p {
-    color: #6b7280;
-    font-size: 15px;
-  }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    padding: 16px 24px;
-    border-radius: 12px;
-    font-weight: 500;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-    z-index: 9999;
-    animation: slideInUp 0.3s ease-out;
-  }
-
-  @keyframes slideInUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .toast-success {
-    background: #10b981;
-    color: white;
-  }
-
-  .toast-error {
-    background: #ef4444;
-    color: white;
-  }
-
-  /* Responsive */
-  @media (max-width: 768px) {
-    .filters-sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      max-width: 280px;
-      border-radius: 0;
-      z-index: 1000;
-      transform: translateX(-100%);
-      transition: transform 0.3s;
-      max-height: 100vh;
-      overflow-y: auto;
-      top: 60px;
-    }
-
-    .filters-sidebar.active {
-      transform: translateX(0);
-    }
-
-    .close-filters {
-      display: block;
-    }
-
-    .toggle-filters {
-      display: flex;
-    }
-
-    .franchise-grid {
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 16px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .franchise-grid {
-      grid-template-columns: 1fr;
-    }
-
-    .franchise-image {
-      height: 140px;
-    }
-
-    .card-body {
-      padding: 12px;
-    }
-  }
-</style>
 {% endblock %}
 
 {% block content %}
@@ -550,7 +40,7 @@
 <div class="browse-wrapper">
   <div class="browse-container">
     
-    <!-- ✅ MODERN SIDEBAR FILTERS -->
+    <!-- Sidebar Filters -->
     <aside class="filters-sidebar">
       <div class="filters-header">
         <h3 class="filters-title">
@@ -563,7 +53,6 @@
       </div>
 
       <form method="get" class="filters-form" id="filtersForm">
-        <!-- Search Box -->
         <div class="filter-group">
           <label class="filter-label">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -571,16 +60,9 @@
             </svg>
             Search
           </label>
-          <input 
-            type="text" 
-            name="q" 
-            value="{{ q }}" 
-            placeholder="Search franchises..." 
-            class="filter-input"
-          >
+          <input type="text" name="q" value="{{ q }}" placeholder="Search franchises..." class="filter-input">
         </div>
 
-        <!-- Location Filter -->
         <div class="filter-group">
           <label class="filter-label">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -588,16 +70,9 @@
             </svg>
             Location
           </label>
-          <input 
-            type="text" 
-            name="location" 
-            value="{{ location_filter }}" 
-            placeholder="e.g., Manila" 
-            class="filter-input"
-          >
+          <input type="text" name="location" value="{{ location_filter }}" placeholder="e.g., Manila" class="filter-input">
         </div>
 
-        <!-- Investment Range -->
         <div class="filter-group">
           <label class="filter-label">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -606,25 +81,12 @@
             Investment Range (₱)
           </label>
           <div class="range-inputs">
-            <input 
-              type="number" 
-              name="min_investment" 
-              value="{{ min_investment }}" 
-              placeholder="Min" 
-              class="filter-input small"
-            >
+            <input type="number" name="min_investment" value="{{ min_investment }}" placeholder="Min" class="filter-input small">
             <span class="range-dash">–</span>
-            <input 
-              type="number" 
-              name="max_investment" 
-              value="{{ max_investment }}" 
-              placeholder="Max" 
-              class="filter-input small"
-            >
+            <input type="number" name="max_investment" value="{{ max_investment }}" placeholder="Max" class="filter-input small">
           </div>
         </div>
 
-        <!-- Filter Actions -->
         <div class="filter-actions">
           <button type="submit" class="btn-apply">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -634,7 +96,7 @@
           </button>
           <button type="reset" class="btn-reset">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 011.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
             Clear
           </button>
@@ -644,7 +106,6 @@
 
     <!-- Main Content -->
     <main class="browse-content">
-      <!-- Results Header -->
       <div class="results-header">
         <h2 class="results-count">
           <span id="franchiseCount">{{ franchises.count }}</span> 
@@ -658,11 +119,9 @@
         </button>
       </div>
 
-      <!-- ✅ MODERN FRANCHISE CARDS GRID -->
       <div class="franchise-grid" id="franchiseGrid">
         {% for franchise in franchises %}
           <div class="franchise-card {% if franchise.id in applied_franchise_ids %}has-applied{% endif %}" data-franchise-id="{{ franchise.id }}">
-            <!-- ✅ NEW: Applied Badge -->
             {% if franchise.id in applied_franchise_ids %}
               <div class="applied-badge">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -672,7 +131,6 @@
               </div>
             {% endif %}
 
-            <!-- Favorite Button -->
             <div class="favorite-btn-wrapper">
               <button class="favorite-btn" data-franchise-id="{{ franchise.id }}" aria-label="Add to favorites" type="button">
                 <svg width="18" height="18" viewBox="0 0 20 20">
@@ -681,16 +139,10 @@
               </button>
             </div>
 
-            <!-- Franchise Image -->
             <div class="franchise-image">
               {% if franchise.image %}
-                <img 
-                  src="{{ franchise.image.url }}" 
-                  alt="{{ franchise.name }}" 
-                  loading="lazy"
-                  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
-                >
-                <div class="image-placeholder" style="display: none;">
+                <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" loading="lazy" class="franchise-img">
+                <div class="image-placeholder hidden">
                   <svg width="40" height="40" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
                   </svg>
@@ -704,13 +156,10 @@
               {% endif %}
             </div>
 
-            <!-- Card Content -->
             <div class="card-body">
               <h3 class="franchise-name">{{ franchise.name }}</h3>
-              
               <div class="franchise-meta">
                 <span class="meta-badge">{{ franchise.category }}</span>
-                
                 {% if franchise.franchisor.location %}
                   <span class="meta-location">
                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
@@ -720,22 +169,17 @@
                   </span>
                 {% endif %}
               </div>
-
               <p class="franchise-company">{{ franchise.franchisor.company_name }}</p>
-
               <div class="franchise-investment">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
                 </svg>
                 <strong>{{ franchise.formatted_investment }}</strong>
               </div>
-
               <p class="franchise-description">{{ franchise.short_description }}</p>
             </div>
 
-            <!-- Card Actions -->
             <div class="card-actions">
-              <!-- ✅ FIXED: Always allow viewing details -->
               <a href="{% url 'franchise_detail' franchise.id %}" class="btn-view">
                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/>
@@ -763,97 +207,8 @@
   </div>
 </div>
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  // ✅ FILTER TOGGLE (Mobile)
-  const toggleFiltersBtn = document.getElementById('toggleFilters');
-  const closeFiltersBtn = document.getElementById('closeFilters');
-  const filtersSidebar = document.querySelector('.filters-sidebar');
+{% endblock %}
 
-  toggleFiltersBtn?.addEventListener('click', () => {
-    filtersSidebar.classList.toggle('active');
-  });
-
-  closeFiltersBtn?.addEventListener('click', () => {
-    filtersSidebar.classList.remove('active');
-  });
-
-  // Close filters when clicking outside
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.filters-sidebar') && !e.target.closest('.toggle-filters')) {
-      filtersSidebar.classList.remove('active');
-    }
-  });
-
-  // ✅ FAVORITE BUTTON FUNCTIONALITY
-  const favoriteButtons = document.querySelectorAll('.favorite-btn');
-
-  favoriteButtons.forEach(btn => {
-    const franchiseId = btn.dataset.franchiseId;
-    
-    // Check initial favorite status
-    fetch(`/accounts/favorites/check/${franchiseId}/`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.is_favorited) btn.classList.add('active');
-      })
-      .catch(err => console.error('Error checking favorite:', err));
-
-    // Toggle favorite on click
-    btn.addEventListener('click', async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-
-      try {
-        const response = await fetch(`/accounts/favorites/toggle/${franchiseId}/`, {
-          method: 'POST',
-          headers: {
-            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
-                          document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1],
-            'Content-Type': 'application/json'
-          }
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          if (data.status === 'added') {
-            btn.classList.add('active');
-          } else if (data.status === 'removed') {
-            btn.classList.remove('active');
-          }
-          showToast(data.message, 'success');
-        } else {
-          showToast(data.message || 'Error updating favorite', 'error');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        showToast('Failed to update favorite', 'error');
-      }
-    });
-  });
-
-  // Toast notification
-  function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type}`;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.style.animation = 'slideInUp 0.3s ease-out reverse forwards';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-
-  // ✅ FORM SUBMISSION WITH VALIDATION
-  const filtersForm = document.getElementById('filtersForm');
-  if (filtersForm) {
-    filtersForm.addEventListener('submit', function(e) {
-      // Form will submit naturally, but we can add validation here if needed
-      console.log('✅ Filters form submitted');
-    });
-  }
-});
-</script>
+{% block extra_js %}
+<script src="{% static 'accounts/browse.js' %}"></script>
 {% endblock %}

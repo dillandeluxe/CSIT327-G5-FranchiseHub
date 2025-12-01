@@ -6,403 +6,7 @@
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{% static 'accounts/franchise_form.css' %}">
-<style>
-/* ✅ Additional modern styles for edit page */
-.page-header-modern {
-  text-align: center;
-  margin-bottom: 40px;
-  padding-top: 20px;
-}
-
-.header-back {
-  margin-bottom: 20px;
-}
-
-.back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: #6b7280;
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  transition: all 0.2s;
-  padding: 8px 16px;
-  border-radius: 10px;
-  background: white;
-  border: 1px solid #e5e7eb;
-}
-
-.back-btn:hover {
-  color: #d66900;
-  background: #fff7ed;
-  border-color: #fed7aa;
-  transform: translateX(-4px);
-}
-
-.page-icon {
-  width: 72px;
-  height: 72px;
-  background: linear-gradient(135deg, #d66900 0%, #b35c04 100%);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  margin: 0 auto 24px;
-  box-shadow: 0 8px 24px rgba(214, 105, 0, 0.3);
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-
-.page-title-modern {
-  font-size: 32px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 8px;
-  letter-spacing: -0.5px;
-}
-
-.page-subtitle-modern {
-  font-size: 16px;
-  color: #6b7280;
-  font-weight: 500;
-}
-
-/* Modern form grid for edit page */
-.form-grid-modern {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px;
-  margin-bottom: 32px;
-}
-
-.form-group-modern {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.form-group-modern.full-width {
-  grid-column: 1 / -1;
-}
-
-.form-label-modern {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  color: #374151;
-}
-
-.form-label-modern svg {
-  color: #d66900;
-  flex-shrink: 0;
-}
-
-.required-star {
-  color: #ef4444;
-  font-size: 16px;
-}
-
-.form-input-modern,
-.form-textarea-modern {
-  width: 100%;
-  padding: 14px 16px;
-  border: 2px solid #e5e7eb;
-  border-radius: 12px;
-  font-size: 15px;
-  font-family: 'Poppins', sans-serif;
-  transition: all 0.3s;
-  background: #f9fafb;
-  color: #111827;
-}
-
-.form-input-modern:focus,
-.form-textarea-modern:focus {
-  outline: none;
-  border-color: #d66900;
-  background: white;
-  box-shadow: 0 0 0 4px rgba(214, 105, 0, 0.1);
-  transform: translateY(-2px);
-}
-
-.form-input-modern:valid:not(:placeholder-shown) {
-  border-color: #10b981;
-  background: #f0fdf4;
-}
-
-.form-textarea-modern {
-  resize: vertical;
-  min-height: 120px;
-  line-height: 1.6;
-}
-
-.char-counter {
-  font-size: 12px;
-  color: #9ca3af;
-  text-align: right;
-}
-
-.form-feedback {
-  font-size: 13px;
-  color: #ef4444;
-  min-height: 20px;
-}
-
-/* Modern image section */
-.image-section-modern {
-  margin: 32px 0;
-  padding: 28px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  position: relative;
-  overflow: hidden;
-}
-
-.image-section-modern::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: #d66900;
-  transform: translateX(-4px);
-  transition: transform 0.3s;
-}
-
-.image-section-modern:hover::before {
-  transform: translateX(0);
-}
-
-.section-heading {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 18px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #e5e7eb;
-}
-
-.section-heading svg {
-  color: #d66900;
-}
-
-/* Existing image */
-.existing-image-container {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  max-width: 100%;
-  height: 400px;
-  background: #f9fafb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #e5e7eb;
-}
-
-.existing-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s;
-}
-
-.existing-image-container:hover .existing-image {
-  transform: scale(1.05);
-}
-
-.image-badge {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  background: rgba(0,0,0,0.75);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  z-index: 2;
-  backdrop-filter: blur(10px);
-}
-
-.image-badge.new-badge {
-  background: rgba(214, 105, 0, 0.95);
-}
-
-.image-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all 0.3s;
-}
-
-.existing-image-container:hover .image-overlay {
-  opacity: 1;
-  background: rgba(0,0,0,0.6);
-}
-
-.btn-change-image {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: white;
-  color: #d66900;
-  border: none;
-  padding: 14px 28px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
-}
-
-.btn-change-image:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-}
-
-/* Upload zone */
-.upload-zone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 40px;
-  border: 3px dashed #d1d5db;
-  border-radius: 16px;
-  background: #f9fafb;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.upload-zone:hover {
-  border-color: #d66900;
-  background: #fff7ed;
-  transform: scale(1.02);
-}
-
-.upload-icon {
-  color: #9ca3af;
-  margin-bottom: 20px;
-  transition: all 0.3s;
-}
-
-.upload-zone:hover .upload-icon {
-  color: #d66900;
-  transform: scale(1.1) rotate(5deg);
-}
-
-.upload-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: #374151;
-  margin-bottom: 8px;
-}
-
-.upload-hint {
-  font-size: 13px;
-  color: #9ca3af;
-}
-
-.image-input-hidden {
-  display: none;
-}
-
-/* New image preview */
-.new-image-container {
-  position: relative;
-  border-radius: 16px;
-  overflow: hidden;
-  height: 400px;
-  background: #f9fafb;
-  border: 3px solid #10b981;
-  animation: slideIn 0.4s ease-out;
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.preview-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.image-actions {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  z-index: 2;
-}
-
-.btn-remove-new {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: #ef4444;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 6px 16px rgba(239, 68, 68, 0.4);
-}
-
-.btn-remove-new:hover {
-  background: #dc2626;
-  transform: translateY(-2px);
-  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.5);
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .add-franchise-container {
-    padding: 24px 16px 60px;
-  }
-
-  .form-grid-modern {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .existing-image-container,
-  .new-image-container {
-    height: 250px;
-  }
-
-  .page-title-modern {
-    font-size: 26px;
-  }
-}
-</style>
+<link rel="stylesheet" href="{% static 'accounts/edit_franchise.css' %}">
 {% endblock %}
 
 {% block franchisor_content %}
@@ -598,7 +202,6 @@
           </div>
 
           <div class="image-upload-modern">
-            <!-- Existing Image -->
             {% if franchise.image %}
               <div id="existingImage" class="existing-image-container">
                 <div class="image-badge">Current Image</div>
@@ -614,16 +217,9 @@
               </div>
             {% endif %}
             
-            <!-- Upload Zone -->
-            <input 
-              type="file" 
-              name="image" 
-              id="imageInput"
-              class="image-input-hidden"
-              accept="image/*"
-            >
+            <input type="file" name="image" id="imageInput" class="image-input-hidden" accept="image/*">
             
-            <label for="imageInput" class="upload-zone" {% if franchise.image %}style="display:none;"{% endif %}>
+            <label for="imageInput" class="upload-zone {% if franchise.image %}hidden{% endif %}">
               <div class="upload-icon">
                 <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd"/>
@@ -633,8 +229,7 @@
               <p class="upload-hint">PNG, JPG, GIF up to 10MB</p>
             </label>
             
-            <!-- New Image Preview -->
-            <div id="newImagePreview" class="new-image-container" style="display:none;">
+            <div id="newImagePreview" class="new-image-container hidden">
               <div class="image-badge new-badge">New Image</div>
               <img id="previewImg" src="" alt="Preview" class="preview-image">
               <div class="image-actions">
@@ -698,7 +293,7 @@
                 <div class="doc-upload-text">{% if franchise.brochure %}Replace{% else %}Upload{% endif %} Brochure</div>
                 <div class="doc-upload-hint">PDF, DOC, DOCX (max 10MB)</div>
               </div>
-              <input type="file" name="brochure" id="brochureInput" accept=".pdf,.doc,.docx" style="display: none;">
+              <input type="file" name="brochure" id="brochureInput" accept=".pdf,.doc,.docx" class="hidden">
               
               <div class="document-preview" id="brochurePreview">
                 <div class="doc-icon">
@@ -739,7 +334,6 @@
                 <div class="doc-icon">
                   <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-                  </svg>
                 </div>
                 <div class="doc-info">
                   <a href="{{ franchise.business_plan.url }}" target="_blank">View Current Business Plan</a>
@@ -758,7 +352,7 @@
                 <div class="doc-upload-text">{% if franchise.business_plan %}Replace{% else %}Upload{% endif %} Business Plan</div>
                 <div class="doc-upload-hint">PDF, DOC, DOCX (max 10MB)</div>
               </div>
-              <input type="file" name="business_plan" id="businessPlanInput" accept=".pdf,.doc,.docx" style="display: none;">
+              <input type="file" name="business_plan" id="businessPlanInput" accept=".pdf,.doc,.docx" class="hidden">
               
               <div class="document-preview" id="businessPlanPreview">
                 <div class="doc-icon">
@@ -816,112 +410,8 @@
     </div>
   </div>
 </div>
+{% endblock %}
 
-<script>
-(function() {
-  // Character counter
-  const textarea = document.getElementById('id_description');
-  const charCount = document.getElementById('charCount');
-  
-  if (textarea && charCount) {
-    textarea.addEventListener('input', function() {
-      charCount.textContent = this.value.length;
-    });
-  }
-
-  // Image upload handling
-  const imageInput = document.getElementById('imageInput');
-  const uploadZone = document.querySelector('.upload-zone');
-  const existingImage = document.getElementById('existingImage');
-  const newImagePreview = document.getElementById('newImagePreview');
-  const previewImg = document.getElementById('previewImg');
-
-  if (imageInput) {
-    imageInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (file && file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          previewImg.src = e.target.result;
-          if (uploadZone) uploadZone.style.display = 'none';
-          if (existingImage) existingImage.style.display = 'none';
-          newImagePreview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-      }
-    });
-  }
-
-  // Document upload handlers
-  const documents = ['brochure', 'business_plan'];
-  
-  documents.forEach(docType => {
-    const inputId = docType === 'brochure' ? 'brochureInput' : 'businessPlanInput';
-    const zoneId = docType === 'brochure' ? 'brochureUploadZone' : 'businessPlanUploadZone';
-    const previewId = docType === 'brochure' ? 'brochurePreview' : 'businessPlanPreview';
-    const nameId = docType === 'brochure' ? 'brochureName' : 'businessPlanName';
-    const sizeId = docType === 'brochure' ? 'brochureSize' : 'businessPlanSize';
-    
-    const input = document.getElementById(inputId);
-    const uploadZone = document.getElementById(zoneId);
-    const preview = document.getElementById(previewId);
-    const nameEl = document.getElementById(nameId);
-    const sizeEl = document.getElementById(sizeId);
-    
-    if (uploadZone && input) {
-      uploadZone.addEventListener('click', () => input.click());
-      
-      input.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          if (file.size > 10 * 1024 * 1024) {
-            alert('File size must be less than 10MB');
-            this.value = '';
-            return;
-          }
-          nameEl.textContent = file.name;
-          sizeEl.textContent = `${(file.size / 1024 / 1024).toFixed(2)} MB`;
-          uploadZone.style.display = 'none';
-          preview.classList.add('active');
-        }
-      });
-    }
-  });
-})();
-
-// Global functions
-function triggerImageUpload() {
-  document.getElementById('imageInput').click();
-}
-
-function removeNewImage() {
-  const imageInput = document.getElementById('imageInput');
-  const uploadZone = document.querySelector('.upload-zone');
-  const existingImage = document.getElementById('existingImage');
-  const newImagePreview = document.getElementById('newImagePreview');
-  
-  imageInput.value = '';
-  newImagePreview.style.display = 'none';
-  
-  if (existingImage) {
-    existingImage.style.display = 'flex';
-  } else if (uploadZone) {
-    uploadZone.style.display = 'flex';
-  }
-}
-
-function removeDocument(type) {
-  const inputId = type === 'brochure' ? 'brochureInput' : 'businessPlanInput';
-  const zoneId = type === 'brochure' ? 'brochureUploadZone' : 'businessPlanUploadZone';
-  const previewId = type === 'brochure' ? 'brochurePreview' : 'businessPlanPreview';
-  
-  const input = document.getElementById(inputId);
-  const zone = document.getElementById(zoneId);
-  const preview = document.getElementById(previewId);
-  
-  input.value = '';
-  zone.style.display = 'flex';
-  preview.classList.remove('active');
-}
-</script>
+{% block extra_js %}
+<script src="{% static 'accounts/edit_franchise.js' %}"></script>
 {% endblock %}

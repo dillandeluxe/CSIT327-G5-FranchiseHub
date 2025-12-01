@@ -5,534 +5,7 @@
 
 {% block extra_css %}
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --primary: #d66900;
-  --primary-hover: #b35c04;
-  --primary-light: #fff7ed;
-  --success: #10b981;
-  --error: #ef4444;
-  --text: #111827;
-  --text-muted: #6b7280;
-  --text-light: #9ca3af;
-  --bg: #f8fafc;
-  --card-bg: #ffffff;
-  --border: #e5e7eb;
-  --shadow: 0 4px 16px rgba(0,0,0,0.06);
-  --shadow-lg: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.6;
-}
-
-/* ===== NAVBAR ===== */
-.modern-navbar {
-  background: var(--card-bg);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  box-shadow: var(--shadow);
-}
-
-.brand-logo {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text);
-  text-decoration: none;
-}
-
-.brand-logo span {
-  color: var(--primary);
-}
-
-.nav-menu {
-  display: flex;
-  gap: 32px;
-  align-items: center;
-}
-
-.nav-link {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 14px;
-  transition: color 0.2s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.nav-link:hover,
-.nav-link.active {
-  color: var(--primary);
-}
-
-/* ===== HERO IMAGE ===== */
-.detail-hero {
-  height: 500px;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  position: absolute;
-  inset: 0;
-}
-
-.hero-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 100%);
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  color: white;
-  text-align: center;
-  padding: 0 24px;
-}
-
-.hero-badge {
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 600;
-  margin-bottom: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.hero-title {
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  letter-spacing: -1px;
-}
-
-.hero-subtitle {
-  font-size: 20px;
-  opacity: 0.95;
-  font-weight: 400;
-}
-
-/* ===== MAIN CONTAINER ===== */
-.detail-container {
-  max-width: 1200px;
-  margin: -60px auto 0;
-  padding: 0 24px;
-  position: relative;
-  z-index: 10;
-}
-
-/* ===== TOP CARD ===== */
-.detail-top-card {
-  background: var(--card-bg);
-  border-radius: 24px;
-  padding: 40px;
-  box-shadow: var(--shadow-lg);
-  margin-bottom: 40px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 40px;
-}
-
-.detail-left {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.detail-right {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-/* Location Section */
-.location-section {
-  padding: 24px;
-  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-  border-radius: 16px;
-  border: 2px solid #fbbf24;
-}
-
-.location-icon {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  color: #92400e;
-  margin-bottom: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.location-icon svg {
-  flex-shrink: 0;
-}
-
-.location-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: #111827;
-  margin-bottom: 4px;
-}
-
-.location-country {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-/* Franchisor Card */
-.franchisor-card {
-  padding: 24px;
-  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-  border-radius: 16px;
-  border: 2px solid #86efac;
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.franchisor-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 32px;
-  flex-shrink: 0;
-  box-shadow: 0 8px 24px rgba(214, 105, 0, 0.3);
-}
-
-.franchisor-info h4 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 4px;
-}
-
-.franchisor-info p {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-/* Stats Grid */
-.stats-grid-detail {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.stat-item {
-  padding: 20px;
-  background: var(--bg);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  text-align: center;
-  transition: all 0.3s;
-}
-
-.stat-item:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: 4px;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-/* ===== DESCRIPTION SECTION ===== */
-.description-section {
-  background: var(--card-bg);
-  border-radius: 24px;
-  padding: 40px;
-  box-shadow: var(--shadow);
-  margin-bottom: 60px;
-}
-
-.section-title {
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.section-title svg {
-  color: var(--primary);
-}
-
-.description-text {
-  font-size: 16px;
-  color: var(--text-muted);
-  line-height: 1.8;
-}
-
-/* ===== CTA SECTION ===== */
-.cta-section {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  border-radius: 24px;
-  padding: 48px;
-  color: white;
-  text-align: center;
-  margin-bottom: 60px;
-  box-shadow: 0 20px 60px rgba(214, 105, 0, 0.3);
-}
-
-.cta-title {
-  font-size: 32px;
-  font-weight: 700;
-  margin-bottom: 12px;
-  letter-spacing: -0.5px;
-}
-
-.cta-subtitle {
-  font-size: 18px;
-  opacity: 0.95;
-  margin-bottom: 32px;
-}
-
-.cta-buttons {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.btn {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 32px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 16px;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.3s;
-  border: none;
-  font-family: inherit;
-}
-
-.btn-primary {
-  background: white;
-  color: var(--primary);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
-}
-
-.btn-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 2px solid white;
-}
-
-.btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-/* ===== BACK BUTTON ===== */
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  margin-bottom: 32px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  text-decoration: none;
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 14px;
-  transition: all 0.2s;
-  width: fit-content;
-}
-
-.back-button:hover {
-  background: var(--bg);
-  color: var(--text);
-  border-color: var(--primary);
-  gap: 12px;
-}
-
-/* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
-  .detail-top-card {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 768px) {
-  .modern-navbar {
-    padding: 14px 24px;
-  }
-
-  .brand-logo {
-    font-size: 20px;
-  }
-
-  .nav-menu {
-    gap: 16px;
-  }
-
-  .nav-link {
-    font-size: 13px;
-  }
-
-  .detail-hero {
-    height: 350px;
-  }
-
-  .hero-title {
-    font-size: 32px;
-  }
-
-  .hero-subtitle {
-    font-size: 16px;
-  }
-
-  .detail-container {
-    padding: 0 16px;
-    margin: -40px auto 0;
-  }
-
-  .detail-top-card,
-  .description-section,
-  .cta-section {
-    padding: 24px;
-  }
-
-  .section-title {
-    font-size: 24px;
-  }
-
-  .cta-title {
-    font-size: 26px;
-  }
-
-  .cta-subtitle {
-    font-size: 16px;
-  }
-
-  .cta-buttons {
-    flex-direction: column;
-  }
-
-  .btn {
-    justify-content: center;
-    width: 100%;
-  }
-
-  .stats-grid-detail {
-    grid-template-columns: 1fr;
-  }
-
-  .franchisor-card {
-    flex-direction: column;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .detail-hero {
-    height: 300px;
-  }
-
-  .hero-title {
-    font-size: 24px;
-  }
-
-  .detail-container {
-    padding: 0 12px;
-  }
-
-  .detail-top-card,
-  .description-section {
-    padding: 20px;
-  }
-
-  .section-title {
-    font-size: 20px;
-  }
-
-  .cta-section {
-    padding: 32px 20px;
-  }
-
-  .cta-title {
-    font-size: 22px;
-  }
-}
-
-/* ===== ANIMATIONS ===== */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.detail-top-card,
-.description-section,
-.cta-section {
-  animation: fadeInUp 0.6s ease-out;
-}
-</style>
+<link rel="stylesheet" href="{% static 'accounts/franchise_detail.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -562,7 +35,7 @@ body {
       src="{{ franchise.image.url }}" 
       alt="{{ franchise.name }}" 
       class="hero-image"
-      onerror="this.style.display='none'; this.parentNode.style.background='linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%)';"
+      id="heroImage"
     >
   {% endif %}
   <div class="hero-overlay"></div>
@@ -586,7 +59,6 @@ body {
   <!-- Top Card with Location, Franchisor, and Stats -->
   <div class="detail-top-card">
     <div class="detail-left">
-      <!-- ✅ LOCATION SECTION (PROMINENT) -->
       <div class="location-section">
         <div class="location-icon">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
@@ -600,7 +72,6 @@ body {
         {% endif %}
       </div>
 
-      <!-- Franchisor Card -->
       <div class="franchisor-card">
         <div class="franchisor-avatar">
           {{ franchise.franchisor.company_name|first|upper }}
@@ -622,7 +93,6 @@ body {
     </div>
 
     <div class="detail-right">
-      <!-- Stats Grid -->
       <div class="stats-grid-detail">
         <div class="stat-item">
           <div class="stat-value">{{ franchise.formatted_investment }}</div>
@@ -644,7 +114,6 @@ body {
     </div>
   </div>
 
-  <!-- Description Section -->
   {% if franchise.description %}
     <div class="description-section">
       <h2 class="section-title">
@@ -657,7 +126,6 @@ body {
     </div>
   {% endif %}
 
-  <!-- ✅ NEW: Available Documents Section -->
   {% if franchise.brochure or franchise.business_plan %}
   <div class="description-section">
     <h2 class="section-title">
@@ -669,15 +137,15 @@ body {
     
     <div class="stats-grid-detail">
       {% if franchise.brochure %}
-      <a href="{{ franchise.brochure.url }}" target="_blank" rel="noopener noreferrer" class="stat-item" style="text-decoration: none; cursor: pointer; border: 2px solid var(--primary); transition: all 0.3s; background: linear-gradient(135deg, var(--primary-light) 0%, #fed7aa 100%);">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-          <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20" style="color: var(--primary);">
+      <a href="{{ franchise.brochure.url }}" target="_blank" rel="noopener noreferrer" class="stat-item doc-card doc-card--brochure">
+        <div class="doc-card-inner">
+          <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20" class="doc-icon doc-icon--brochure">
             <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
           </svg>
-          <div class="stat-label" style="color: var(--text); font-weight: 600;">Franchise Brochure</div>
-          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+          <div class="stat-label">Franchise Brochure</div>
+          <div class="doc-download">
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 011.414 0L9 9.586V3a1 1 0 112 0v6.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
             Click to Download
           </div>
@@ -686,15 +154,15 @@ body {
       {% endif %}
 
       {% if franchise.business_plan %}
-      <a href="{{ franchise.business_plan.url }}" target="_blank" rel="noopener noreferrer" class="stat-item" style="text-decoration: none; cursor: pointer; border: 2px solid var(--success); transition: all 0.3s; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);">
-        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
-          <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20" style="color: var(--success);">
+      <a href="{{ franchise.business_plan.url }}" target="_blank" rel="noopener noreferrer" class="stat-item doc-card doc-card--plan">
+        <div class="doc-card-inner">
+          <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20" class="doc-icon doc-icon--plan">
             <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
           </svg>
-          <div class="stat-label" style="color: var(--text); font-weight: 600;">Business Plan</div>
-          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+          <div class="stat-label">Business Plan</div>
+          <div class="doc-download">
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM6.293 6.707a1 1 0 011.414 0L9 9.586V3a1 1 0 112 0v6.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
             </svg>
             Click to Download
           </div>
@@ -734,99 +202,8 @@ body {
     </div>
   </div>
 </div>
+{% endblock %}
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-  const franchiseId = "{{ franchise.id }}";
-  const favoriteBtn = document.getElementById('favoriteBtn');
-  const favoriteText = document.getElementById('favoriteText');
-
-  // Check if already favorited
-  fetch(`/accounts/favorites/check/${franchiseId}/`)
-    .then(res => res.json())
-    .then(data => {
-      if (data.is_favorited) {
-        favoriteBtn.style.background = '#10b981';
-        favoriteBtn.style.borderColor = 'white';
-        favoriteText.textContent = '♥ Saved to Favorites';
-      }
-    });
-
-  // Toggle favorite
-  favoriteBtn.addEventListener('click', async function(e) {
-    e.preventDefault();
-    
-    try {
-      const response = await fetch(`/accounts/favorites/toggle/${franchiseId}/`, {
-        method: 'POST',
-        headers: {
-          'X-CSRFToken': '{{ csrf_token }}',
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const data = await response.json();
-
-      if (data.status === 'added') {
-        favoriteBtn.style.background = '#10b981';
-        favoriteBtn.style.borderColor = 'white';
-        favoriteText.textContent = '♥ Saved to Favorites';
-      } else if (data.status === 'removed') {
-        favoriteBtn.style.background = 'rgba(255, 255, 255, 0.2)';
-        favoriteBtn.style.borderColor = 'white';
-        favoriteText.textContent = 'Add to Favorites';
-      }
-
-      // Show toast
-      showToast(data.message, data.status === 'error' ? 'error' : 'success');
-    } catch (error) {
-      showToast('Error updating favorite', 'error');
-    }
-  });
-
-  function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.style.cssText = `
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: ${type === 'error' ? '#ef4444' : '#10b981'};
-      color: white;
-      padding: 16px 24px;
-      border-radius: 12px;
-      font-weight: 500;
-      font-family: Poppins, sans-serif;
-      z-index: 10000;
-      animation: slideInUp 0.3s ease-out;
-    `;
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-      toast.style.animation = 'slideOutDown 0.3s ease-out forwards';
-      setTimeout(() => toast.remove(), 300);
-    }, 3000);
-  }
-});
-</script>
-
-<style>
-@keyframes slideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideOutDown {
-  to {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-}
-</style>
+{% block extra_js %}
+<script src="{% static 'accounts/franchise_detail.js' %}"></script>
 {% endblock %}

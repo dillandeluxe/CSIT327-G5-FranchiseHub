@@ -76,7 +76,7 @@ body {
 /* ===== HERO ===== */
 .browse-hero {
   background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  padding: 48px 24px;
+  padding: 56px 24px;
   text-align: center;
   color: white;
 }
@@ -98,12 +98,12 @@ body {
 }
 
 .browse-container {
-  max-width: 1400px;
+  max-width: 1200px; /* slightly narrower for better readability */
   margin: 0 auto;
   padding: 32px 24px;
   display: grid;
   grid-template-columns: 300px 1fr;
-  gap: 32px;
+  gap: 28px;
 }
 
 /* ===== FILTERS SIDEBAR ===== */
@@ -114,7 +114,7 @@ body {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 24px;
+  padding: 20px;
   box-shadow: var(--shadow);
 }
 
@@ -122,8 +122,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border-light);
 }
 
@@ -148,7 +148,7 @@ body {
 .filters-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .filter-group {
@@ -186,13 +186,17 @@ body {
 }
 
 .filter-input.small {
-  flex: 1;
+  flex: 1 1 0;      /* allow both inputs to share space and shrink */
+  min-width: 0;     /* critical: allow flex items to shrink below content width */
+  max-width: 100%;  /* prevent overflow in narrow containers */
+  box-sizing: border-box;
 }
 
 .range-inputs {
   display: flex;
   gap: 8px;
   align-items: center;
+  flex-wrap: nowrap; /* prevent unintended wrapping in normal widths */
 }
 
 .range-dash {
@@ -203,7 +207,7 @@ body {
 .filter-actions {
   display: flex;
   gap: 8px;
-  margin-top: 16px;
+  margin-top: 12px;
 }
 
 .btn-apply,
@@ -252,8 +256,8 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  padding-bottom: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -280,8 +284,8 @@ body {
 .franchise-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding: 20px 0;
+  gap: 18px;
+  padding: 16px 0;
 }
 
 /* ===== ULTRA MODERN FRANCHISE CARD ===== */
@@ -290,7 +294,7 @@ body {
   border-radius: 20px;
   overflow: hidden;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  box-shadow: 0 3px 14px rgba(0,0,0,0.06);
   border: 1px solid #f1f5f9;
   display: flex;
   flex-direction: column;
@@ -414,11 +418,11 @@ body {
 
 /* ===== MODERN CARD BODY ===== */
 .card-body {
-  padding: 20px;
+  padding: 18px;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%);
 }
 
@@ -440,8 +444,8 @@ body {
 .franchise-meta {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin: 6px 0;
+  gap: 6px;
+  margin: 4px 0;
 }
 
 .meta-badge {
@@ -529,7 +533,7 @@ body {
 
 /* ===== MODERN CARD ACTIONS ===== */
 .card-actions {
-  padding: 16px 20px;
+  padding: 14px 18px;
   border-top: 1px solid #f1f5f9;
   margin-top: auto;
   background: linear-gradient(135deg, #fafbfc 0%, #f8fafc 100%);
@@ -587,7 +591,7 @@ body {
 .no-results {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 80px 40px;
+  padding: 64px 32px;
   background: white;
   border-radius: 20px;
   border: 2px dashed #e2e8f0;
@@ -616,40 +620,38 @@ body {
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1024px) {
+  .browse-container {
+    padding: 28px 20px;
+    gap: 24px;
+  }
   .franchise-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 18px;
+    gap: 16px;
   }
 }
 
 @media (max-width: 768px) {
-  .franchise-grid {
+  .browse-container {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 20px;
   }
-
-  .franchise-image {
-    height: 120px;
+  .filters-sidebar {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    max-width: 280px;
+    border-radius: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    top: 60px;
   }
-
-  .card-body {
-    padding: 16px;
-    gap: 10px;
-  }
-
-  .franchise-name {
-    font-size: 15px;
-  }
-
-  .franchise-investment {
-    font-size: 14px;
-    padding: 6px 10px;
-  }
-
-  .btn-view {
-    padding: 10px 14px;
-    font-size: 12px;
-  }
+  .filters-sidebar.active { transform: translateX(0); }
+  .close-filters { display: block; }
+  .toggle-filters { display: flex; }
+  .franchise-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
 }
 
 @media (max-width: 480px) {
@@ -664,6 +666,21 @@ body {
 
   .franchise-investment {
     font-size: 13px;
+  }
+}
+
+/* Extra safeguard for very narrow viewports */
+@media (max-width: 380px) {
+  .range-inputs {
+    flex-wrap: wrap; /* allow wrapping when space is extremely tight */
+  }
+  .filter-input.small {
+    flex: 1 1 100%;
+  }
+  .range-dash {
+    width: 100%;
+    text-align: center;
+    opacity: 0.7;
   }
 }
 
@@ -700,4 +717,48 @@ body {
   box-shadow: 0 4px 20px rgba(0,0,0,0.06);
 }
 
-/* ...existing filter styles... */
+/* Utility classes */
+.hidden { display: none !important; }
+
+/* Toast notifications */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  z-index: 9999;
+  animation: slideInUp 0.3s ease-out;
+}
+@keyframes slideInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.toast-success { background: #10b981; color: #fff; }
+.toast-error { background: #ef4444; color: #fff; }
+
+/* Mobile filters toggle visibility and behavior */
+@media (max-width: 768px) {
+  .filters-sidebar {
+    position: fixed;
+    left: 0;
+    width: 100%;
+    max-width: 280px;
+    border-radius: 0;
+    z-index: 1000;
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+    top: 60px;
+  }
+  .filters-sidebar.active { transform: translateX(0); }
+  .close-filters { display: block; }
+  .toggle-filters { display: flex; }
+  .franchise-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+}
+
+/* Image placeholder appearance */
+.image-placeholder { display: flex; align-items: center; justify-content: center; }
