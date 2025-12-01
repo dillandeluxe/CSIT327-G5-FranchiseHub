@@ -80,26 +80,65 @@ class FranchisorForm(forms.ModelForm):
         return location
 
 class FranchiseApplicationForm(forms.ModelForm):
-    """Form for franchisee applications"""
     class Meta:
         model = FranchiseApplication
-        fields = ['full_name', 'email', 'phone', 'experience']
+        fields = [
+            'full_name',
+            'email', 
+            'phone',
+            'experience',  # ✅ Make sure this is included
+            'resume',
+            'business_proposal',
+            'financial_statement'
+        ]
         widgets = {
             'full_name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Your full name'
+                'placeholder': 'Enter your full name',
+                'required': True
             }),
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'your@email.com'
+                'placeholder': 'your.email@example.com',
+                'required': True
             }),
             'phone': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Your phone number'
+                'placeholder': '+63 XXX XXX XXXX',
             }),
             'experience': forms.Textarea(attrs={
                 'class': 'form-control',
-                'placeholder': 'Tell us about your business experience...',
-                'rows': 4
-            })
+                'placeholder': 'Describe your business experience, background, and qualifications...',
+                'rows': 5
+            }),
+            'resume': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.pdf,.doc,.docx'
+            }),
+            'business_proposal': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.pdf,.doc,.docx'
+            }),
+            'financial_statement': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.pdf,.doc,.docx'
+            }),
         }
+
+    def clean_resume(self):
+        resume = self.cleaned_data.get('resume')
+        if resume and resume.size > 10 * 1024 * 1024:  # 10MB limit
+            raise forms.ValidationError('File size must be less than 10MB')
+        return resume
+
+    def clean_business_proposal(self):
+        proposal = self.cleaned_data.get('business_proposal')
+        if proposal and proposal.size > 10 * 1024 * 1024:  # 10MB limit
+            raise forms.ValidationError('File size must be less than 10MB')
+        return proposal
+
+    def clean_financial_statement(self):
+        statement = self.cleaned_data.get('financial_statement')
+        if statement and statement.size > 10 * 1024 * 1024:  # 10MB limit
+            raise forms.ValidationError('File size must be less than 10MB')
+        return statement

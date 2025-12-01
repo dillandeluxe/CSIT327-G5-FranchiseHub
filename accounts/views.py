@@ -505,15 +505,18 @@ def franchise_apply(request, franchise_id):
         return redirect('browse')
 
     if request.method == 'POST':
-        form = FranchiseApplicationForm(request.POST)
+        form = FranchiseApplicationForm(request.POST, request.FILES)  # ✅ request.FILES captures uploads
         if form.is_valid():
             app = form.save(commit=False)
             app.franchise = franchise
             app.franchisee = franchisee
-            app.save()
-            messages.success(request, "Application submitted successfully.")
-            return redirect('browse')
+            app.save()  # ✅ Saves resume, business_proposal, financial_statement to Cloudinary
+            
+            messages.success(request, f"Application submitted successfully for {franchise.name}!")
+            return redirect('franchisee_dashboard')
         else:
+            # ✅ DEBUG: Print form errors
+            print(f"❌ Form validation errors: {form.errors}")
             messages.error(request, "Please correct the errors below.")
     else:
         initial = {
@@ -1217,4 +1220,26 @@ def check_favorite(request, franchise_id):
     
     return JsonResponse({
         'is_favorited': is_favorited
+    })
+
+@login_required
+def application_detail_view(request, application_id):
+    """
+    Display detailed information about a specific franchise application.
+    Only accessible by the franchisor who owns the franchise.
+    """
+    application = get_object_or_404(FranchiseApplication, id=application_id)
+    
+    # Security check: Only the franchisor who owns the franchise can view this
+    try:
+        franchisor = Franchisor.objects.get(user=request.user)
+        if application.franchise.franchisor != franchisor:
+            messages.error(request, "You don't have permission to view this application.")
+            return redirect('franchisor_dashboard')
+    except Franchisor.DoesNotExist:
+        messages.error(request, "You are not registered as a franchisor.")
+        return redirect('home')
+    
+    return render(request, 'accounts/application_detail.html', {
+        'application': application
     })

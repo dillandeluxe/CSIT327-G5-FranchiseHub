@@ -108,7 +108,19 @@ class Franchise(models.Model):
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='franchise_images/', blank=True, null=True)
     
-    # ✅ REMOVED: Document fields (brochure and business_plan)
+    # ✅ ADDED BACK: Document fields for file uploads
+    brochure = models.FileField(
+        upload_to='franchise_documents/', 
+        blank=True, 
+        null=True,
+        help_text="Upload franchise brochure (PDF, DOC, DOCX, etc.)"
+    )
+    business_plan = models.FileField(
+        upload_to='franchise_documents/', 
+        blank=True, 
+        null=True,
+        help_text="Upload business plan document (PDF, DOC, DOCX, etc.)"
+    )
     
     # ✅ NEW STATUS FIELDS
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -354,6 +366,26 @@ class FranchiseApplication(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=20, blank=True, null=True)
     experience = models.TextField(blank=True, null=True, help_text="Business experience and background")
+    
+    # ✅ These fields store the uploaded documents
+    resume = models.FileField(
+        upload_to='application_documents/',
+        blank=True,
+        null=True,
+        help_text="Upload your resume/CV (PDF, DOC, DOCX)"
+    )
+    business_proposal = models.FileField(
+        upload_to='application_documents/',
+        blank=True,
+        null=True,
+        help_text="Upload your business proposal (PDF, DOC, DOCX)"
+    )
+    financial_statement = models.FileField(
+        upload_to='application_documents/',
+        blank=True,
+        null=True,
+        help_text="Upload financial statement or proof of funds (PDF)"
+    )
     
     # Application Status
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Pending')

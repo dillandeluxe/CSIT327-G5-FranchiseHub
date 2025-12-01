@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),  # /accounts/ → accounts.urls
     path('', views.home_view, name='home'),        # / → main home
+    path('accounts/application/<uuid:application_id>/', views.application_detail_view, name='application_detail'),
 ]
 
 # Serve media files in development
