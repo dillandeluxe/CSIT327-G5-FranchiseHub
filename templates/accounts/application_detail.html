@@ -754,6 +754,234 @@ body {
     font-size: 20px;
   }
 }
+
+/* ✅ NEW: Modern Reject Modal Styles */
+.reject-modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.reject-modal.active {
+  display: flex;
+}
+
+.reject-modal-content {
+  background: white;
+  border-radius: 20px;
+  width: 520px;
+  max-width: 95%;
+  padding: 0;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.reject-modal-header {
+  padding: 32px;
+  text-align: center;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+}
+
+.reject-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ef4444;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+  animation: warningPulse 2s infinite;
+}
+
+@keyframes warningPulse {
+  0%, 100% {
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+  }
+  50% {
+    box-shadow: 0 12px 32px rgba(239, 68, 68, 0.4);
+  }
+}
+
+.reject-modal-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #991b1b;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.reject-modal-subtitle {
+  font-size: 16px;
+  color: #6b7280;
+  line-height: 1.6;
+}
+
+.reject-modal-body {
+  padding: 32px;
+}
+
+.reject-form-group {
+  margin-bottom: 24px;
+}
+
+.reject-form-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.required-star {
+  color: #ef4444;
+  font-size: 16px;
+}
+
+.reject-form-textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 14px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  font-size: 15px;
+  font-family: 'Poppins', sans-serif;
+  transition: all 0.3s;
+  background: #f9fafb;
+  resize: vertical;
+}
+
+.reject-form-textarea:focus {
+  outline: none;
+  border-color: #ef4444;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.1);
+}
+
+.reject-form-textarea::placeholder {
+  color: #9ca3af;
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 6px;
+}
+
+.reject-form-help {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.reject-modal-actions {
+  display: flex;
+  gap: 12px;
+  padding: 24px 32px;
+  background: #f9fafb;
+  border-top: 1px solid #e5e7eb;
+}
+
+.reject-modal-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  font-family: 'Poppins', sans-serif;
+}
+
+.reject-modal-btn.cancel {
+  background: white;
+  color: #6b7280;
+  border: 2px solid #e5e7eb;
+}
+
+.reject-modal-btn.cancel:hover {
+  background: #f9fafb;
+  border-color: #d1d5db;
+  color: #1a1a1a;
+}
+
+.reject-modal-btn.confirm {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  box-shadow: 0 6px 18px rgba(239, 68, 68, 0.4);
+}
+
+.reject-modal-btn.confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.5);
+}
+
+.reject-modal-btn.confirm:active {
+  transform: translateY(0);
+}
+
+.reject-modal-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* Close button */
+.reject-modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #ef4444;
+  z-index: 10;
+}
+
+.reject-modal-close:hover {
+  background: rgba(239, 68, 68, 0.2);
+  transform: rotate(90deg);
+}
 </style>
 {% endblock %}
 
@@ -1001,16 +1229,12 @@ body {
             Accept Application
           </button>
         </form>
-        <form method="POST" action="{% url 'reject_application' application.id %}" style="flex: 1;" onsubmit="return confirm('Are you sure you want to reject this application?');">
-          {% csrf_token %}
-          <textarea name="rejection_reason" placeholder="Rejection reason..." required style="display: none;"></textarea>
-          <button type="submit" class="btn btn-reject">
-            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
-            </svg>
-            Reject Application
-          </button>
-        </form>
+        <button type="button" class="btn btn-reject" onclick="openRejectModal()" style="flex: 1;">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+          Reject Application
+        </button>
       </div>
       {% else %}
       <div class="action-buttons">
@@ -1027,6 +1251,77 @@ body {
   </div>
 </div>
 
+<!-- ✅ NEW: Modern Reject Modal -->
+<div class="reject-modal" id="rejectModal">
+  <div class="reject-modal-content">
+    <button type="button" class="reject-modal-close" onclick="closeRejectModal()">
+      <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+      </svg>
+    </button>
+    
+    <div class="reject-modal-header">
+      <div class="reject-icon">
+        <svg width="40" height="40" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <h3 class="reject-modal-title">Reject Application</h3>
+      <p class="reject-modal-subtitle">
+        Please provide a detailed reason for rejecting this application
+      </p>
+    </div>
+    
+    <form id="rejectForm" method="POST" action="{% url 'reject_application' application.id %}">
+      {% csrf_token %}
+      <div class="reject-modal-body">
+        <div class="reject-form-group">
+          <label for="rejectionReasonTextarea" class="reject-form-label">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            Rejection Reason
+            <span class="required-star">*</span>
+          </label>
+          <textarea 
+            id="rejectionReasonTextarea"
+            name="rejection_reason" 
+            class="reject-form-textarea"
+            placeholder="Provide a clear and constructive reason for rejection..."
+            required
+            minlength="10"
+            maxlength="500"
+          ></textarea>
+          <div class="char-counter">
+            <span id="charCount">0</span> / 500 characters
+          </div>
+          <div class="reject-form-help">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            Be specific and constructive (minimum 10 characters)
+          </div>
+        </div>
+      </div>
+      
+      <div class="reject-modal-actions">
+        <button type="button" class="reject-modal-btn cancel" onclick="closeRejectModal()">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+          Cancel
+        </button>
+        <button type="submit" class="reject-modal-btn confirm" id="rejectSubmitBtn">
+          <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+          </svg>
+          Confirm Rejection
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <script>
 // Smooth animations on load
 document.addEventListener('DOMContentLoaded', function() {
@@ -1040,18 +1335,96 @@ document.addEventListener('DOMContentLoaded', function() {
       card.style.transform = 'translateY(0)';
     }, index * 100);
   });
+});
 
-  // Enhanced reject button with reason modal
-  const rejectForm = document.querySelector('form[action*="reject_application"]');
-  if (rejectForm) {
-    rejectForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      const reason = prompt('Please provide a reason for rejection:');
-      if (reason && reason.trim()) {
-        this.querySelector('textarea[name="rejection_reason"]').value = reason;
-        this.submit();
+// ✅ FIXED: Handle reject button with proper reason input
+function handleReject() {
+  const reason = prompt('Please provide a detailed reason for rejection:');
+  
+  if (reason && reason.trim()) {
+    // Set the hidden input value
+    document.getElementById('rejectionReasonInput').value = reason.trim();
+    
+    // Submit the form
+    document.getElementById('rejectForm').submit();
+  } else if (reason !== null) {
+    // User clicked OK but didn't provide a reason
+    alert('Rejection reason is required. Please try again.');
+  }
+  // If reason is null, user clicked Cancel - do nothing
+}
+
+// ✅ NEW: Modern Reject Modal Functions
+function openRejectModal() {
+  document.getElementById('rejectModal').classList.add('active');
+  document.getElementById('rejectionReasonTextarea').focus();
+}
+
+function closeRejectModal() {
+  document.getElementById('rejectModal').classList.remove('active');
+  document.getElementById('rejectForm').reset();
+  document.getElementById('charCount').textContent = '0';
+}
+
+// Character counter for rejection reason
+document.addEventListener('DOMContentLoaded', function() {
+  const rejectTextarea = document.getElementById('rejectionReasonTextarea');
+  const charCount = document.getElementById('charCount');
+  
+  if (rejectTextarea && charCount) {
+    rejectTextarea.addEventListener('input', function() {
+      const count = this.value.length;
+      charCount.textContent = count;
+      
+      // Update color based on length
+      if (count < 10) {
+        charCount.style.color = '#ef4444';
+      } else if (count > 450) {
+        charCount.style.color = '#f59e0b';
+      } else {
+        charCount.style.color = '#10b981';
       }
     });
+  }
+  
+  // Form validation
+  const rejectForm = document.getElementById('rejectForm');
+  if (rejectForm) {
+    rejectForm.addEventListener('submit', function(e) {
+      const textarea = document.getElementById('rejectionReasonTextarea');
+      const reason = textarea.value.trim();
+      
+      if (reason.length < 10) {
+        e.preventDefault();
+        alert('Please provide a rejection reason with at least 10 characters.');
+        textarea.focus();
+        return false;
+      }
+      
+      // Disable submit button to prevent double submission
+      const submitBtn = document.getElementById('rejectSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20" style="animation: spin 1s linear infinite;">
+          <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z"/>
+        </svg>
+        Processing...
+      `;
+    });
+  }
+});
+
+// Close modal when clicking outside
+document.getElementById('rejectModal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeRejectModal();
+  }
+});
+
+// Close modal with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeRejectModal();
   }
 });
 </script>
