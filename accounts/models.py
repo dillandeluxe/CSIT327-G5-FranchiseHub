@@ -367,24 +367,27 @@ class FranchiseApplication(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True)
     experience = models.TextField(blank=True, null=True, help_text="Business experience and background")
     
-    # ✅ These fields store the uploaded documents
+    # ✅ These fields will automatically upload to Cloudinary
     resume = models.FileField(
         upload_to='application_documents/',
         blank=True,
         null=True,
-        help_text="Upload your resume/CV (PDF, DOC, DOCX)"
+        help_text="Upload your resume/CV (PDF, DOC, DOCX)",
+        max_length=500  # ✅ Allow longer Cloudinary URLs
     )
     business_proposal = models.FileField(
         upload_to='application_documents/',
         blank=True,
         null=True,
-        help_text="Upload your business proposal (PDF, DOC, DOCX)"
+        help_text="Upload your business proposal (PDF, DOC, DOCX)",
+        max_length=500  # ✅ Allow longer Cloudinary URLs
     )
     financial_statement = models.FileField(
         upload_to='application_documents/',
         blank=True,
         null=True,
-        help_text="Upload financial statement or proof of funds (PDF)"
+        help_text="Upload financial statement or proof of funds (PDF)",
+        max_length=500  # ✅ Allow longer Cloudinary URLs
     )
     
     # Application Status

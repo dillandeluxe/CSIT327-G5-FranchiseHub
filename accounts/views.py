@@ -284,7 +284,7 @@ def edit_profile_view(request):
         profile.location = request.POST.get('location', '')
         profile.bio = request.POST.get('bio', '')
         
-        # Handle profile picture upload
+        # ✅ Handle profile picture upload - Cloudinary will handle this automatically
         if request.FILES.get('profile_picture'):
             profile.profile_picture = request.FILES['profile_picture']
         

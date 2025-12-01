@@ -932,7 +932,7 @@ body {
         
         <div class="documents-grid">
           {% if application.resume %}
-          <a href="{{ application.resume.url }}" target="_blank" rel="noopener noreferrer" class="document-item">
+          <a href="{{ application.resume.url }}" target="_blank" rel="noopener noreferrer" class="document-item" download>
             <div class="document-icon">
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
@@ -940,19 +940,13 @@ body {
             </div>
             <div class="document-info">
               <div class="document-name">Resume/CV</div>
-              <div class="document-size">
-                {% if application.resume.size %}
-                  {{ application.resume.size|filesizeformat }}
-                {% else %}
-                  Document
-                {% endif %}
-              </div>
+              <div class="document-size">PDF Document</div>
             </div>
           </a>
           {% endif %}
 
           {% if application.business_proposal %}
-          <a href="{{ application.business_proposal.url }}" target="_blank" rel="noopener noreferrer" class="document-item">
+          <a href="{{ application.business_proposal.url }}" target="_blank" rel="noopener noreferrer" class="document-item" download>
             <div class="document-icon">
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
@@ -960,32 +954,20 @@ body {
             </div>
             <div class="document-info">
               <div class="document-name">Business Proposal</div>
-              <div class="document-size">
-                {% if application.business_proposal.size %}
-                  {{ application.business_proposal.size|filesizeformat }}
-                {% else %}
-                  Document
-                {% endif %}
-              </div>
+              <div class="document-size">PDF Document</div>
             </div>
           </a>
           {% endif %}
 
           {% if application.financial_statement %}
-          <a href="{{ application.financial_statement.url }}" target="_blank" rel="noopener noreferrer" class="document-item">
+          <a href="{{ application.financial_statement.url }}" target="_blank" rel="noopener noreferrer" class="document-item" download>
             <div class="document-icon">
               <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
             </div>
             <div class="document-info">
               <div class="document-name">Financial Statement</div>
-              <div class="document-size">
-                {% if application.financial_statement.size %}
-                  {{ application.financial_statement.size|filesizeformat }}
-                {% else %}
-                  Document
-                {% endif %}
-              </div>
+              <div class="document-size">PDF Document</div>
             </div>
           </a>
           {% endif %}
