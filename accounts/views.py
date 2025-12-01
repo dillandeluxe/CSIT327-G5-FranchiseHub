@@ -361,17 +361,16 @@ def add_franchise_view(request):
         return redirect('browse')
 
     if request.method == 'POST':
-        form = FranchiseForm(request.POST, request.FILES)
-        # ✅ Handle location field separately
+        form = FranchiseForm(request.POST, request.FILES)  # ✅ request.FILES is correct
         location = request.POST.get('location', '').strip()
         
         if form.is_valid():
             franchise = form.save(commit=False)
             franchise.franchisor = franchisor
-            franchise.status = 'pending'  # ✅ ALWAYS PENDING
+            franchise.status = 'pending'
             franchise.save()
             
-            # ✅ Update franchisor location if provided
+            # ✅ Update franchisor location
             if location and location != franchisor.location:
                 franchisor.location = location
                 franchisor.save(update_fields=['location'])
@@ -416,7 +415,7 @@ def delete_franchise(request, franchise_id):
 
 @login_required
 def edit_franchise_view(request, franchise_id):
-    """Allows a franchisor to edit an existing franchise including image."""
+    """Allows a franchisor to edit an existing franchise including documents"""
     try:
         franchisor = Franchisor.objects.get(user=request.user)
     except Franchisor.DoesNotExist:
@@ -426,9 +425,19 @@ def edit_franchise_view(request, franchise_id):
     franchise = get_object_or_404(Franchise, id=franchise_id, franchisor=franchisor, is_active=True)
 
     if request.method == 'POST':
-        form = FranchiseForm(request.POST, request.FILES, instance=franchise)  # ✅ Include request.FILES
+        form = FranchiseForm(request.POST, request.FILES, instance=franchise)
         if form.is_valid():
-            form.save()
+            # ✅ Handle document uploads - they will automatically save to Cloudinary
+            updated_franchise = form.save(commit=False)
+            
+            # ✅ Only update documents if new ones are uploaded
+            if 'brochure' in request.FILES:
+                updated_franchise.brochure = request.FILES['brochure']
+            
+            if 'business_plan' in request.FILES:
+                updated_franchise.business_plan = request.FILES['business_plan']
+            
+            updated_franchise.save()
             messages.success(request, f"Franchise '{franchise.name}' updated successfully!")
             return redirect('franchisor_dashboard')
         else:

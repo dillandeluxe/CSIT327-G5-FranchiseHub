@@ -1057,7 +1057,7 @@ body {
                     </div>
                 </div>
 
-                <!-- ✅ NEW: Document Upload Section -->
+                <!-- Document Upload Section (Optional) -->
                 <div class="form-section" data-step="4">
                     <div class="section-header">
                         <div class="section-icon">
@@ -1066,9 +1066,9 @@ body {
                             </svg>
                         </div>
                         <div>
-                            <h3 class="section-title">Documents</h3>
+                            <h3 class="section-title">Supporting Documents</h3>
                         </div>
-                        <span class="section-description">Supporting materials</span>
+                        <span class="section-description">Optional - Upload brochure & business plan</span>
                     </div>
                     
                     <div class="form-row">
@@ -1078,45 +1078,96 @@ body {
                                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
                                 </svg>
-                                Franchise Brochure (Optional)
+                                Franchise Brochure
                             </label>
-                            <input 
-                                type="file" 
-                                name="brochure" 
-                                accept=".pdf,.doc,.docx"
-                                class="form-control"
-                            >
+                            
+                            <div class="file-upload-area" id="brochureUploadArea" style="padding: 30px 20px;">
+                                <div class="upload-icon" style="width: 48px; height: 48px;">
+                                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="upload-text" style="font-size: 14px;">Click to upload brochure</div>
+                                <div class="upload-hint" style="font-size: 12px;">PDF, DOC, DOCX (max 10MB)</div>
+                                <input 
+                                    type="file" 
+                                    name="brochure" 
+                                    id="brochureInput"
+                                    accept=".pdf,.doc,.docx"
+                                    class="file-input"
+                                    style="position: absolute; opacity: 0; pointer-events: none;"
+                                >
+                            </div>
+                            
+                            <div class="file-preview" id="brochurePreview" style="display: none; margin-top: 12px; padding: 12px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="color: #10b981;">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+                                </svg>
+                                <span id="brochureFileName" style="flex: 1; font-size: 13px; color: #065f46; font-weight: 500;"></span>
+                                <button type="button" class="remove-image" onclick="removeFile('brochure')" style="position: static; width: 24px; height: 24px;">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
                             <div class="field-help">
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                                 </svg>
-                                PDF, DOC, DOCX (max 10MB)
+                                Upload marketing materials (optional)
                             </div>
                         </div>
-                        
+
                         <!-- Business Plan Upload -->
                         <div class="form-group">
                             <label class="form-label">
                                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                                </svg>
+                                Business Plan
+                            </label>
+                            
+                            <div class="file-upload-area" id="businessPlanUploadArea" style="padding: 30px 20px;">
+                                <div class="upload-icon" style="width: 48px; height: 48px;">
+                                    <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div class="upload-text" style="font-size: 14px;">Click to upload business plan</div>
+                                <div class="upload-hint" style="font-size: 12px;">PDF, DOC, DOCX (max 10MB)</div>
+                                <input 
+                                    type="file" 
+                                    name="business_plan" 
+                                    id="businessPlanInput"
+                                    accept=".pdf,.doc,.docx"
+                                    class="file-input"
+                                    style="position: absolute; opacity: 0; pointer-events: none;"
+                                >
+                            </div>
+                            
+                            <div class="file-preview" id="businessPlanPreview" style="display: none; margin-top: 12px; padding: 12px; background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                                <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20" style="color: #10b981;">
                                     <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
                                 </svg>
-                                Business Plan (Optional)
-                            </label>
-                            <input 
-                                type="file" 
-                                name="business_plan" 
-                                accept=".pdf,.doc,.docx"
-                                class="form-control"
-                            >
+                                <span id="businessPlanFileName" style="flex: 1; font-size: 13px; color: #065f46; font-weight: 500;"></span>
+                                <button type="button" class="remove-image" onclick="removeFile('business_plan')" style="position: static; width: 24px; height: 24px;">
+                                    <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            
                             <div class="field-help">
                                 <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
                                 </svg>
-                                PDF, DOC, DOCX (max 10MB)
+                                Upload detailed business plan (optional)
                             </div>
                         </div>
                     </div>
                 </div>
+
             </form>
         </div>
 
@@ -1353,6 +1404,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Brochure upload
+    const brochureInput = document.getElementById('brochureInput');
+    const brochureUploadArea = document.getElementById('brochureUploadArea');
+    const brochurePreview = document.getElementById('brochurePreview');
+    const brochureFileName = document.getElementById('brochureFileName');
+
+    if (brochureUploadArea && brochureInput) {
+        brochureUploadArea.addEventListener('click', () => brochureInput.click());
+        
+        brochureInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File size must be less than 10MB');
+                    this.value = '';
+                    return;
+                }
+                brochureFileName.textContent = file.name;
+                brochureUploadArea.style.display = 'none';
+                brochurePreview.style.display = 'flex';
+            }
+        });
+    }
+
+    // Business Plan upload
+    const businessPlanInput = document.getElementById('businessPlanInput');
+    const businessPlanUploadArea = document.getElementById('businessPlanUploadArea');
+    const businessPlanPreview = document.getElementById('businessPlanPreview');
+    const businessPlanFileName = document.getElementById('businessPlanFileName');
+
+    if (businessPlanUploadArea && businessPlanInput) {
+        businessPlanUploadArea.addEventListener('click', () => businessPlanInput.click());
+        
+        businessPlanInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('File size must be less than 10MB');
+                    this.value = '';
+                    return;
+                }
+                businessPlanFileName.textContent = file.name;
+                businessPlanUploadArea.style.display = 'none';
+                businessPlanPreview.style.display = 'flex';
+            }
+        });
+    }
+
     // Form submission
     form.addEventListener('submit', function(e) {
         // Validate all required fields
@@ -1400,6 +1499,27 @@ function removeImage() {
         imageInput.value = '';
         uploadArea.style.display = 'flex';
         imagePreview.style.display = 'none';
+    }
+}
+
+// ✅ FIXED: Global function for removing files
+function removeFile(type) {
+    if (type === 'brochure') {
+        const input = document.getElementById('brochureInput');
+        const uploadArea = document.getElementById('brochureUploadArea');
+        const preview = document.getElementById('brochurePreview');
+        
+        input.value = '';
+        uploadArea.style.display = 'flex';
+        preview.style.display = 'none';
+    } else if (type === 'business_plan') {
+        const input = document.getElementById('businessPlanInput');
+        const uploadArea = document.getElementById('businessPlanUploadArea');
+        const preview = document.getElementById('businessPlanPreview');
+        
+        input.value = '';
+        uploadArea.style.display = 'flex';
+        preview.style.display = 'none';
     }
 }
 </script>

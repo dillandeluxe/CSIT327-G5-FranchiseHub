@@ -649,12 +649,60 @@ body {
     <div class="description-section">
       <h2 class="section-title">
         <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-          <path fill-rule="evenodd" d="M4.3 4.3a1 1 0 011.4 0L10 8.6l4.3-4.3a1 1 0 011.4 1.4L11.4 10l4.3 4.3a1 1 0 01-1.4 1.4L10 11.4l-4.3 4.3a1 1 0 01-1.4-1.4L8.6 10 4.3 5.7a1 1 0 010-1.4z" clip-rule="evenodd"/>
+          <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
         </svg>
         About This Opportunity
       </h2>
       <div class="description-text">{{ franchise.description }}</div>
     </div>
+  {% endif %}
+
+  <!-- ✅ NEW: Available Documents Section -->
+  {% if franchise.brochure or franchise.business_plan %}
+  <div class="description-section">
+    <h2 class="section-title">
+      <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+      </svg>
+      Available Documents
+    </h2>
+    
+    <div class="stats-grid-detail">
+      {% if franchise.brochure %}
+      <a href="{{ franchise.brochure.url }}" target="_blank" rel="noopener noreferrer" class="stat-item" style="text-decoration: none; cursor: pointer; border: 2px solid var(--primary); transition: all 0.3s; background: linear-gradient(135deg, var(--primary-light) 0%, #fed7aa 100%);">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+          <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20" style="color: var(--primary);">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
+          </svg>
+          <div class="stat-label" style="color: var(--text); font-weight: 600;">Franchise Brochure</div>
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+            Click to Download
+          </div>
+        </div>
+      </a>
+      {% endif %}
+
+      {% if franchise.business_plan %}
+      <a href="{{ franchise.business_plan.url }}" target="_blank" rel="noopener noreferrer" class="stat-item" style="text-decoration: none; cursor: pointer; border: 2px solid var(--success); transition: all 0.3s; background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px;">
+          <svg width="32" height="32" fill="currentColor" viewBox="0 0 20 20" style="color: var(--success);">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+          </svg>
+          <div class="stat-label" style="color: var(--text); font-weight: 600;">Business Plan</div>
+          <div style="font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;">
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+            Click to Download
+          </div>
+        </div>
+      </a>
+      {% endif %}
+    </div>
+  </div>
   {% endif %}
 
   <!-- CTA Section -->

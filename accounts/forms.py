@@ -10,7 +10,7 @@ class FranchiseForm(forms.ModelForm):
     """Form for creating and editing franchises"""
     class Meta:
         model = Franchise
-        fields = ['name', 'category', 'investment', 'description', 'image']  # ✅ Removed brochure and business_plan
+        fields = ['name', 'category', 'investment', 'description', 'image', 'brochure', 'business_plan']  # ✅ Include documents
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
@@ -37,6 +37,15 @@ class FranchiseForm(forms.ModelForm):
                 'class': 'form-control',
                 'accept': 'image/*'
             }),
+            # ✅ Document widgets
+            'brochure': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.pdf,.doc,.docx'
+            }),
+            'business_plan': forms.FileInput(attrs={
+                'class': 'form-control',
+                'accept': '.pdf,.doc,.docx'
+            }),
         }
 
     def clean_investment(self):
@@ -44,6 +53,19 @@ class FranchiseForm(forms.ModelForm):
         if investment and investment < 0:
             raise forms.ValidationError('Investment amount must be positive')
         return investment
+    
+    # ✅ Document validation
+    def clean_brochure(self):
+        brochure = self.cleaned_data.get('brochure')
+        if brochure and hasattr(brochure, 'size') and brochure.size > 10 * 1024 * 1024:
+            raise forms.ValidationError('File size must be less than 10MB')
+        return brochure
+
+    def clean_business_plan(self):
+        business_plan = self.cleaned_data.get('business_plan')
+        if business_plan and hasattr(business_plan, 'size') and business_plan.size > 10 * 1024 * 1024:
+            raise forms.ValidationError('File size must be less than 10MB')
+        return business_plan
 
 # ✅ NEW: Franchisor Form with Location
 class FranchisorForm(forms.ModelForm):
