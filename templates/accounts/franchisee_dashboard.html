@@ -9,12 +9,18 @@
 {% endblock %}
 
 {% block content %}
-  <!-- Modern Navbar -->
   <nav class="modern-navbar">
     <a href="{% url 'home' %}" class="brand-logo">
       <span>Franchise</span>Hub
     </a>
-    <div class="nav-menu">
+
+    <div class="hamburger" id="hamburger">
+      <svg width="30" height="30" fill="currentColor" viewBox="0 0 20 20" style="color: #282828;">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <div class="nav-menu" id="nav-menu">
       <a href="{% url 'browse' %}" class="nav-link">Browse</a>
       <a href="{% url 'franchisee_dashboard' %}" class="nav-link active">My Applications</a>
       <a href="{% url 'profile' %}" class="nav-link">Profile</a>
@@ -22,7 +28,6 @@
     </div>
   </nav>
 
-  <!-- Hero Header -->
   <div class="dashboard-hero">
     <div class="hero-content">
       <h1 class="hero-title">My Applications</h1>
@@ -30,7 +35,6 @@
     </div>
   </div>
 
-  <!-- Main Content -->
   <div class="dashboard-container">
     {% if applications %}
       <div class="applications-grid">
@@ -38,7 +42,6 @@
           <div class="app-card {% if not application.franchise.is_active %}deleted-franchise{% endif %}" data-app-id="{{ application.id }}">
             
             {% if not application.franchise.is_active %}
-              <!-- Soft-Deleted Franchise -->
               <div class="deleted-overlay">
                 <div class="deleted-icon">
                   <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20">
@@ -58,7 +61,6 @@
                 </form>
               </div>
             {% else %}
-              <!-- Active Franchise Application -->
               <div class="status-pill status-{{ application.status|lower }}">
                 {{ application.status }}
               </div>
@@ -126,7 +128,6 @@
         {% endfor %}
       </div>
     {% else %}
-      <!-- Empty State -->
       <div class="empty-state">
         <div class="empty-icon">
           <svg width="120" height="120" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -150,6 +151,17 @@
 <script src="{% static 'accounts/modern_auth.js' %}"></script>
 <script>
 (function() {
+  // --- NEW: HAMBURGER MENU TOGGLE ---
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('nav-menu');
+  
+  if (hamburger && navMenu) {
+    hamburger.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+    });
+  }
+
+  // --- EXISTING LOGIC ---
   // Page load animations
   document.addEventListener('DOMContentLoaded', function() {
     const cards = document.querySelectorAll('.app-card');

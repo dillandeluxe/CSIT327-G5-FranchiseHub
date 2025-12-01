@@ -11,7 +11,9 @@ body {
   min-height: 100vh;
 }
 
-/* Navbar (from home.html) */
+/* ============================
+   NAVBAR (Desktop Default)
+   ============================ */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -33,6 +35,17 @@ body {
 
 .logo span {
   color: #d66900;
+}
+
+/* DESKTOP PROTECTION: Hide hamburger on large screens */
+.hamburger {
+  display: none;
+}
+
+/* Ensure links align correctly on desktop */
+.nav-links {
+  display: flex;
+  align-items: center;
 }
 
 .nav-links a {
@@ -61,7 +74,9 @@ body {
   background: #b35c04;
 }
 
-/* Orange Gradient Background */
+/* ============================
+   AUTH CONTENT
+   ============================ */
 .auth-background {
   background: linear-gradient(180deg, #ff8c2b 0%, #ff5e00 100%);
   min-height: calc(100vh - 60px);
@@ -86,14 +101,8 @@ body {
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .auth-header {
@@ -129,23 +138,9 @@ body {
   animation: slideIn 0.3s ease-out;
 }
 
-.message-error {
-  background: #fef2f2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
-}
-
-.message-success {
-  background: #ecfdf5;
-  color: #065f46;
-  border: 1px solid #a7f3d0;
-}
-
-.message-info {
-  background: #fff7ed;
-  color: #9a3412;
-  border: 1px solid #fed7aa;
-}
+.message-error { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+.message-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.message-info { background: #fff7ed; color: #9a3412; border: 1px solid #fed7aa; }
 
 /* Form Styles */
 .auth-form {
@@ -169,10 +164,7 @@ body {
   color: #1a1a1a;
 }
 
-.form-label i {
-  color: #ff6a00;
-  font-size: 16px;
-}
+.form-label i { color: #ff6a00; font-size: 16px; }
 
 .form-input {
   width: 100%;
@@ -192,9 +184,7 @@ body {
   box-shadow: 0 0 0 3px rgba(255, 106, 0, 0.1);
 }
 
-.form-input::placeholder {
-  color: #9ca3af;
-}
+.form-input::placeholder { color: #9ca3af; }
 
 select.form-input {
   cursor: pointer;
@@ -207,9 +197,7 @@ select.form-input {
 }
 
 /* Password Toggle */
-.password-wrapper {
-  position: relative;
-}
+.password-wrapper { position: relative; }
 
 .password-toggle {
   position: absolute;
@@ -224,14 +212,10 @@ select.form-input {
   transition: color 0.2s;
 }
 
-.password-toggle:hover {
-  color: #ff6a00;
-}
+.password-toggle:hover { color: #ff6a00; }
 
 /* Password Strength */
-.password-strength {
-  margin-top: -4px;
-}
+.password-strength { margin-top: -4px; }
 
 .strength-bar {
   height: 4px;
@@ -272,10 +256,7 @@ select.form-input {
   margin-bottom: 16px;
 }
 
-.section-title i {
-  color: #ff6a00;
-  font-size: 18px;
-}
+.section-title i { color: #ff6a00; font-size: 18px; }
 
 .section-subtitle {
   display: block;
@@ -310,14 +291,8 @@ select.form-input {
   box-shadow: 0 6px 16px rgba(255, 106, 0, 0.4);
 }
 
-.btn-submit:active {
-  transform: translateY(0);
-}
-
-.btn-submit:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
+.btn-submit:active { transform: translateY(0); }
+.btn-submit:disabled { opacity: 0.7; cursor: not-allowed; }
 
 /* Auth Footer */
 .auth-footer {
@@ -327,10 +302,7 @@ select.form-input {
   border-top: 1px solid #e5e7eb;
 }
 
-.auth-footer p {
-  font-size: 14px;
-  color: #666;
-}
+.auth-footer p { font-size: 14px; color: #666; }
 
 .auth-link {
   color: #ff6a00;
@@ -356,16 +328,55 @@ select.form-input {
   background: #fef2f2;
 }
 
-.form-group.has-error .form-error {
-  display: block;
-}
+.form-group.has-error .form-error { display: block; }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* ============================
+   MOBILE RESPONSIVE (Tablets & Phones)
+   ============================ */
+@media (max-width: 768px) {
+  /* --- NAVBAR CHANGES --- */
   .navbar {
     padding: 14px 24px;
   }
 
+  .hamburger {
+    display: block; /* Show Icon */
+    cursor: pointer;
+  }
+
+  /* Hide links by default, turn into dropdown */
+  .nav-links {
+    display: none; 
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    flex-direction: column;
+    padding: 20px 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* JavaScript adds this class to show menu */
+  .nav-links.active {
+    display: flex;
+  }
+
+  .nav-links a {
+    margin-left: 0;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+  }
+
+  .get-started {
+    margin-left: 0;
+    width: 80%;
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  /* --- REGISTER FORM MOBILE --- */
   .auth-background {
     padding: 30px 16px;
   }
@@ -378,6 +389,7 @@ select.form-input {
     font-size: 22px;
   }
 
+  /* Make security questions easier to tap on mobile */
   .security-questions-section {
     padding: 16px;
   }

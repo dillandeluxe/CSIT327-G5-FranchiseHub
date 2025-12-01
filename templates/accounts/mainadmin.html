@@ -7,139 +7,9 @@
     <title>Site Administration | FranchiseHub</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/mainadmin.css' %}">
     
     <script src="https://cdn.tailwindcss.com"></script>
-
-    <style>
-        /* ========================================= */
-        /* 1. MODERN ADMIN NAVBAR STYLES            */
-        /* ========================================= */
-        
-        /* Reset for navbar elements */
-        .admin-navbar * {
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .admin-navbar {
-            background: linear-gradient(135deg, #ff6600 0%, #ff8c2b 100%);
-            box-shadow: 0 4px 20px rgba(255, 102, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            color: white;
-        }
-
-        .nav-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 70px;
-        }
-
-        .nav-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: white;
-            text-decoration: none;
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(10px);
-        }
-
-        .brand-text {
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.9);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 14px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            text-transform: uppercase; /* Match your request style */
-            letter-spacing: 0.5px;
-        }
-
-        .nav-link:hover {
-            background: rgba(255,255,255,0.15);
-            color: white;
-        }
-
-        /* Active State Style */
-        .nav-link.active {
-            background: rgba(255,255,255,0.25);
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* Logout specific style */
-        .nav-link.logout {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-left: 12px;
-        }
-        .nav-link.logout:hover {
-            background: #ef4444; /* Red on hover */
-            border-color: #ef4444;
-        }
-
-        /* Responsive */
-        @media (max-width: 1100px) {
-            .nav-link {
-                font-size: 12px;
-                padding: 8px 10px;
-            }
-            .nav-link svg {
-                display: none; /* Hide icons on smaller screens to fit text */
-            }
-        }
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                height: auto;
-                padding: 16px;
-                gap: 16px;
-            }
-            .nav-menu {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-        }
-
-        /* ========================================= */
-        /* 2. EXISTING PAGE STYLES (Tailwind Override) */
-        /* ========================================= */
-        .django-module-header { background-color: #ed8936; }
-        .django-link { color: #c05621; }
-        .django-link:hover { color: #7c2d12; }
-    </style>
 </head>
 <body class="bg-white font-sans antialiased text-gray-800">
 
@@ -154,7 +24,13 @@
                 <span class="brand-text">System Admin</span>
             </a>
 
-            <div class="nav-menu">
+            <div class="hamburger" id="hamburger">
+                <svg width="30" height="30" fill="currentColor" viewBox="0 0 20 20" style="color: white;">
+                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                </svg>
+            </div>
+
+            <div class="nav-menu" id="nav-menu">
                 
                 <a href="{% url 'admin_index' %}" class="nav-link active">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
@@ -164,11 +40,6 @@
                 <a href="{% url 'admin_dashboard' %}" class="nav-link">
                     <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
                     OVERVIEW
-                </a>
-
-                <a href="{% url 'admin_franchise_management' %}" class="nav-link">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clip-rule="evenodd"/><path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z"/></svg>
-                    Franchises
                 </a>
 
                 
@@ -235,5 +106,16 @@
         </div>
     </main>
 
+    <script>
+        // --- HAMBURGER MENU TOGGLE ---
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        if(hamburger && navMenu) {
+            hamburger.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+    </script>
 </body>
 </html>

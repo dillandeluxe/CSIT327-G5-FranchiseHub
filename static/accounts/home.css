@@ -1,3 +1,8 @@
+/* Add this at the very top of home.css */
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: "Poppins", sans-serif;
@@ -5,6 +10,9 @@ body {
   background: #fff;
 }
 
+/* =========================================
+   DESKTOP NAVIGATION (Default)
+   ========================================= */
 .navbar {
   display: flex;
   justify-content: space-between;
@@ -29,6 +37,17 @@ body {
   color: #d66900;
 }
 
+/* DESKTOP PROTECTION: 
+   This ensures the hamburger icon is INVISIBLE on desktop screens. */
+.hamburger {
+  display: none; 
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+}
+
 .nav-links a {
   margin-left: 28px;
   font-weight: 500;
@@ -51,14 +70,15 @@ body {
   text-decoration: none;
 }
 
-/* ========== MODERN HERO SECTION ========== */
+/* =========================================
+   HERO SECTION
+   ========================================= */
 .hero-modern {
   position: relative;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ✅ ADJUSTED ORANGE GRADIENT - Lighter for better text contrast */
   background: linear-gradient(135deg, #FF8C2B 0%, #FFB84D 40%, #FFAC38 100%);
   overflow: hidden;
 }
@@ -66,7 +86,6 @@ body {
 .hero-gradient-overlay {
   position: absolute;
   inset: 0;
-  /* ✅ DARKER OVERLAY for better text readability */
   background: 
     radial-gradient(circle at 20% 50%, rgba(255, 122, 0, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 80% 80%, rgba(255, 140, 43, 0.2) 0%, transparent 50%),
@@ -81,7 +100,6 @@ body {
   max-width: 900px;
   padding: 60px 24px;
   color: #ffffff;
-  /* ✅ SUBTLE DARK BACKDROP for text container */
   background: rgba(0, 0, 0, 0.15);
   border-radius: 24px;
   backdrop-filter: blur(8px);
@@ -93,7 +111,6 @@ body {
   line-height: 1.1;
   margin-bottom: 24px;
   letter-spacing: -1px;
-  /* ✅ PURE WHITE with STRONG SHADOW for maximum contrast */
   color: #ffffff;
   text-shadow: 
     0 2px 4px rgba(0,0,0,0.3),
@@ -102,18 +119,12 @@ body {
 }
 
 .hero-highlight {
-  /* ✅ BRIGHT WHITE with slight yellow tint - high contrast against orange */
   color: #FFFACD;
   text-shadow: 
     0 2px 8px rgba(0,0,0,0.5),
     0 4px 16px rgba(255,215,0,0.4),
     0 1px 3px rgba(0,0,0,0.8);
-  /* Remove gradient to ensure solid color visibility */
   background: none;
-  -webkit-background-clip: unset;
-  -webkit-text-fill-color: unset;
-  background-clip: unset;
-  display: inline;
   font-weight: 800;
   letter-spacing: -0.5px;
 }
@@ -122,7 +133,6 @@ body {
   font-size: 1.25rem;
   line-height: 1.6;
   margin-bottom: 40px;
-  /* ✅ PURE WHITE with enhanced shadow */
   color: #ffffff;
   opacity: 1;
   font-weight: 500;
@@ -154,14 +164,12 @@ body {
 }
 
 .btn-hero-primary {
-  /* ✅ NEW ORANGE GRADIENT BUTTON */
   background: linear-gradient(135deg, #FF7A00 0%, #FF8C2B 100%);
   color: #ffffff;
 }
 
 .btn-hero-primary:hover {
   transform: translateY(-3px) scale(1.05);
-  /* ✅ ORANGE GLOW */
   box-shadow: 0 12px 30px rgba(255, 122, 0, 0.5);
 }
 
@@ -178,7 +186,6 @@ body {
   transform: translateY(-3px);
 }
 
-/* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
   bottom: 40px;
@@ -212,7 +219,9 @@ body {
 [data-aos-delay="300"] { transition-delay: 0.3s; }
 [data-aos-delay="400"] { transition-delay: 0.4s; }
 
-/* ========== MODERN FEATURES SECTION ========== */
+/* =========================================
+   FEATURES SECTION
+   ========================================= */
 .features-modern {
   padding: 100px 24px;
   background: #ffffff;
@@ -245,7 +254,6 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  /* ✅ ORANGE GRADIENT TOP BORDER */
   background: linear-gradient(90deg, #FF7A00, #FFAC38);
   transform: scaleX(0);
   transform-origin: left;
@@ -269,7 +277,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  /* ✅ ORANGE GRADIENT ICON BACKGROUND */
   background: linear-gradient(135deg, #FFF4E6 0%, #FFE6CC 100%);
   color: #FF7A00;
   transition: all 0.3s;
@@ -277,7 +284,6 @@ body {
 
 .feature-card:hover .feature-icon {
   transform: scale(1.1) rotate(5deg);
-  /* ✅ ORANGE GLOW */
   box-shadow: 0 10px 30px rgba(255, 122, 0, 0.3);
 }
 
@@ -301,7 +307,6 @@ body {
 
 .feature-badge {
   display: inline-block;
-  /* ✅ ORANGE GRADIENT BADGE */
   background: linear-gradient(135deg, #FFF4E6 0%, #FFE6CC 100%);
   color: #FF7A00;
   padding: 8px 20px;
@@ -311,9 +316,10 @@ body {
   border: 1px solid #FFCB80;
 }
 
-/* ========== MODERN STATS SECTION ========== */
+/* =========================================
+   STATS SECTION
+   ========================================= */
 .stats-modern {
-  /* ✅ NEW DARK GRADIENT WITH ORANGE ACCENTS */
   background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   padding: 100px 24px;
   color: #ffffff;
@@ -328,7 +334,6 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  /* ✅ ORANGE RADIAL OVERLAYS */
   background: 
     radial-gradient(circle at 20% 30%, rgba(255, 122, 0, 0.15) 0%, transparent 50%),
     radial-gradient(circle at 80% 70%, rgba(255, 140, 43, 0.15) 0%, transparent 50%);
@@ -379,7 +384,6 @@ body {
 .stat-item:hover {
   transform: translateY(-8px);
   background: rgba(255,255,255,0.08);
-  /* ✅ ORANGE BORDER GLOW */
   border-color: rgba(255, 122, 0, 0.5);
   box-shadow: 0 20px 40px rgba(255, 122, 0, 0.2);
 }
@@ -396,22 +400,10 @@ body {
   color: #ffffff;
 }
 
-.stat-icon-members { 
-  /* ✅ BLUE GRADIENT (UNCHANGED) */
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-}
-.stat-icon-brands { 
-  /* ✅ ORANGE GRADIENT */
-  background: linear-gradient(135deg, #FF7A00 0%, #FF8C2B 100%); 
-}
-.stat-icon-success { 
-  /* ✅ GREEN GRADIENT (UNCHANGED) */
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%); 
-}
-.stat-icon-industries { 
-  /* ✅ ORANGE-YELLOW GRADIENT */
-  background: linear-gradient(135deg, #FFAC38 0%, #FFD700 100%); 
-}
+.stat-icon-members { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); }
+.stat-icon-brands { background: linear-gradient(135deg, #FF7A00 0%, #FF8C2B 100%); }
+.stat-icon-success { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
+.stat-icon-industries { background: linear-gradient(135deg, #FFAC38 0%, #FFD700 100%); }
 
 .stat-number {
   display: block;
@@ -424,7 +416,6 @@ body {
 
 .stat-plus {
   font-size: 2rem;
-  /* ✅ ORANGE COLOR */
   color: #FF7A00;
   font-weight: 700;
 }
@@ -437,7 +428,9 @@ body {
   font-weight: 500;
 }
 
-/* ========== FOOTER STYLES ========== */
+/* =========================================
+   FOOTER
+   ========================================= */
 footer {
   background: #18181e;
   color: #fff;
@@ -466,7 +459,6 @@ footer {
 }
 
 .footer-logo span {
-  /* ✅ ORANGE COLOR */
   color: #FF7A00;
 }
 
@@ -494,7 +486,6 @@ footer {
 }
 
 .footer-column a:hover {
-  /* ✅ ORANGE HOVER */
   color: #FF7A00;
 }
 
@@ -506,31 +497,80 @@ footer {
   font-size: 14px;
 }
 
-/* ========== RESPONSIVE DESIGN ========== */
+/* =========================================
+   MOBILE RESPONSIVE RULES (Max Width 768px)
+   ========================================= 
+   These rules only activate on tablets and phones.
+   Desktop view remains untouched. 
+*/
 @media (max-width: 768px) {
+  
+  /* --- MOBILE NAVBAR --- */
   .navbar {
     padding: 14px 24px;
   }
 
+  .hamburger {
+    display: block; /* Show hamburger only on mobile */
+    cursor: pointer;
+    padding: 5px;
+    color: #282828;
+  }
+
+  /* Transform nav-links into a dropdown menu */
+  .nav-links {
+    display: none; /* Hide default horizontal links */
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* JavaScript toggles this class to 'flex' */
+  .nav-links.active {
+    display: flex; 
+  }
+
+  .nav-links a {
+    margin-left: 0;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+  }
+
+  .get-started {
+    margin-left: 0;
+    width: 80%; /* Big button for touch screens */
+    text-align: center;
+    padding: 12px 0;
+  }
+
+  /* --- MOBILE HERO --- */
   .hero-headline {
-    font-size: 2.5rem;
-    text-shadow: 
-      0 2px 6px rgba(0,0,0,0.4),
-      0 4px 16px rgba(0,0,0,0.5);
+    font-size: 2.2rem; /* Smaller font to fit screen */
+    line-height: 1.2;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.4);
   }
 
   .hero-subheadline {
-    font-size: 1.05rem;
+    font-size: 1rem;
   }
 
   .hero-content-modern {
     background: rgba(0, 0, 0, 0.2);
     padding: 40px 20px;
+    margin: 0 15px;
   }
 
   .hero-cta-group {
-    flex-direction: column;
+    flex-direction: column; /* Stack buttons */
     gap: 16px;
+    width: 100%;
   }
 
   .btn-hero-primary,
@@ -539,25 +579,12 @@ footer {
     justify-content: center;
   }
 
-  .features-modern {
+  /* --- MOBILE FEATURES & STATS --- */
+  .features-modern, .stats-modern {
     padding: 60px 20px;
   }
 
-  .features-container {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-
-  .stats-modern {
-    padding: 60px 20px;
-  }
-
-  .stats-heading {
-    font-size: 2rem;
-  }
-
-  .stats-bar-modern {
-    grid-template-columns: 1fr;
+  .features-container, .stats-bar-modern {
     gap: 24px;
   }
 
@@ -565,10 +592,12 @@ footer {
     font-size: 2.5rem;
   }
 
+  /* --- MOBILE FOOTER --- */
   .footer-main {
     flex-direction: column;
-    padding: 40px 24px 24px;
+    padding: 40px 24px;
     text-align: center;
+    gap: 32px;
   }
 
   .footer-brand {
@@ -576,21 +605,25 @@ footer {
   }
 }
 
+/* Small Phones */
 @media (max-width: 480px) {
   .hero-headline {
-    font-size: 2rem;
+    font-size: 1.8rem;
   }
-
-  .hero-content-modern {
-    background: rgba(0, 0, 0, 0.25);
-    padding: 32px 16px;
-  }
-
+  
   .feature-card {
-    padding: 32px 24px;
+    padding: 32px 20px;
   }
+}
 
-  .stat-number {
-    font-size: 2rem;
+/* === FIX FOR MOBILE BUTTONS OVERFLOW === */
+@media (max-width: 768px) {
+  .btn-hero-primary,
+  .btn-hero-secondary {
+    /* This ensures padding is included in the 100% width */
+    box-sizing: border-box; 
+    
+    /* Ensure they don't exceed the container */
+    max-width: 100%;
   }
 }

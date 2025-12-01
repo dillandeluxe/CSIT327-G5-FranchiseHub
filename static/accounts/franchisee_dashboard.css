@@ -49,6 +49,13 @@ body {
 .brand-logo:hover { opacity: 0.8; }
 .brand-logo span { color: var(--primary); }
 
+/* --- DESKTOP PROTECTION: Hide hamburger on large screens --- */
+.hamburger {
+  display: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
 .nav-menu {
   display: flex;
   gap: 32px;
@@ -370,16 +377,46 @@ body {
   }
 }
 
+/* --- MOBILE RESPONSIVE NAVBAR & LAYOUT --- */
 @media (max-width: 768px) {
+  /* Navbar */
   .modern-navbar {
     padding: 14px 24px;
   }
 
-  .nav-menu {
-    gap: 20px;
-    font-size: 14px;
+  /* Show Hamburger */
+  .hamburger {
+    display: block;
+    padding: 5px;
   }
 
+  /* Hide menu by default */
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 24px 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-top: 1px solid #eee;
+    gap: 20px;
+    font-size: 14px;
+    z-index: 1000;
+  }
+
+  /* Show when active */
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-link.active::after {
+    display: none; /* Remove underline on mobile */
+  }
+
+  /* Dashboard Adjustments */
   .dashboard-hero {
     padding: 36px 0;
   }

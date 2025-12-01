@@ -49,6 +49,13 @@ body {
 .brand-logo:hover { opacity: 0.8; }
 .brand-logo span { color: var(--primary); }
 
+/* --- DESKTOP PROTECTION: Hide hamburger on large screens --- */
+.hamburger {
+  display: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
 .nav-menu {
   display: flex;
   gap: 32px;
@@ -548,312 +555,57 @@ textarea.form-control {
   box-shadow: 0 8px 20px rgba(214, 105, 0, 0.4);
 }
 
-/* ========== FRANCHISE DETAIL PAGE STYLES (MATCHING FRANCHISOR VIEW) ========== */
+/* ============================
+   RESPONSIVE LAYOUTS
+   ============================ */
 
-.detail-container {
-  max-width: 900px;
-  margin: 0 auto;
-}
-
-.back-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-muted);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 15px;
-  margin-bottom: 24px;
-  transition: color 0.2s;
-}
-
-.back-link:hover {
-  color: var(--primary);
-}
-
-.detail-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.3s ease;
-}
-
-.detail-hero-image {
-  width: 100%;
-  height: 400px;
-  overflow: hidden;
-  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
-}
-
-.detail-hero-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.detail-content {
-  padding: 40px;
-}
-
-.detail-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 32px;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.detail-title {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 12px;
-}
-
-.detail-category {
-  display: inline-block;
-  background: #f3f4f6;
-  color: var(--text-muted);
-  padding: 6px 16px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.detail-investment {
-  text-align: right;
-  padding: 16px 24px;
-  background: var(--success-bg);
-  border-radius: 12px;
-  border: 1px solid #a7f3d0;
-}
-
-.investment-label {
-  display: block;
-  font-size: 13px;
-  color: #065f46;
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.investment-amount {
-  display: block;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--success);
-}
-
-.detail-meta-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.meta-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 20px;
-  background: var(--bg);
-  border-radius: 12px;
-  border: 1px solid var(--border);
-}
-
-.meta-card svg {
-  color: var(--primary);
-  flex-shrink: 0;
-}
-
-.meta-label {
-  display: block;
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.meta-value {
-  display: block;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.meta-value.status-active {
-  color: var(--success);
-}
-
-.detail-section {
-  margin-bottom: 32px;
-}
-
-.section-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 16px;
-}
-
-.description-text {
-  font-size: 15px;
-  line-height: 1.8;
-  color: var(--text-muted);
-}
-
-.investment-breakdown {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 24px;
-}
-
-.breakdown-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--border);
-}
-
-.breakdown-item:last-of-type {
-  border-bottom: none;
-  margin-bottom: 16px;
-}
-
-.breakdown-label {
-  font-size: 15px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.breakdown-value {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.breakdown-note {
-  display: flex;
-  gap: 10px;
-  padding: 12px;
-  background: #fef3c7;
-  border-radius: 8px;
-  font-size: 13px;
-  color: #92400e;
-}
-
-.breakdown-note svg {
-  flex-shrink: 0;
-  margin-top: 2px;
-}
-
-.detail-actions {
-  display: flex;
-  gap: 12px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border);
-}
-
-.btn-detail-primary,
-.btn-detail-secondary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px 32px;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 15px;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: inherit;
-  text-decoration: none;
-  border: none;
-  flex: 1;
-}
-
-.btn-detail-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
-  color: white;
-  box-shadow: 0 4px 12px rgba(214, 105, 0, 0.3);
-}
-
-.btn-detail-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(214, 105, 0, 0.4);
-}
-
-.btn-detail-secondary {
-  background: var(--bg);
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.btn-detail-secondary:hover {
-  background: #f3f4f6;
-  transform: translateY(-1px);
-}
-
-/* Responsive - Detail Page */
+/* Tablet & Mobile (Max Width 768px) */
 @media (max-width: 768px) {
-  .detail-hero-image {
-    height: 250px;
-  }
-
-  .detail-content {
-    padding: 24px 20px;
-  }
-
-  .detail-header {
-    flex-direction: column;
-  }
-
-  .detail-title {
-    font-size: 26px;
-  }
-
-  .detail-investment {
-    width: 100%;
-    text-align: left;
-  }
-
-  .detail-meta-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .detail-actions {
-    flex-direction: column;
-  }
-
-  .btn-detail-primary,
-  .btn-detail-secondary {
-    width: 100%;
-  }
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-  .franchises-grid {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
+  /* --- NAVBAR CHANGES --- */
   .modern-navbar {
     padding: 14px 24px;
   }
 
-  .nav-menu {
-    gap: 20px;
-    font-size: 14px;
+  .hamburger {
+    display: block; /* Show Icon */
   }
 
+  /* Hide the menu by default and turn it into a dropdown */
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    flex-direction: column;
+    padding: 24px 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-top: 1px solid #eee;
+    z-index: 1000;
+  }
+
+  /* Show when active class added via JS */
+  .nav-menu.active {
+    display: flex;
+  }
+
+  .nav-link {
+    font-size: 1.1rem;
+    padding: 10px 0;
+  }
+
+  .nav-link.active::after {
+    display: none; /* Remove underline effect on mobile */
+  }
+
+  .nav-link.signup-link {
+    width: 80%;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* --- HERO & CONTENT ADJUSTMENTS --- */
   .dashboard-hero {
     padding: 36px 0;
   }
@@ -907,13 +659,10 @@ textarea.form-control {
   }
 }
 
+/* Small Phones */
 @media (max-width: 480px) {
   .brand-logo {
     font-size: 20px;
-  }
-
-  .nav-menu {
-    gap: 16px;
   }
 
   .franchise-header,
@@ -922,17 +671,5 @@ textarea.form-control {
   .franchise-actions {
     padding-left: 16px;
     padding-right: 16px;
-  }
-}
-
-/* Animations */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
   }
 }

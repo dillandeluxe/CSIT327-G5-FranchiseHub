@@ -36,6 +36,12 @@ body {
   color: #d66900;
 }
 
+/* DESKTOP PROTECTION: Hide hamburger on large screens */
+.hamburger {
+  display: none;
+  cursor: pointer;
+}
+
 .nav-links {
   display: flex;
   gap: 28px;
@@ -352,15 +358,54 @@ body {
   }
 }
 
+/* --- MOBILE RESPONSIVE NAVBAR --- */
 @media (max-width: 768px) {
   .navbar {
     padding: 14px 24px;
   }
 
-  .nav-links {
-    gap: 20px;
+  /* Show Hamburger */
+  .hamburger {
+    display: block;
+    padding: 5px;
   }
 
+  /* Hide links by default */
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    flex-direction: column;
+    padding: 20px 0;
+    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-top: 1px solid #f0f0f0;
+  }
+
+  /* Show links when active */
+  .nav-links.active {
+    display: flex;
+  }
+
+  /* Adjust links styles */
+  .nav-links a {
+    font-size: 1.1rem;
+    padding: 8px 0;
+  }
+  
+  .nav-links a.active::after {
+    display: none; /* Remove underline on mobile */
+  }
+
+  .get-started {
+    width: 80%;
+    text-align: center;
+    margin-top: 10px;
+  }
+
+  /* Profile Adjustments */
   .profile-hero {
     padding: 40px 16px 60px;
   }

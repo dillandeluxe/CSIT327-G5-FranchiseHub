@@ -13,16 +13,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <!-- Navbar (from home.html) -->
+  
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
-    <div class="nav-links">
+    
+    <div class="hamburger" id="hamburger">
+      <svg width="30" height="30" fill="currentColor" viewBox="0 0 20 20" style="color: #282828;">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <div class="nav-links" id="nav-links">
       <a href="{% url 'login' %}">Login</a>
       <a href="{% url 'register' %}" class="get-started">Get Started</a>
     </div>
   </nav>
 
-  <!-- Main Content -->
   <div class="auth-background">
     <div class="auth-container">
       <div class="auth-card">
@@ -45,7 +51,6 @@
         <form method="POST" class="auth-form" id="registerForm" novalidate>
           {% csrf_token %}
           
-          <!-- Username -->
           <div class="form-group">
             <label class="form-label">
               <i class="fas fa-user"></i>
@@ -55,7 +60,6 @@
             <span class="form-error" data-field="username"></span>
           </div>
 
-          <!-- Email -->
           <div class="form-group">
             <label class="form-label">
               <i class="fas fa-envelope"></i>
@@ -65,7 +69,6 @@
             <span class="form-error" data-field="email"></span>
           </div>
 
-          <!-- Password -->
           <div class="form-group">
             <label class="form-label">
               <i class="fas fa-lock"></i>
@@ -86,7 +89,6 @@
             <span class="form-error" data-field="password"></span>
           </div>
 
-          <!-- Confirm Password -->
           <div class="form-group">
             <label class="form-label">
               <i class="fas fa-lock"></i>
@@ -101,7 +103,6 @@
             <span class="form-error" data-field="confirm_password"></span>
           </div>
 
-          <!-- Role Selection -->
           <div class="form-group">
             <label class="form-label">
               <i class="fas fa-briefcase"></i>
@@ -115,7 +116,6 @@
             <span class="form-error" data-field="role"></span>
           </div>
 
-          <!-- Security Questions -->
           <div class="security-questions-section">
             <h3 class="section-title">
               <i class="fas fa-shield-alt"></i>
@@ -159,7 +159,17 @@
 
   <script src="{% static 'accounts/modern_auth.js' %}"></script>
   <script>
-    // ✅ PREVENT BACK BUTTON FROM ACCESSING REGISTER PAGE AFTER SUCCESSFUL REGISTRATION
+    // --- HAMBURGER MENU LOGIC ---
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+
+    if(hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
+
+    // --- PREVENT BACK BUTTON ---
     (function() {
         if (window.performance && performance.navigation.type === 2) {
             window.location.reload(true);

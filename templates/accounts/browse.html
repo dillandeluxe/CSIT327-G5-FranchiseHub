@@ -9,12 +9,18 @@
 {% endblock %}
 
 {% block content %}
-  <!-- Modern Navbar (matching franchisee dashboard) -->
   <nav class="modern-navbar">
     <a href="{% url 'home' %}" class="brand-logo">
       <span>Franchise</span>Hub
     </a>
-    <div class="nav-menu">
+
+    <div class="hamburger" id="hamburger">
+      <svg width="30" height="30" fill="currentColor" viewBox="0 0 20 20" style="color: #282828;">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <div class="nav-menu" id="nav-menu">
       {% if user.is_authenticated %}
         {% if user.is_superuser %}
           <a href="{% url 'admin_dashboard' %}" class="nav-link">Admin Dashboard</a>
@@ -32,7 +38,6 @@
     </div>
   </nav>
 
-  <!-- Hero Header (matching franchisee dashboard) -->
   <div class="dashboard-hero">
     <div class="hero-content">
       <h1 class="hero-title">Browse Franchise Opportunities</h1>
@@ -40,7 +45,6 @@
     </div>
   </div>
 
-  <!-- Search & Filter Section -->
   <div class="search-container">
     <form method="get" action="" class="search-form">
       <div class="search-bar">
@@ -59,30 +63,25 @@
     </form>
   </div>
 
-  <!-- Main Content -->
   <div class="dashboard-container">
     {% if franchises %}
       <div class="franchises-grid">
         {% for franchise in franchises %}
           <a href="{% url 'franchise_detail' franchise.id %}" class="franchise-card" data-franchise-id="{{ franchise.id }}" data-franchise-name="{{ franchise.name }}">
             
-            <!-- Franchise Image/Cover -->
             <div class="franchise-cover">
               {% if franchise.image %}
                 <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" loading="lazy">
               {% endif %}
             </div>
 
-            <!-- Franchise Header -->
             <div class="franchise-header">
               <h3 class="franchise-name">{{ franchise.name }}</h3>
               <span class="franchise-category">{{ franchise.category }}</span>
             </div>
 
-            <!-- Franchise Description -->
             <p class="franchise-description">{{ franchise.short_description }}</p>
 
-            <!-- Franchise Meta -->
             <div class="franchise-meta">
               <div class="meta-item investment">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
@@ -99,7 +98,6 @@
               </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="franchise-actions" onclick="event.preventDefault(); event.stopPropagation();">
               {% if user.is_authenticated %}
                 {% if franchise.id in applied_franchise_ids %}
@@ -128,7 +126,6 @@
         {% endfor %}
       </div>
     {% else %}
-      <!-- Empty State -->
       <div class="empty-state">
         {% if q %}
           <div class="empty-icon">
@@ -152,7 +149,6 @@
   </div>
 
   {% if user.is_authenticated %}
-  <!-- Application Modal -->
   <div id="applyModal" class="modal-overlay">
     <div class="modal-card">
       <button type="button" id="applyModalClose" class="modal-close-btn">✕</button>
@@ -200,6 +196,18 @@
 <script src="{% static 'accounts/modern_auth.js' %}"></script>
 <script>
 (function() {
+  
+  // --- NEW: HAMBURGER MENU TOGGLE ---
+  const hamburger = document.getElementById('hamburger');
+  const navMenu = document.getElementById('nav-menu');
+  
+  if (hamburger && navMenu) {
+    hamburger.addEventListener('click', function() {
+      navMenu.classList.toggle('active');
+    });
+  }
+
+  // --- EXISTING LOGIC ---
   {% if user.is_authenticated %}
   // Modal handling
   const modal = document.getElementById('applyModal');
@@ -255,29 +263,4 @@
   });
 })();
 </script>
-{% endblock %}
-
-<!-- Add footer if it doesn't exist, or update existing footer -->
-{% block footer %}
-<footer>
-  <div class="footer-main">
-    <div class="footer-brand">
-      <div class="footer-logo">
-        <span>Franchise</span>Hub
-      </div>
-      <p>Connecting entrepreneurs with proven franchise opportunities.</p>
-    </div>
-    <div class="footer-columns">
-      <div class="footer-column">
-        <h4>Company</h4>
-        <a href="{% url 'about' %}">About</a>
-        <a href="{% url 'support' %}">Support</a>
-        <a href="{% url 'privacy' %}">Privacy</a>
-      </div>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <div>© FranchiseHub. All rights reserved.</div>
-  </div>
-</footer>
 {% endblock %}

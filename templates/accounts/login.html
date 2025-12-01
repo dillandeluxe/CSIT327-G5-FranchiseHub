@@ -13,16 +13,22 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <!-- Navbar (from home.html) -->
+  
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
-    <div class="nav-links">
+    
+    <div class="hamburger" id="hamburger">
+      <svg width="30" height="30" fill="currentColor" viewBox="0 0 20 20" style="color: #282828;">
+        <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+      </svg>
+    </div>
+
+    <div class="nav-links" id="nav-links">
       <a href="{% url 'login' %}">Login</a>
       <a href="{% url 'register' %}" class="get-started">Get Started</a>
     </div>
   </nav>
 
-  <!-- Main Content -->
   <div class="auth-background">
     <div class="auth-container">
       <div class="auth-card">
@@ -94,15 +100,24 @@
 
   <script src="{% static 'accounts/modern_auth.js' %}"></script>
   <script>
-    // ✅ PREVENT BACK BUTTON FROM ACCESSING LOGIN PAGE AFTER SUCCESSFUL LOGIN
+    // --- HAMBURGER MENU LOGIC ---
+    const hamburger = document.getElementById('hamburger');
+    const navLinks = document.getElementById('nav-links');
+
+    if(hamburger && navLinks) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+    }
+
+    // --- PREVENT BACK BUTTON LOGIC ---
     (function() {
-        // If user is authenticated, don't allow back to login
         if (window.performance && performance.navigation.type === 2) {
-            // User pressed back button
             window.location.reload(true);
         }
     })();
     
+    // --- PASSWORD TOGGLE LOGIC ---
     function togglePassword(fieldId) {
       const field = document.getElementById(fieldId);
       const icon = document.getElementById(fieldId + '-icon');
