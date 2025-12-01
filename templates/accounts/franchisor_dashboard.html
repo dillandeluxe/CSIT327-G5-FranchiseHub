@@ -110,7 +110,8 @@
         <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg>
       </div>
       <h3>Active Franchises</h3>
-      <p class="stat-number" data-target="{{ approved_franchises.count }}">0</p>
+      <!-- ✅ FIXED: Add id and data-target attributes -->
+      <p class="stat-number" id="stat-active-franchises" data-target="{{ approved_franchises.count }}">{{ approved_franchises.count }}</p>
       <p class="stat-trend">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
@@ -118,12 +119,14 @@
         +{{ approved_franchises.count }} approved
       </p>
     </div>
+    
     <div class="stat-card" data-stat="applications">
       <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
         <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/><path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/></svg>
       </div>
       <h3>Total Applications</h3>
-      <p class="stat-number" data-target="{{ applications|length }}">0</p>
+      <!-- ✅ FIXED: Add id and data-target attributes -->
+      <p class="stat-number" id="stat-total-applications" data-target="{{ applications|length }}">{{ applications|length }}</p>
       <p class="stat-trend">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/>
@@ -131,12 +134,14 @@
         {{ applications|length }} pending review
       </p>
     </div>
+    
     <div class="stat-card" data-stat="franchisees">
       <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
         <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
       </div>
       <h3>Active Franchisees</h3>
-      <p class="stat-number" data-target="{% widthratio applications|length 1 2 %}">0</p>
+      <!-- ✅ FIXED: Add id and data-target attributes -->
+      <p class="stat-number" id="stat-active-franchisees" data-target="{% widthratio applications|length 1 2 %}">{% widthratio applications|length 1 2 %}</p>
       <p class="stat-trend">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
@@ -144,12 +149,14 @@
         Growing network
       </p>
     </div>
+    
     <div class="stat-card" data-stat="revenue">
       <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
         <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
       </div>
       <h3>Revenue This Month</h3>
-      <p class="stat-number">₱<span data-target="{% widthratio approved_franchises.count 1 50000 %}">0</span></p>
+      <!-- ✅ FIXED: Separate ₱ symbol and add id/data-target -->
+      <p class="stat-number">₱<span id="stat-revenue" data-target="{% widthratio approved_franchises.count 1 50000 %}">{% widthratio approved_franchises.count 1 50000 %}</span></p>
       <p class="stat-trend">
         <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
           <path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 14.586 7H12z" clip-rule="evenodd"/>
@@ -687,6 +694,206 @@ document.addEventListener('DOMContentLoaded', function() {
       }, index * 50);
     });
   });
+</script>
+
+<script>
+// ✅ Real-time Dashboard Stats Update System
+(function() {
+  let updateInterval = null;
+  let isUpdating = false;
+
+  // ✅ FIXED: Target elements by their IDs
+  const statElements = {
+    activeFranchises: document.getElementById('stat-active-franchises'),
+    totalApplications: document.getElementById('stat-total-applications'),
+    activeFranchisees: document.getElementById('stat-active-franchisees'),
+    revenue: document.getElementById('stat-revenue')
+  };
+
+  // ✅ Debug: Check if elements exist
+  console.log('📊 Dashboard Stats Elements:', {
+    activeFranchises: !!statElements.activeFranchises,
+    totalApplications: !!statElements.totalApplications,
+    activeFranchisees: !!statElements.activeFranchisees,
+    revenue: !!statElements.revenue
+  });
+
+  /**
+   * Fetch updated dashboard stats from backend
+   */
+  async function fetchDashboardStats() {
+    if (isUpdating) {
+      console.log('⏳ Update already in progress, skipping...');
+      return;
+    }
+    
+    isUpdating = true;
+    console.log('🔄 Fetching dashboard stats...');
+
+    try {
+      const response = await fetch('/accounts/franchisor/dashboard-stats/', {
+        method: 'GET',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin'
+      });
+
+      console.log('📡 Response status:', response.status);
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log('✅ Received data:', data);
+      
+      updateDashboardUI(data);
+
+    } catch (error) {
+      console.error('❌ Error fetching dashboard stats:', error);
+    } finally {
+      isUpdating = false;
+    }
+  }
+
+  /**
+   * Update UI with new data
+   */
+  function updateDashboardUI(data) {
+    console.log('🎨 Updating UI with data:', data);
+
+    // Active Franchises
+    if (statElements.activeFranchises && data.active_franchises !== undefined) {
+      console.log('📊 Updating Active Franchises:', data.active_franchises);
+      animateNumber(statElements.activeFranchises, data.active_franchises);
+    }
+
+    // Total Applications
+    if (statElements.totalApplications && data.total_applications !== undefined) {
+      console.log('📊 Updating Total Applications:', data.total_applications);
+      animateNumber(statElements.totalApplications, data.total_applications);
+    }
+
+    // Active Franchisees
+    if (statElements.activeFranchisees && data.active_franchisees !== undefined) {
+      console.log('📊 Updating Active Franchisees:', data.active_franchisees);
+      animateNumber(statElements.activeFranchisees, data.active_franchisees);
+    }
+
+    // Revenue
+    if (statElements.revenue && data.revenue !== undefined) {
+      console.log('📊 Updating Revenue:', data.revenue);
+      animateNumber(statElements.revenue, data.revenue);
+    }
+
+    console.log('✅ UI update complete!');
+  }
+
+  /**
+   * Animate number changes smoothly
+   */
+  function animateNumber(element, newValue) {
+    const currentValue = parseFloat(element.textContent.replace(/[^0-9.-]/g, '')) || 0;
+    const targetValue = parseFloat(newValue) || 0;
+
+    console.log(`🔢 Animating from ${currentValue} to ${targetValue}`);
+
+    if (currentValue === targetValue) {
+      console.log('⏭️ Values are the same, skipping animation');
+      return;
+    }
+
+    const duration = 800;
+    const steps = 30;
+    const increment = (targetValue - currentValue) / steps;
+    const stepDuration = duration / steps;
+
+    let currentStep = 0;
+
+    const animation = setInterval(() => {
+      currentStep++;
+      const tempValue = currentValue + (increment * currentStep);
+
+      if (currentStep >= steps) {
+        clearInterval(animation);
+        element.textContent = Math.round(targetValue).toLocaleString();
+        console.log(`✅ Animation complete: ${targetValue}`);
+      } else {
+        element.textContent = Math.round(tempValue).toLocaleString();
+      }
+    }, stepDuration);
+  }
+
+  /**
+   * Start auto-refresh system
+   */
+  function startAutoRefresh() {
+    console.log('🚀 Starting dashboard auto-refresh...');
+    
+    // Initial fetch
+    fetchDashboardStats();
+
+    // Set up interval (every 5 seconds)
+    updateInterval = setInterval(() => {
+      fetchDashboardStats();
+    }, 5000);
+
+    console.log('✅ Dashboard auto-refresh started (5s interval)');
+  }
+
+  /**
+   * Stop auto-refresh (cleanup)
+   */
+  function stopAutoRefresh() {
+    if (updateInterval) {
+      clearInterval(updateInterval);
+      updateInterval = null;
+      console.log('⏹️ Dashboard auto-refresh stopped');
+    }
+  }
+
+  /**
+   * Pause updates when page is hidden
+   */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      console.log('👁️ Page hidden, stopping refresh');
+      stopAutoRefresh();
+    } else {
+      console.log('👁️ Page visible, starting refresh');
+      startAutoRefresh();
+    }
+  });
+
+  /**
+   * Initialize on page load
+   */
+  window.addEventListener('DOMContentLoaded', () => {
+    console.log('🎬 DOM loaded, initializing dashboard stats...');
+    setTimeout(() => {
+      startAutoRefresh();
+    }, 500);
+  });
+
+  /**
+   * Cleanup on page unload
+   */
+  window.addEventListener('beforeunload', () => {
+    stopAutoRefresh();
+  });
+
+  // Expose for debugging
+  window.dashboardStats = {
+    refresh: fetchDashboardStats,
+    start: startAutoRefresh,
+    stop: stopAutoRefresh,
+    elements: statElements
+  };
+
+  console.log('📊 Dashboard stats system initialized!');
+})();
 </script>
 
 {% endblock %}
