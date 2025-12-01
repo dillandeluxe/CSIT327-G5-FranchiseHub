@@ -10,19 +10,22 @@ class FranchiseForm(forms.ModelForm):
     """Form for creating and editing franchises"""
     class Meta:
         model = Franchise
-        fields = ['name', 'category', 'investment', 'description', 'image']
+        fields = ['name', 'category', 'investment', 'description', 'image']  # ✅ Removed brochure and business_plan
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Enter franchise name'
+                'placeholder': 'Enter franchise name',
+                'required': True
             }),
             'category': forms.TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'e.g., Food & Beverage, Retail, Services'
+                'placeholder': 'e.g., Food & Beverage, Retail',
+                'required': True
             }),
             'investment': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': 'Minimum investment amount',
+                'required': True,
                 'step': '0.01'
             }),
             'description': forms.Textarea(attrs={
@@ -31,30 +34,16 @@ class FranchiseForm(forms.ModelForm):
                 'rows': 5
             }),
             'image': forms.FileInput(attrs={
-                'class': 'file-input',
+                'class': 'form-control',
                 'accept': 'image/*'
-            })
-        }
-        labels = {
-            'name': 'Franchise Name',
-            'category': 'Category/Industry',
-            'investment': 'Minimum Investment (₱)',
-            'description': 'Description',
-            'image': 'Franchise Image/Logo'
+            }),
         }
 
-    def clean_image(self):
-        image = self.cleaned_data.get('image')
-        if image:
-            # Validate file size (5MB limit)
-            if image.size > 5 * 1024 * 1024:
-                raise forms.ValidationError("Image file too large ( > 5MB )")
-            
-            # Validate file type
-            if not image.content_type.startswith('image/'):
-                raise forms.ValidationError("Only image files are allowed.")
-                
-        return image
+    def clean_investment(self):
+        investment = self.cleaned_data.get('investment')
+        if investment and investment < 0:
+            raise forms.ValidationError('Investment amount must be positive')
+        return investment
 
 # ✅ NEW: Franchisor Form with Location
 class FranchisorForm(forms.ModelForm):

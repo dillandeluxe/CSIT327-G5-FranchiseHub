@@ -108,6 +108,8 @@ class Franchise(models.Model):
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='franchise_images/', blank=True, null=True)
     
+    # ✅ REMOVED: Document fields (brochure and business_plan)
+    
     # ✅ NEW STATUS FIELDS
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     is_active = models.BooleanField(default=True)  # For soft delete
