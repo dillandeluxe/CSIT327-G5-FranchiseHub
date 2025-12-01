@@ -1252,3 +1252,34 @@ def application_detail_view(request, application_id):
     return render(request, 'accounts/application_detail.html', {
         'application': application
     })
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+
+@require_http_methods(["GET"])
+def dashboard_stats(request):
+    """Return real-time dashboard statistics as JSON"""
+    if not request.user.is_authenticated or not hasattr(request.user, 'franchisor'):
+        return JsonResponse({'error': 'Unauthorized'}, status=401)
+    
+    franchisor = request.user.franchisor
+    
+    # Get franchise counts
+    approved_franchises = franchisor.franchises.filter(status='approved').count()
+    total_applications = fromachisor.franchises.values_list('applications', flat=True).count()
+    
+    # Calculate active franchisees (unique applicants)
+    from django.db.models import Count
+    active_franchisees = franchisor.franchises.aggregate(
+        franchisees=Count('applications__franchisee', distinct=True)
+    )['franchisees'] or 0
+    
+    # Calculate revenue (approximation: approved franchises × base fee)
+    revenue = approved_franchises * 50000
+    
+    return JsonResponse({
+        'active_franchises': approved_franchises,
+        'total_applications': total_applications,
+        'active_franchisees': active_franchisees,
+        'revenue': revenue
+    })

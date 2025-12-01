@@ -55,4 +55,6 @@ urlpatterns = [
     path('favorites/', views.favorites_view, name='favorites'),
     path('favorites/toggle/<uuid:franchise_id>/', views.toggle_favorite, name='toggle_favorite'),
     path('favorites/check/<uuid:franchise_id>/', views.check_favorite, name='check_favorite'),
+    # Real-time stats endpoint
+    path('franchisor/dashboard-stats/', views.dashboard_stats, name='dashboard_stats'),
 ]
