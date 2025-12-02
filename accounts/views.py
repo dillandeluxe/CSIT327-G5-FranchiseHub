@@ -286,8 +286,8 @@ def edit_profile_view(request):
         profile.location = request.POST.get('location', '')
         profile.bio = request.POST.get('bio', '')
         
-        # ✅ Handle profile picture upload - Cloudinary will handle this automatically
-        if request.FILES.get('profile_picture'):
+        # ✅ Handle profile picture upload - Only update if new file is uploaded
+        if 'profile_picture' in request.FILES:
             profile.profile_picture = request.FILES['profile_picture']
         
         profile.save()
@@ -363,7 +363,7 @@ def add_franchise_view(request):
         return redirect('browse')
 
     if request.method == 'POST':
-        form = FranchiseForm(request.POST, request.FILES)  # ✅ request.FILES is correct
+        form = FranchiseForm(request.POST, request.FILES)
         location = request.POST.get('location', '').strip()
         
         if form.is_valid():
@@ -429,15 +429,12 @@ def edit_franchise_view(request, franchise_id):
     if request.method == 'POST':
         form = FranchiseForm(request.POST, request.FILES, instance=franchise)
         if form.is_valid():
-            # ✅ Handle document uploads - they will automatically save to Cloudinary
+            # ✅ Save the form - files will be handled automatically by Django/Cloudinary
+            # Only update file fields if new files are provided in request.FILES
             updated_franchise = form.save(commit=False)
             
-            # ✅ Only update documents if new ones are uploaded
-            if 'brochure' in request.FILES:
-                updated_franchise.brochure = request.FILES['brochure']
-            
-            if 'business_plan' in request.FILES:
-                updated_franchise.business_plan = request.FILES['business_plan']
+            # ✅ File fields are already handled by the form, no need to manually assign
+            # Django forms automatically handle file uploads when request.FILES is passed
             
             updated_franchise.save()
             messages.success(request, f"Franchise '{franchise.name}' updated successfully!")
@@ -516,18 +513,16 @@ def franchise_apply(request, franchise_id):
         return redirect('browse')
 
     if request.method == 'POST':
-        form = FranchiseApplicationForm(request.POST, request.FILES)  # ✅ request.FILES captures uploads
+        form = FranchiseApplicationForm(request.POST, request.FILES)
         if form.is_valid():
             app = form.save(commit=False)
             app.franchise = franchise
             app.franchisee = franchisee
-            app.save()  # ✅ Saves resume, business_proposal, financial_statement to Cloudinary
+            app.save()
             
             messages.success(request, f"Application submitted successfully for {franchise.name}!")
             return redirect('franchisee_dashboard')
         else:
-            # ✅ DEBUG: Print form errors
-            print(f"❌ Form validation errors: {form.errors}")
             messages.error(request, "Please correct the errors below.")
     else:
         initial = {

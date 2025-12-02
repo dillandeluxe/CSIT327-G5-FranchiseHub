@@ -1,0 +1,90 @@
+/* location: static/css/admin_custom.css */
+
+/* Custom style for active nav link */
+.nav-link.active {
+    border-bottom: 2px solid #3b82f6; /* blue-500 */
+    color: #ffffff; /* white */
+}
+
+.nav-link {
+    padding-bottom: 4px;
+}
+
+/* Logout Link Styling */
+.logout-link {
+    color: rgba(255, 255, 255, 0.9) !important;
+    margin-left: 8px;
+    padding-left: 16px;
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logout-link:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: white !important;
+}
+
+.logout-link svg {
+    transition: transform 0.2s;
+}
+
+.logout-link:hover svg {
+    transform: translateX(2px);
+}
+
+/* Responsive - hide logout text on mobile, show icon only */
+@media (max-width: 768px) {
+    .nav-menu {
+        gap: 4px;
+    }
+    
+    .nav-link {
+        padding: 8px 12px;
+        font-size: 0;
+    }
+    
+    .nav-link svg {
+        margin: 0;
+    }
+    
+    .logout-link {
+        border-left: none;
+        padding-left: 12px;
+        margin-left: 4px;
+    }
+}
+
+/* Note: Most styling is handled by Tailwind classes in the HTML.
+   This file is for custom overrides only. */
+
+/* Admin dashboard custom styles */
+
+.franchise-location {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #d66900;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.franchise-location svg {
+    flex-shrink: 0;
+}
+
+/* Location input styling */
+.location-input {
+    position: relative;
+}
+
+.location-input:focus {
+    border-color: #d66900;
+    box-shadow: 0 0 0 3px rgba(214, 105, 0, 0.1);
+}
+
+/* Form field help text */
+.field-help {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}

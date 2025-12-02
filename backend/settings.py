@@ -8,21 +8,46 @@ from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
 from django.contrib.messages import constants as messages
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
 
 # --------------------------------------------------------------------
-# BASE CONFIGURATION
+# MANUALLY SET PATHS
 # --------------------------------------------------------------------
-BASE_DIR = Path(__file__).resolve().parent.parent
+# Project root (where manage.py is)
+PROJECT_ROOT = Path.cwd()  # Current directory
+# Django project folder
+BASE_DIR = PROJECT_ROOT / "backend"
 
-# Load environment variables (.env for local dev, Render vars for prod)
-if os.environ.get("RENDER", "") != "true":
-    load_dotenv(dotenv_path=BASE_DIR / ".env")
+print(f"PROJECT_ROOT: {PROJECT_ROOT}")
+print(f"BASE_DIR: {BASE_DIR}")
+
+# --------------------------------------------------------------------
+# LOAD ENVIRONMENT
+# --------------------------------------------------------------------
+# Check for .env in project root
+env_path = PROJECT_ROOT / ".env"
+if env_path.exists():
+    
+    load_dotenv(dotenv_path=env_path)
+    print(f"✅ Loaded .env from: {env_path}")
+else:
+    print(f"❌ .env not found at: {env_path}")
+
+# Debug what was loaded
+print(f"DJANGO_DEBUG: {os.getenv('DJANGO_DEBUG')}")
+print(f"RENDER: {os.getenv('RENDER')}")
+print(f"DATABASE_URL exists: {'DATABASE_URL' in os.environ}")
 
 # --- Debug/host config ---
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 IS_RENDER = os.getenv('RENDER', '').lower() == 'true'
-RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip()
+RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip() 
 
+# --------------------------------------------------------------------
+# BASE CONFIGURATION
+# --------------------------------------------------------------------
 # When running on Render, set ALLOWED_HOSTS from RENDER_EXTERNAL_HOSTNAME automatically
 if DEBUG:
     ALLOWED_HOSTS = []
@@ -39,8 +64,7 @@ else:
         RENDER_EXTERNAL_HOSTNAME,
     ]
 
-
-# CSRF trusted origins (include Render URL if available)
+# CSRF trusted origins
 default_csrf = []
 if RENDER_EXTERNAL_HOSTNAME:
     default_csrf.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
@@ -62,14 +86,14 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
+    'cloudinary_storage',   
+    'cloudinary',           
+    "django.contrib.staticfiles",  
     "django_extensions",
     "accounts",
-    'cloudinary',
-    'cloudinary_storage',
+    
 ]
-
-# ✅ ADD MIDDLEWARE TO PREVENT CACHING OF AUTHENTICATED PAGES
+# Prevent caching
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -79,7 +103,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'accounts.middleware.NoCacheMiddleware',  # ✅ Add custom middleware
+    'accounts.middleware.NoCacheMiddleware',
 ]
 
 ROOT_URLCONF = "backend.urls"
@@ -92,7 +116,7 @@ TEMPLATES = [
         "OPTIONS": {
             "context_processors": [
                 "django.template.context_processors.request",
-                "django.template.context_processors.static",  # NEW: ensures {% static %} has context
+                "django.template.context_processors.static",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
@@ -105,23 +129,32 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # --------------------------------------------------------------------
 # DATABASE (Supabase)
 # --------------------------------------------------------------------
+# --------------------------------------------------------------------
+# DATABASE (Supabase for production, SQLite for local)
+# --------------------------------------------------------------------
 raw_db_url = os.environ.get("DATABASE_URL")
 
-if raw_db_url is None:
-    raise ValueError("❌ ERROR: DATABASE_URL environment variable is missing!")
+if raw_db_url:
+    # Production: Supabase
+    safe_db_url = raw_db_url.replace(":5432/", ":6543/")
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=safe_db_url,
+            conn_max_age=0,
+            ssl_require=True,
+        )
+    }
+else:
+    # Development: SQLite (local)
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR.parent / 'db.sqlite3',
+        }
+    }
 
-# Force Django to use Transaction Pooler instead of Session Pooler
-safe_db_url = raw_db_url.replace(":5432/", ":6543/")
-
-DATABASES = {
-    "default": dj_database_url.config(
-        default=safe_db_url,
-        conn_max_age=0,
-        ssl_require=True,
-    )
-}
 # --------------------------------------------------------------------
-# PASSWORD VALIDATION
+# VALIDATORS
 # --------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -142,30 +175,25 @@ USE_TZ = True
 # STATIC FILES
 # --------------------------------------------------------------------
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # collectstatic output
-STATICFILES_DIRS = [BASE_DIR / "static"]  # source assets for development
+STATIC_ROOT = BASE_DIR.parent / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR.parent / "static"]
 
-# Use simpler storage in dev; hashed, compressed files in production
 if DEBUG:
     STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 else:
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Optional (recommended on Render behind proxy)
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # --------------------------------------------------------------------
-# AUTHENTICATION & LOGIN
+# AUTH
 # --------------------------------------------------------------------
 LOGIN_URL = "/accounts/login/"
 LOGIN_REDIRECT_URL = "/accounts/browse/"
 
-# --------------------------------------------------------------------
-# DEFAULT PRIMARY KEY FIELD TYPE
-# --------------------------------------------------------------------
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Message framework tags mapped to Bootstrap 5 classes
+# Messages
 MESSAGE_TAGS = {
     messages.DEBUG: 'alert-info',
     messages.INFO: 'alert-info',
@@ -174,36 +202,46 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-# Media files configuration
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# --------------------------------------------------------------------
+# SESSION SECURITY
+# --------------------------------------------------------------------
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 1209600
 
-# ✅ SESSION SECURITY SETTINGS
-SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access to session cookie
-SESSION_COOKIE_SECURE = not DEBUG  # Use HTTPS in production
-SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
-SESSION_EXPIRE_AT_BROWSER_CLOSE = False  # Keep session after browser close
-SESSION_COOKIE_AGE = 1209600  # 2 weeks
-
-import os
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
-# ✅ FIXED: Cloudinary Configuration with HTTPS enforcement
+# --------------------------------------------------------------------
+# CLOUDINARY CONFIG
+# --------------------------------------------------------------------
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': os.getenv('CLOUDINARY_API_KEY'),
     'API_SECRET': os.getenv('CLOUDINARY_API_SECRET'),
-    'SECURE': True,  # ✅ Force HTTPS URLs
+    'SECURE': True,
 }
 
-# Configure cloudinary with HTTPS
 cloudinary.config(
     cloud_name=os.getenv('CLOUDINARY_CLOUD_NAME'),
     api_key=os.getenv('CLOUDINARY_API_KEY'),
     api_secret=os.getenv('CLOUDINARY_API_SECRET'),
-    secure=True  # ✅ This ensures all URLs use HTTPS
+    secure=True
 )
 
-DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+# -----------------------------
+# MEDIA FILES (Cloudinary for production, local for development)
+# -----------------------------
+# ✅ ALWAYS define MEDIA_URL and MEDIA_ROOT first
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR.parent / 'media'
+
+if IS_RENDER:
+    # Production: Cloudinary
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    # Development: Local filesystem
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+
+print(f"DEBUG: DEFAULT_FILE_STORAGE = {DEFAULT_FILE_STORAGE}")
+print(f"DEBUG: MEDIA_ROOT = {MEDIA_ROOT}")
+print(f"DEBUG: MEDIA_ROOT exists = {MEDIA_ROOT.exists()}")
