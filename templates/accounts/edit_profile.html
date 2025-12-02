@@ -11,7 +11,7 @@
 <body>
   <!-- Modern Navbar -->
   <nav class="navbar">
-    <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
+    <a href="{% if user.is_superuser %}{% url 'admin_dashboard' %}{% elif user.franchisor_set.exists %}{% url 'franchisor_dashboard' %}{% elif user.franchisee_set.exists %}{% url 'franchisee_dashboard' %}{% else %}{% url 'home' %}{% endif %}" class="logo"><span>Franchise</span>Hub</a>
     <div class="nav-links">
       <!-- ✅ Smart back navigation based on user role -->
       {% if user.is_superuser %}
