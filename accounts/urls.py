@@ -66,4 +66,6 @@ urlpatterns = [
     path('system-admin/password_change/', views.admin_password_change, name='admin_password_change'),
     # ✅ Clear all franchises (admin only)
     path('admin/clear-franchises/', views.clear_all_franchises, name='clear_all_franchises'),
+    # ✅ File download proxy
+    path('download/<str:file_type>/<uuid:file_id>/', views.download_file, name='download_file'),
 ]
