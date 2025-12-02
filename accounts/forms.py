@@ -5,6 +5,15 @@ class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['full_name', 'phone_number', 'location', 'bio', 'profile_picture']
+    
+    def clean_profile_picture(self):
+        from django.core.files.uploadedfile import UploadedFile
+        profile_picture = self.cleaned_data.get('profile_picture')
+        # Only validate NEW uploads (not existing database FieldFile objects)
+        if profile_picture and isinstance(profile_picture, UploadedFile):
+            if profile_picture.size > 5 * 1024 * 1024:  # 5MB limit for images
+                raise forms.ValidationError('Image size must be less than 5MB')
+        return profile_picture
 
 class FranchiseForm(forms.ModelForm):
     """Form for creating and editing franchises"""

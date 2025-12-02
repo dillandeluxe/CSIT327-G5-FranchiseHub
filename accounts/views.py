@@ -275,34 +275,39 @@ def edit_profile_view(request):
     profile, created = Profile.objects.get_or_create(user=request.user)
     
     if request.method == 'POST':
-        # Update user fields
-        request.user.first_name = request.POST.get('first_name', '')
-        request.user.last_name = request.POST.get('last_name', '')
-        request.user.email = request.POST.get('email', '')
-        request.user.save()
-        
-        # Update profile fields
-        profile.phone_number = request.POST.get('phone_number', '')
-        profile.location = request.POST.get('location', '')
-        profile.bio = request.POST.get('bio', '')
-        
-        # ✅ Handle profile picture upload - Only update if new file is uploaded
-        if 'profile_picture' in request.FILES:
-            profile.profile_picture = request.FILES['profile_picture']
-        
-        profile.save()
-        
-        messages.success(request, "Profile updated successfully!")
-        
-        # ✅ Redirect to appropriate dashboard based on role
-        if request.user.is_superuser:
-            return redirect('admin_dashboard')
-        elif Franchisor.objects.filter(user=request.user).exists():
-            return redirect('franchisor_dashboard')
-        elif Franchisee.objects.filter(user=request.user).exists():
-            return redirect('franchisee_dashboard')
-        else:
-            return redirect('profile')
+        try:
+            # Update user fields
+            request.user.first_name = request.POST.get('first_name', '')
+            request.user.last_name = request.POST.get('last_name', '')
+            request.user.email = request.POST.get('email', '')
+            request.user.save()
+            
+            # Update profile fields
+            profile.phone_number = request.POST.get('phone_number', '')
+            profile.location = request.POST.get('location', '')
+            profile.bio = request.POST.get('bio', '')
+            
+            # ✅ Handle profile picture upload - Only update if new file is uploaded
+            if 'profile_picture' in request.FILES:
+                profile.profile_picture = request.FILES['profile_picture']
+            # If no new file uploaded, keep existing profile picture
+            
+            profile.save()
+            
+            messages.success(request, "Profile updated successfully!")
+            
+            # ✅ Redirect to appropriate dashboard based on role
+            if request.user.is_superuser:
+                return redirect('admin_dashboard')
+            elif Franchisor.objects.filter(user=request.user).exists():
+                return redirect('franchisor_dashboard')
+            elif Franchisee.objects.filter(user=request.user).exists():
+                return redirect('franchisee_dashboard')
+            else:
+                return redirect('profile')
+        except Exception as e:
+            messages.error(request, f"Error updating profile: {str(e)}")
+            print(f"❌ Error in edit_profile_view: {str(e)}")
     
     return render(request, 'accounts/edit_profile.html', {'profile': profile})
 
