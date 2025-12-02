@@ -52,8 +52,10 @@ print(f"⚙️ DEBUG = {DEBUG}")
 # Force storage backend configuration BEFORE any models are imported
 if IS_RENDER:
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    print(f"✅ PRODUCTION MODE: Using Cloudinary storage")
 else:
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage' 
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    print(f"⚠️ DEVELOPMENT MODE: Using local filesystem storage") 
 
 # --------------------------------------------------------------------
 # BASE CONFIGURATION
@@ -258,6 +260,15 @@ cloudinary.config(
 if IS_RENDER:
     # Production: Cloudinary handles storage, but Django still needs MEDIA_URL
     MEDIA_URL = '/media/'  # This is used as a fallback, Cloudinary provides its own URLs
+    # Django 4.2+ STORAGES setting (takes precedence over DEFAULT_FILE_STORAGE)
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 else:
     # Development: Local filesystem
     MEDIA_URL = '/media/'
