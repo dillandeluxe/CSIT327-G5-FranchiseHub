@@ -1486,12 +1486,10 @@ def clear_all_franchises(request):
 @login_required
 def download_file(request, file_type, file_id):
     """
-    Direct download handler for documents.
-    Generates signed Cloudinary URLs with attachment flag for secure downloads.
+    Download handler that streams files directly through Django.
     """
-    from django.http import HttpResponseRedirect
-    import cloudinary
-    import cloudinary.utils
+    from django.http import FileResponse, HttpResponse
+    import mimetypes
     
     try:
         file_obj = None
@@ -1527,33 +1525,19 @@ def download_file(request, file_type, file_id):
             messages.error(request, "File not found.")
             return redirect('browse')
         
-        # Get the file URL
-        file_url = file_obj.url
+        # Open the file and stream it
+        file_obj.open()
         
-        # For Cloudinary URLs, generate a signed URL with attachment flag
-        if 'cloudinary' in file_url:
-            # Extract public_id from URL
-            # URL format: https://res.cloudinary.com/{cloud_name}/{resource_type}/upload/{public_id}.{format}
-            try:
-                url_parts = file_url.split('/upload/')
-                if len(url_parts) == 2:
-                    # Get public_id with extension
-                    public_id_with_ext = url_parts[1]
-                    
-                    # Generate signed URL with attachment flag
-                    file_url = cloudinary.utils.cloudinary_url(
-                        public_id_with_ext,
-                        resource_type='raw',
-                        type='upload',
-                        sign_url=True,
-                        secure=True,
-                        flags='attachment'
-                    )[0]
-            except Exception as e:
-                print(f"⚠️ Cloudinary URL generation error: {e}, using original URL")
+        # Guess content type
+        content_type, _ = mimetypes.guess_type(document_name)
+        if not content_type:
+            content_type = 'application/octet-stream'
         
-        # Redirect to the download URL
-        return HttpResponseRedirect(file_url)
+        # Create response with file content
+        response = FileResponse(file_obj, content_type=content_type)
+        response['Content-Disposition'] = f'attachment; filename="{document_name}"'
+        
+        return response
         
     except Exception as e:
         print(f"❌ Download error: {e}")
