@@ -445,18 +445,27 @@ def edit_franchise_view(request, franchise_id):
     if request.method == 'POST':
         form = FranchiseForm(request.POST, request.FILES, instance=franchise)
         if form.is_valid():
-            # ✅ Save the form - files will be handled automatically by Django/Cloudinary
-            # Only update file fields if new files are provided in request.FILES
-            updated_franchise = form.save(commit=False)
-            
-            # ✅ File fields are already handled by the form, no need to manually assign
-            # Django forms automatically handle file uploads when request.FILES is passed
-            
-            updated_franchise.save()
-            messages.success(request, f"Franchise '{franchise.name}' updated successfully!")
-            return redirect('franchisor_dashboard')
+            try:
+                # ✅ Save the form - files will be handled automatically by Django/Cloudinary
+                updated_franchise = form.save(commit=False)
+                
+                # If no new image is uploaded, keep the existing one
+                if 'image' not in request.FILES:
+                    updated_franchise.image = franchise.image
+                if 'brochure' not in request.FILES:
+                    updated_franchise.brochure = franchise.brochure
+                if 'business_plan' not in request.FILES:
+                    updated_franchise.business_plan = franchise.business_plan
+                
+                updated_franchise.save()
+                messages.success(request, f"Franchise '{franchise.name}' updated successfully!")
+                return redirect('franchisor_dashboard')
+            except Exception as e:
+                messages.error(request, f"Error updating franchise: {str(e)}")
+                print(f"❌ Error in edit_franchise_view: {str(e)}")
         else:
             messages.error(request, "Please correct the errors below.")
+            print(f"❌ Form errors: {form.errors}")
     else:
         form = FranchiseForm(instance=franchise)
 
