@@ -370,7 +370,8 @@ def add_franchise_view(request):
         import logging
         logger = logging.getLogger(__name__)
         if 'image' in request.FILES:
-            logger.info(f"Image upload detected: {request.FILES['image'].name}")
+            logger.info(f"📸 Image upload detected: {request.FILES['image'].name}")
+            logger.info(f"📦 File size: {request.FILES['image'].size} bytes")
         
         if form.is_valid():
             franchise = form.save(commit=False)
@@ -378,10 +379,13 @@ def add_franchise_view(request):
             franchise.status = 'pending'
             franchise.save()
             
-            # Debug: Log saved image URL
+            # Debug: Log saved image details
             if franchise.image:
-                logger.info(f"Image saved to: {franchise.image.url}")
-                logger.info(f"Storage backend: {franchise.image.storage.__class__.__name__}")
+                logger.info(f"✅ Franchise saved: {franchise.name}")
+                logger.info(f"🔗 Image URL: {franchise.image.url}")
+                logger.info(f"📁 Image name: {franchise.image.name}")
+                logger.info(f"🏪 Storage backend: {franchise.image.storage.__class__.__name__}")
+                logger.info(f"☁️ Storage location: {franchise.image.storage.__class__.__module__}")
             
             # ✅ Update franchisor location
             if location and location != franchisor.location:
@@ -391,6 +395,7 @@ def add_franchise_view(request):
             messages.success(request, f"Franchise '{franchise.name}' submitted successfully! It is now awaiting admin approval.")
             return redirect('franchisor_dashboard')
         else:
+            logger.error(f"❌ Form validation failed: {form.errors}")
             messages.error(request, "Please correct the errors below.")
     else:
         form = FranchiseForm()
