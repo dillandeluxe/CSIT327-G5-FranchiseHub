@@ -3,7 +3,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home_view, name='home'),  
+    # Removed duplicate home route - main home is in backend/urls.py
     path('browse/', views.browse, name='browse'),  # ensure browse route handles search via ?q=
     path('register/', views.register_view, name='register'),
     path('login/', views.login_view, name='login'),
