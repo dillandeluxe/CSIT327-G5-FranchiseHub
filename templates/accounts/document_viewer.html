@@ -256,10 +256,343 @@
 
     <div class="viewer-container">
         <div class="document-frame">
-            <iframe 
-                src="{{ file_url }}"
-                class="document-embed">
-            </iframe>
+            {% if file_type == 'franchise_brochure' %}
+                <!-- Franchise Brochure Mock Content -->
+                <div style="padding: 40px; background: white; height: 100%; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #ff6600; padding-bottom: 30px;">
+                        <h1 style="color: #ff6600; font-size: 42px; margin-bottom: 10px;">{{ item_name }}</h1>
+                        <p style="font-size: 18px; color: #666;">Franchise Opportunity Brochure</p>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 40px;">
+                        <div style="background: linear-gradient(135deg, #ff6600 0%, #ff8c2b 100%); padding: 30px; border-radius: 12px; color: white;">
+                            <h2 style="margin-bottom: 15px; font-size: 24px;">Investment Required</h2>
+                            <p style="font-size: 36px; font-weight: 700;">$150,000 - $350,000</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 30px; border-radius: 12px; border: 2px solid #e5e7eb;">
+                            <h2 style="margin-bottom: 15px; font-size: 24px; color: #1a1a1a;">Expected ROI</h2>
+                            <p style="font-size: 36px; font-weight: 700; color: #10b981;">18-24 months</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="color: #ff6600; font-size: 28px; margin-bottom: 20px;">About This Franchise</h2>
+                        <p style="line-height: 1.8; color: #4b5563; font-size: 16px;">
+                            {{ item_name }} is a leading franchise opportunity in the industry, offering comprehensive support and proven business systems. Our franchise model has been refined over years of success, providing franchisees with everything they need to thrive in today's competitive market.
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="color: #ff6600; font-size: 28px; margin-bottom: 20px;">What We Offer</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #ff6600;">
+                                <h3 style="color: #1a1a1a; margin-bottom: 10px;">✓ Training & Support</h3>
+                                <p style="color: #666;">Comprehensive initial training and ongoing support</p>
+                            </div>
+                            <div style="padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #ff6600;">
+                                <h3 style="color: #1a1a1a; margin-bottom: 10px;">✓ Marketing Materials</h3>
+                                <p style="color: #666;">Professional marketing and branding assets</p>
+                            </div>
+                            <div style="padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #ff6600;">
+                                <h3 style="color: #1a1a1a; margin-bottom: 10px;">✓ Proven Systems</h3>
+                                <p style="color: #666;">Tested operational procedures and workflows</p>
+                            </div>
+                            <div style="padding: 20px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #ff6600;">
+                                <h3 style="color: #1a1a1a; margin-bottom: 10px;">✓ Territory Protection</h3>
+                                <p style="color: #666;">Exclusive territory rights in your area</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 12px; color: white; text-align: center;">
+                        <h2 style="font-size: 32px; margin-bottom: 15px;">Ready to Join Us?</h2>
+                        <p style="font-size: 18px; opacity: 0.9;">Take the first step towards owning your own successful franchise</p>
+                    </div>
+                </div>
+
+            {% elif file_type == 'franchise_business_plan' %}
+                <!-- Business Plan Mock Content -->
+                <div style="padding: 40px; background: white; height: 100%; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 40px;">
+                        <h1 style="color: #ff6600; font-size: 42px; margin-bottom: 10px;">{{ item_name }}</h1>
+                        <h2 style="font-size: 24px; color: #666; margin-bottom: 5px;">Business Plan</h2>
+                        <p style="color: #999;">Confidential Document - 2025</p>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #ff6600; font-size: 28px; margin-bottom: 15px; border-bottom: 2px solid #ff6600; padding-bottom: 10px;">Executive Summary</h2>
+                        <p style="line-height: 1.8; color: #4b5563;">
+                            This comprehensive business plan outlines the operational strategy, financial projections, and growth opportunities for {{ item_name }}. Our franchise model has demonstrated consistent success across multiple markets.
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #ff6600; font-size: 28px; margin-bottom: 15px; border-bottom: 2px solid #ff6600; padding-bottom: 10px;">Financial Projections</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: #f8fafc;">
+                                    <th style="padding: 15px; text-align: left; border: 1px solid #e5e7eb;">Year</th>
+                                    <th style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">Revenue</th>
+                                    <th style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">Expenses</th>
+                                    <th style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">Net Profit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Year 1</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">$450,000</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">$320,000</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; color: #10b981; font-weight: 600;">$130,000</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Year 2</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">$680,000</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">$410,000</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; color: #10b981; font-weight: 600;">$270,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Year 3</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">$920,000</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb;">$520,000</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; color: #10b981; font-weight: 600;">$400,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #ff6600; font-size: 28px; margin-bottom: 15px; border-bottom: 2px solid #ff6600; padding-bottom: 10px;">Market Analysis</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px;">
+                            <div style="background: #f0fdf4; padding: 25px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 36px; font-weight: 700; color: #10b981; margin-bottom: 10px;">87%</div>
+                                <div style="color: #666;">Market Growth</div>
+                            </div>
+                            <div style="background: #fef3c7; padding: 25px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 36px; font-weight: 700; color: #f59e0b; margin-bottom: 10px;">15K+</div>
+                                <div style="color: #666;">Target Customers</div>
+                            </div>
+                            <div style="background: #fce7f3; padding: 25px; border-radius: 8px; text-align: center;">
+                                <div style="font-size: 36px; font-weight: 700; color: #ec4899; margin-bottom: 10px;">$2.5M</div>
+                                <div style="color: #666;">Market Size</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif file_type == 'application_resume' %}
+                <!-- Resume Mock Content -->
+                <div style="padding: 40px; background: white; height: 100%; overflow-y: auto;">
+                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px; border-radius: 12px; color: white; margin-bottom: 30px;">
+                        <div style="display: flex; align-items: center; gap: 30px;">
+                            <div style="width: 120px; height: 120px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: 700; color: #10b981;">
+                                {{ item_name.0 }}
+                            </div>
+                            <div>
+                                <h1 style="font-size: 36px; margin-bottom: 10px;">{{ item_name }}</h1>
+                                <p style="font-size: 18px; opacity: 0.9; margin-bottom: 15px;">Franchise Business Professional</p>
+                                <div style="display: flex; gap: 20px; font-size: 14px;">
+                                    <span>📧 {{ item_name|lower|cut:" " }}@email.com</span>
+                                    <span>📱 (555) 123-4567</span>
+                                    <span>📍 New York, NY</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="color: #10b981; font-size: 24px; margin-bottom: 15px; border-bottom: 2px solid #10b981; padding-bottom: 10px;">Professional Summary</h2>
+                        <p style="line-height: 1.8; color: #4b5563;">
+                            Experienced business professional with over 10 years in franchise management and operations. Proven track record of successfully launching and scaling multiple franchise locations. Strong background in team leadership, financial management, and customer service excellence.
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="color: #10b981; font-size: 24px; margin-bottom: 15px; border-bottom: 2px solid #10b981; padding-bottom: 10px;">Work Experience</h2>
+                        
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <h3 style="color: #1a1a1a; font-size: 20px;">Regional Manager</h3>
+                                <span style="color: #666;">2020 - Present</span>
+                            </div>
+                            <p style="color: #666; font-style: italic; margin-bottom: 10px;">National Franchise Group</p>
+                            <ul style="color: #4b5563; line-height: 1.8;">
+                                <li>Managed operations for 8 franchise locations across 3 states</li>
+                                <li>Increased regional revenue by 45% over 3 years</li>
+                                <li>Trained and mentored 12 new franchise owners</li>
+                            </ul>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <h3 style="color: #1a1a1a; font-size: 20px;">Operations Manager</h3>
+                                <span style="color: #666;">2016 - 2020</span>
+                            </div>
+                            <p style="color: #666; font-style: italic; margin-bottom: 10px;">Retail Solutions Inc.</p>
+                            <ul style="color: #4b5563; line-height: 1.8;">
+                                <li>Oversaw daily operations of multi-million dollar facility</li>
+                                <li>Implemented cost-saving measures reducing expenses by 22%</li>
+                                <li>Led team of 35+ employees</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 30px;">
+                        <h2 style="color: #10b981; font-size: 24px; margin-bottom: 15px; border-bottom: 2px solid #10b981; padding-bottom: 10px;">Education</h2>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <h3 style="color: #1a1a1a; font-size: 20px;">MBA in Business Administration</h3>
+                            <span style="color: #666;">2016</span>
+                        </div>
+                        <p style="color: #666;">University of Business Excellence</p>
+                    </div>
+
+                    <div>
+                        <h2 style="color: #10b981; font-size: 24px; margin-bottom: 15px; border-bottom: 2px solid #10b981; padding-bottom: 10px;">Skills</h2>
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <span style="background: #f0fdf4; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 500;">Leadership</span>
+                            <span style="background: #f0fdf4; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 500;">Financial Management</span>
+                            <span style="background: #f0fdf4; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 500;">Operations</span>
+                            <span style="background: #f0fdf4; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 500;">Strategic Planning</span>
+                            <span style="background: #f0fdf4; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 500;">Team Building</span>
+                            <span style="background: #f0fdf4; color: #059669; padding: 8px 16px; border-radius: 20px; font-weight: 500;">Customer Service</span>
+                        </div>
+                    </div>
+                </div>
+
+            {% elif file_type == 'application_proposal' %}
+                <!-- Business Proposal Mock Content -->
+                <div style="padding: 40px; background: white; height: 100%; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #10b981; padding-bottom: 30px;">
+                        <h1 style="color: #10b981; font-size: 42px; margin-bottom: 10px;">Business Proposal</h1>
+                        <h2 style="font-size: 24px; color: #666;">{{ item_name }}</h2>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #10b981; font-size: 28px; margin-bottom: 15px;">Executive Summary</h2>
+                        <p style="line-height: 1.8; color: #4b5563;">
+                            This proposal outlines my strategic vision and operational plan for successfully launching and managing this franchise opportunity. With extensive experience in business operations and a passion for entrepreneurship, I am confident in my ability to build a thriving franchise location.
+                        </p>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #10b981; font-size: 28px; margin-bottom: 15px;">Market Strategy</h2>
+                        <div style="background: #f0fdf4; padding: 25px; border-radius: 12px; border-left: 4px solid #10b981;">
+                            <h3 style="color: #1a1a1a; margin-bottom: 15px; font-size: 20px;">Target Market Analysis</h3>
+                            <p style="color: #4b5563; line-height: 1.8; margin-bottom: 15px;">
+                                The proposed location serves a population of 150,000+ residents with strong demographic alignment to the franchise's target customer base. Market research indicates significant demand and limited competition in this area.
+                            </p>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 20px;">
+                                <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #10b981;">150K+</div>
+                                    <div style="color: #666; font-size: 14px;">Population</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #10b981;">$75K</div>
+                                    <div style="color: #666; font-size: 14px;">Avg. Income</div>
+                                </div>
+                                <div style="background: white; padding: 15px; border-radius: 8px; text-align: center;">
+                                    <div style="font-size: 24px; font-weight: 700; color: #10b981;">Low</div>
+                                    <div style="color: #666; font-size: 14px;">Competition</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #10b981; font-size: 28px; margin-bottom: 15px;">Marketing Plan</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <h3 style="color: #1a1a1a; margin-bottom: 10px;">Digital Marketing</h3>
+                                <ul style="color: #4b5563; line-height: 1.8;">
+                                    <li>Social media campaigns</li>
+                                    <li>Local SEO optimization</li>
+                                    <li>Email marketing</li>
+                                </ul>
+                            </div>
+                            <div style="background: #f8fafc; padding: 20px; border-radius: 8px;">
+                                <h3 style="color: #1a1a1a; margin-bottom: 10px;">Traditional Marketing</h3>
+                                <ul style="color: #4b5563; line-height: 1.8;">
+                                    <li>Local events sponsorship</li>
+                                    <li>Community partnerships</li>
+                                    <li>Direct mail campaigns</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px; border-radius: 12px; color: white; text-align: center;">
+                        <h2 style="font-size: 28px; margin-bottom: 15px;">Projected First Year Revenue</h2>
+                        <p style="font-size: 48px; font-weight: 700;">$550,000</p>
+                    </div>
+                </div>
+
+            {% else %}
+                <!-- Financial Statement Mock Content -->
+                <div style="padding: 40px; background: white; height: 100%; overflow-y: auto;">
+                    <div style="text-align: center; margin-bottom: 40px; border-bottom: 3px solid #10b981; padding-bottom: 30px;">
+                        <h1 style="color: #10b981; font-size: 42px; margin-bottom: 10px;">Financial Statement</h1>
+                        <h2 style="font-size: 24px; color: #666;">{{ item_name }}</h2>
+                        <p style="color: #999;">As of December 2025</p>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #10b981; font-size: 28px; margin-bottom: 15px;">Assets</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tbody>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Cash & Cash Equivalents</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$285,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Investment Portfolio</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$150,000</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Real Estate Holdings</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$425,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Business Equipment</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$65,000</td>
+                                </tr>
+                                <tr style="background: #f0fdf4;">
+                                    <td style="padding: 15px; border: 2px solid #10b981; font-weight: 700; color: #1a1a1a;">Total Assets</td>
+                                    <td style="padding: 15px; text-align: right; border: 2px solid #10b981; font-weight: 700; color: #10b981; font-size: 18px;">$925,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-bottom: 35px;">
+                        <h2 style="color: #10b981; font-size: 28px; margin-bottom: 15px;">Liabilities</h2>
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tbody>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Mortgage</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$180,000</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Business Loan</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$45,000</td>
+                                </tr>
+                                <tr style="background: #f8fafc;">
+                                    <td style="padding: 15px; border: 1px solid #e5e7eb;">Credit Lines</td>
+                                    <td style="padding: 15px; text-align: right; border: 1px solid #e5e7eb; font-weight: 600;">$25,000</td>
+                                </tr>
+                                <tr style="background: #fef3c7;">
+                                    <td style="padding: 15px; border: 2px solid #f59e0b; font-weight: 700; color: #1a1a1a;">Total Liabilities</td>
+                                    <td style="padding: 15px; text-align: right; border: 2px solid #f59e0b; font-weight: 700; color: #f59e0b; font-size: 18px;">$250,000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 40px; border-radius: 12px; color: white; text-align: center;">
+                        <h2 style="font-size: 28px; margin-bottom: 15px;">Net Worth</h2>
+                        <p style="font-size: 56px; font-weight: 700; margin-bottom: 10px;">$675,000</p>
+                        <p style="font-size: 16px; opacity: 0.9;">Strong financial position for franchise investment</p>
+                    </div>
+                </div>
+            {% endif %}
         </div>
     </div>
 </body>
