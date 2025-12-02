@@ -243,20 +243,21 @@ cloudinary.config(
 # -----------------------------
 # MEDIA FILES (Cloudinary for production, local for development)
 # -----------------------------
-# ✅ ALWAYS define MEDIA_URL and MEDIA_ROOT first
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR.parent / 'media'
 
 if IS_RENDER:
     # Production: Cloudinary
     DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+    # Cloudinary will handle MEDIA_URL automatically, don't override it
 else:
     # Development: Local filesystem
     DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = PROJECT_ROOT / 'media'
 
 print(f"DEBUG: DEFAULT_FILE_STORAGE = {DEFAULT_FILE_STORAGE}")
-print(f"DEBUG: MEDIA_ROOT = {MEDIA_ROOT}")
-print(f"DEBUG: MEDIA_ROOT exists = {MEDIA_ROOT.exists()}")
+if not IS_RENDER:
+    print(f"DEBUG: MEDIA_ROOT = {MEDIA_ROOT}")
+    print(f"DEBUG: MEDIA_ROOT exists = {MEDIA_ROOT.exists()}")
 
 # --------------------------------------------------------------------
 # LOGGING - Capture all errors in production
