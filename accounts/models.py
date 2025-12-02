@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password as django_check_password
 from django.utils import timezone
-from .storage import select_storage  # ✅ Import storage helper
 
 # This imports the default Django User model (defined by settings.AUTH_USER_MODEL)
 # via a Foreign Key to link profiles to users.
@@ -107,22 +106,20 @@ class Franchise(models.Model):
     category = models.CharField(max_length=100)
     investment = models.DecimalField(max_digits=10, decimal_places=2)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='franchise_images/', blank=True, null=True, storage=select_storage)
+    image = models.ImageField(upload_to='franchise_images/', blank=True, null=True)
     
     # ✅ ADDED BACK: Document fields for file uploads
     brochure = models.FileField(
         upload_to='franchise_documents/', 
         blank=True, 
         null=True,
-        help_text="Upload franchise brochure (PDF, DOC, DOCX, etc.)",
-        storage=select_storage
+        help_text="Upload franchise brochure (PDF, DOC, DOCX, etc.)"
     )
     business_plan = models.FileField(
         upload_to='franchise_documents/', 
         blank=True, 
         null=True,
-        help_text="Upload business plan document (PDF, DOC, DOCX, etc.)",
-        storage=select_storage
+        help_text="Upload business plan document (PDF, DOC, DOCX, etc.)"
     )
     
     # ✅ NEW STATUS FIELDS
@@ -244,7 +241,7 @@ class Profile(models.Model):
     phone_number = models.CharField(max_length=20, null=True, blank=True)
     location = models.CharField(max_length=100, null=True, blank=True)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True, storage=select_storage)
+    profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 
     class Meta:
         db_table = 'profile'
@@ -376,24 +373,21 @@ class FranchiseApplication(models.Model):
         blank=True,
         null=True,
         help_text="Upload your resume/CV (PDF, DOC, DOCX)",
-        max_length=500,  # ✅ Allow longer Cloudinary URLs
-        storage=select_storage
+        max_length=500  # ✅ Allow longer Cloudinary URLs
     )
     business_proposal = models.FileField(
         upload_to='application_documents/',
         blank=True,
         null=True,
         help_text="Upload your business proposal (PDF, DOC, DOCX)",
-        max_length=500,  # ✅ Allow longer Cloudinary URLs
-        storage=select_storage
+        max_length=500  # ✅ Allow longer Cloudinary URLs
     )
     financial_statement = models.FileField(
         upload_to='application_documents/',
         blank=True,
         null=True,
         help_text="Upload financial statement or proof of funds (PDF)",
-        max_length=500,  # ✅ Allow longer Cloudinary URLs
-        storage=select_storage
+        max_length=500  # ✅ Allow longer Cloudinary URLs
     )
     
     # Application Status
