@@ -1486,49 +1486,76 @@ def clear_all_franchises(request):
 @login_required
 def download_file(request, file_type, file_id):
     """
-    Document viewer - displays documents in an embedded viewer page.
-    Opens Cloudinary documents in a full-page iframe for viewing.
+    Direct download handler for documents.
+    For Supabase Storage: Returns file directly with download headers
+    For Cloudinary: Redirects to Cloudinary URL
     """
+    import requests
+    from django.http import HttpResponse
+    
     try:
-        file_url = None
-        document_name = "Document"
+        file_obj = None
+        document_name = "document.pdf"
         
         if file_type == 'franchise_brochure':
             franchise = get_object_or_404(Franchise, id=file_id)
             if franchise.brochure:
-                file_url = franchise.brochure.url
-                document_name = f"{franchise.name} - Brochure"
+                file_obj = franchise.brochure
+                document_name = f"{franchise.name.replace(' ', '_')}_Brochure.pdf"
         elif file_type == 'franchise_business_plan':
             franchise = get_object_or_404(Franchise, id=file_id)
             if franchise.business_plan:
-                file_url = franchise.business_plan.url
-                document_name = f"{franchise.name} - Business Plan"
+                file_obj = franchise.business_plan
+                document_name = f"{franchise.name.replace(' ', '_')}_Business_Plan.pdf"
         elif file_type == 'application_resume':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.resume:
-                file_url = app.resume.url
-                document_name = f"{app.full_name} - Resume"
+                file_obj = app.resume
+                document_name = f"{app.full_name.replace(' ', '_')}_Resume.pdf"
         elif file_type == 'application_proposal':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.business_proposal:
-                file_url = app.business_proposal.url
-                document_name = f"{app.full_name} - Business Proposal"
+                file_obj = app.business_proposal
+                document_name = f"{app.full_name.replace(' ', '_')}_Business_Proposal.pdf"
         elif file_type == 'application_financial':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.financial_statement:
-                file_url = app.financial_statement.url
-                document_name = f"{app.full_name} - Financial Statement"
+                file_obj = app.financial_statement
+                document_name = f"{app.full_name.replace(' ', '_')}_Financial_Statement.pdf"
         
-        if not file_url:
+        if not file_obj:
             messages.error(request, "File not found.")
             return redirect('browse')
         
-        # Render document viewer page
-        return render(request, 'accounts/document_viewer.html', {
-            'document_url': file_url,
-            'document_name': document_name
-        })
+        file_url = file_obj.url
+        
+        # Check if it's a Supabase URL (download directly) or Cloudinary (proxy)
+        if 'supabase' in file_url:
+            # Supabase Storage - download directly
+            response = requests.get(file_url, stream=True)
+            response.raise_for_status()
+            
+            content_type = response.headers.get('content-type', 'application/octet-stream')
+            django_response = HttpResponse(response.content, content_type=content_type)
+            django_response['Content-Disposition'] = f'attachment; filename="{document_name}"'
+            return django_response
+            
+        elif 'cloudinary' in file_url:
+            # Cloudinary - proxy download to set proper headers
+            response = requests.get(file_url, stream=True)
+            response.raise_for_status()
+            
+            content_type = response.headers.get('content-type', 'application/octet-stream')
+            django_response = HttpResponse(response.content, content_type=content_type)
+            django_response['Content-Disposition'] = f'attachment; filename="{document_name}"'
+            return django_response
+        else:
+            # Local file or other
+            response = HttpResponse(file_obj.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{document_name}"'
+            return response
         
     except Exception as e:
-        messages.error(request, f"Error viewing file: {str(e)}")
+        print(f"❌ Download error: {e}")
+        messages.error(request, f"Error downloading file: {str(e)}")
         return redirect('browse')

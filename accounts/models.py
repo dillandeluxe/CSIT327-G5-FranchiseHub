@@ -1,9 +1,24 @@
 import uuid  # ✅ ADD missing import
+import os
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import make_password, check_password as django_check_password
 from django.utils import timezone
+
+# Import storage backends
+def get_document_storage():
+    """Return appropriate storage for documents (PDFs, etc.)"""
+    # Check if we're in production and Supabase is configured
+    is_render = bool(os.getenv('RENDER'))
+    has_supabase = bool(os.getenv('SUPABASE_URL')) and bool(os.getenv('SUPABASE_KEY'))
+    
+    if is_render and has_supabase:
+        from accounts.supabase_storage import SupabaseStorage
+        return SupabaseStorage()
+    else:
+        from django.core.files.storage import FileSystemStorage
+        return FileSystemStorage()
 
 # This imports the default Django User model (defined by settings.AUTH_USER_MODEL)
 # via a Foreign Key to link profiles to users.
@@ -108,18 +123,22 @@ class Franchise(models.Model):
     description = models.TextField(blank=True, null=True)
     image = models.ImageField(upload_to='franchise_images/', blank=True, null=True)
     
-    # ✅ ADDED BACK: Document fields for file uploads
+    # ✅ ADDED BACK: Document fields for file uploads (use Supabase Storage)
     brochure = models.FileField(
         upload_to='franchise_documents/', 
+        storage=get_document_storage,
         blank=True, 
         null=True,
-        help_text="Upload franchise brochure (PDF, DOC, DOCX, etc.)"
+        help_text="Upload franchise brochure (PDF, DOC, DOCX, etc.)",
+        max_length=500
     )
     business_plan = models.FileField(
         upload_to='franchise_documents/', 
+        storage=get_document_storage,
         blank=True, 
         null=True,
-        help_text="Upload business plan document (PDF, DOC, DOCX, etc.)"
+        help_text="Upload business plan document (PDF, DOC, DOCX, etc.)",
+        max_length=500
     )
     
     # ✅ NEW STATUS FIELDS
@@ -367,27 +386,30 @@ class FranchiseApplication(models.Model):
     phone = models.CharField(max_length=20, blank=True, null=True)
     experience = models.TextField(blank=True, null=True, help_text="Business experience and background")
     
-    # ✅ These fields will automatically upload to Cloudinary
+    # ✅ These fields will use Supabase Storage for documents
     resume = models.FileField(
         upload_to='application_documents/',
+        storage=get_document_storage,
         blank=True,
         null=True,
         help_text="Upload your resume/CV (PDF, DOC, DOCX)",
-        max_length=500  # ✅ Allow longer Cloudinary URLs
+        max_length=500
     )
     business_proposal = models.FileField(
         upload_to='application_documents/',
+        storage=get_document_storage,
         blank=True,
         null=True,
         help_text="Upload your business proposal (PDF, DOC, DOCX)",
-        max_length=500  # ✅ Allow longer Cloudinary URLs
+        max_length=500
     )
     financial_statement = models.FileField(
         upload_to='application_documents/',
+        storage=get_document_storage,
         blank=True,
         null=True,
         help_text="Upload financial statement or proof of funds (PDF)",
-        max_length=500  # ✅ Allow longer Cloudinary URLs
+        max_length=500
     )
     
     # Application Status
