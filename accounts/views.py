@@ -1486,7 +1486,8 @@ def clear_all_franchises(request):
 @login_required
 def download_file(request, file_type, file_id):
     """
-    Download handler that streams files directly through Django.
+    View/download handler that streams files directly through Django.
+    Uses 'inline' disposition to open in browser instead of forcing download.
     """
     from django.http import FileResponse, HttpResponse
     import mimetypes
@@ -1535,7 +1536,8 @@ def download_file(request, file_type, file_id):
         
         # Create response with file content
         response = FileResponse(file_obj, content_type=content_type)
-        response['Content-Disposition'] = f'attachment; filename="{document_name}"'
+        # Use 'inline' to open in browser, not force download
+        response['Content-Disposition'] = f'inline; filename="{document_name}"'
         
         return response
         
