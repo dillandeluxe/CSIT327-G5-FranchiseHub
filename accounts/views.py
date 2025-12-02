@@ -1487,11 +1487,9 @@ def clear_all_franchises(request):
 def download_file(request, file_type, file_id):
     """
     Direct download handler for documents.
-    For Supabase Storage: Returns file directly with download headers
-    For Cloudinary: Redirects to Cloudinary URL
+    Uses Cloudinary's fl_attachment flag for direct downloads.
     """
-    import requests
-    from django.http import HttpResponse
+    from django.http import HttpResponseRedirect
     
     try:
         file_obj = None
@@ -1529,33 +1527,17 @@ def download_file(request, file_type, file_id):
         
         file_url = file_obj.url
         
-        # Check if it's a Supabase URL (download directly) or Cloudinary (proxy)
-        if 'supabase' in file_url:
-            # Supabase Storage - download directly
-            response = requests.get(file_url, stream=True)
-            response.raise_for_status()
-            
-            content_type = response.headers.get('content-type', 'application/octet-stream')
-            django_response = HttpResponse(response.content, content_type=content_type)
-            django_response['Content-Disposition'] = f'attachment; filename="{document_name}"'
-            return django_response
-            
-        elif 'cloudinary' in file_url:
-            # Cloudinary - proxy download to set proper headers
-            response = requests.get(file_url, stream=True)
-            response.raise_for_status()
-            
-            content_type = response.headers.get('content-type', 'application/octet-stream')
-            django_response = HttpResponse(response.content, content_type=content_type)
-            django_response['Content-Disposition'] = f'attachment; filename="{document_name}"'
-            return django_response
-        else:
-            # Local file or other
-            response = HttpResponse(file_obj.read(), content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename="{document_name}"'
-            return response
+        # For Cloudinary URLs, add fl_attachment flag to force download
+        if 'cloudinary' in file_url:
+            # Inject fl_attachment into the Cloudinary URL
+            if '/upload/' in file_url:
+                file_url = file_url.replace('/upload/', '/upload/fl_attachment/')
+        
+        # Redirect to the download URL
+        return HttpResponseRedirect(file_url)
         
     except Exception as e:
         print(f"❌ Download error: {e}")
         messages.error(request, f"Error downloading file: {str(e)}")
+        return redirect('browse')
         return redirect('browse')
