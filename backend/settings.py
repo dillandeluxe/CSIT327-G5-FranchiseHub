@@ -252,10 +252,13 @@ cloudinary.config(
 # -----------------------------
 # MEDIA FILES (Cloudinary for production, local for development)
 # -----------------------------
-# Note: DEFAULT_FILE_STORAGE already set above, just set MEDIA_ROOT/URL for development
+# Note: DEFAULT_FILE_STORAGE already set above
 
-if not IS_RENDER:
-    # Development: Local filesystem needs MEDIA settings
+if IS_RENDER:
+    # Production: Cloudinary handles storage, but Django still needs MEDIA_URL
+    MEDIA_URL = '/media/'  # This is used as a fallback, Cloudinary provides its own URLs
+else:
+    # Development: Local filesystem
     MEDIA_URL = '/media/'
     MEDIA_ROOT = PROJECT_ROOT / 'media'
     print(f"DEBUG: MEDIA_ROOT = {MEDIA_ROOT}")
