@@ -1487,9 +1487,11 @@ def clear_all_franchises(request):
 def download_file(request, file_type, file_id):
     """
     Direct download handler for documents.
-    Uses Cloudinary's fl_attachment flag for direct downloads.
+    Generates signed Cloudinary URLs with attachment flag for secure downloads.
     """
     from django.http import HttpResponseRedirect
+    import cloudinary
+    import cloudinary.utils
     
     try:
         file_obj = None
@@ -1525,13 +1527,30 @@ def download_file(request, file_type, file_id):
             messages.error(request, "File not found.")
             return redirect('browse')
         
+        # Get the file URL
         file_url = file_obj.url
         
-        # For Cloudinary URLs, add fl_attachment flag to force download
+        # For Cloudinary URLs, generate a signed URL with attachment flag
         if 'cloudinary' in file_url:
-            # Inject fl_attachment into the Cloudinary URL
-            if '/upload/' in file_url:
-                file_url = file_url.replace('/upload/', '/upload/fl_attachment/')
+            # Extract public_id from URL
+            # URL format: https://res.cloudinary.com/{cloud_name}/{resource_type}/upload/{public_id}.{format}
+            try:
+                url_parts = file_url.split('/upload/')
+                if len(url_parts) == 2:
+                    # Get public_id with extension
+                    public_id_with_ext = url_parts[1]
+                    
+                    # Generate signed URL with attachment flag
+                    file_url = cloudinary.utils.cloudinary_url(
+                        public_id_with_ext,
+                        resource_type='raw',
+                        type='upload',
+                        sign_url=True,
+                        secure=True,
+                        flags='attachment'
+                    )[0]
+            except Exception as e:
+                print(f"⚠️ Cloudinary URL generation error: {e}, using original URL")
         
         # Redirect to the download URL
         return HttpResponseRedirect(file_url)
@@ -1539,5 +1558,4 @@ def download_file(request, file_type, file_id):
     except Exception as e:
         print(f"❌ Download error: {e}")
         messages.error(request, f"Error downloading file: {str(e)}")
-        return redirect('browse')
         return redirect('browse')
