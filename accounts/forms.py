@@ -56,31 +56,21 @@ class FranchiseForm(forms.ModelForm):
     
     # ✅ Document validation
     def clean_brochure(self):
+        from django.core.files.uploadedfile import UploadedFile
         brochure = self.cleaned_data.get('brochure')
-        # Only validate if it's a new upload (InMemoryUploadedFile or TemporaryUploadedFile)
-        if brochure and hasattr(brochure, 'size'):
-            try:
-                # Check if it's a new upload by checking if size is directly accessible
-                file_size = brochure.size
-                if file_size > 10 * 1024 * 1024:
-                    raise forms.ValidationError('File size must be less than 10MB')
-            except (AttributeError, FileNotFoundError):
-                # It's an existing file reference, not a new upload - skip validation
-                pass
+        # Only validate NEW uploads (not existing database FieldFile objects)
+        if brochure and isinstance(brochure, UploadedFile):
+            if brochure.size > 10 * 1024 * 1024:
+                raise forms.ValidationError('File size must be less than 10MB')
         return brochure
 
     def clean_business_plan(self):
+        from django.core.files.uploadedfile import UploadedFile
         business_plan = self.cleaned_data.get('business_plan')
-        # Only validate if it's a new upload (InMemoryUploadedFile or TemporaryUploadedFile)
-        if business_plan and hasattr(business_plan, 'size'):
-            try:
-                # Check if it's a new upload by checking if size is directly accessible
-                file_size = business_plan.size
-                if file_size > 10 * 1024 * 1024:
-                    raise forms.ValidationError('File size must be less than 10MB')
-            except (AttributeError, FileNotFoundError):
-                # It's an existing file reference, not a new upload - skip validation
-                pass
+        # Only validate NEW uploads (not existing database FieldFile objects)
+        if business_plan and isinstance(business_plan, UploadedFile):
+            if business_plan.size > 10 * 1024 * 1024:
+                raise forms.ValidationError('File size must be less than 10MB')
         return business_plan
 
 # ✅ NEW: Franchisor Form with Location
