@@ -9,6 +9,8 @@ from django.views.decorators.http import require_POST, require_http_methods
 from django.db.models import Q
 from django.http import JsonResponse
 from django.utils import timezone
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .models import (
     Franchisee, 
@@ -1283,3 +1285,149 @@ def dashboard_stats(request):
         'active_franchisees': active_franchisees,
         'revenue': revenue
     })
+
+# =========================================================================
+# 13. CUSTOM SYSTEM ADMIN VIEWS
+# =========================================================================
+
+def is_superuser(user):
+    return user.is_authenticated and user.is_superuser
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+def admin_index(request):
+    """Renders the main admin dashboard home."""
+    return render(request, 'accounts/mainadmin.html')
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+def admin_user_list(request):
+    """Lists users with filtering logic matching your HTML."""
+    users = User.objects.all().order_by('-date_joined')
+    
+    # --- Filter Logic ---
+    staff_filter = request.GET.get('staff')
+    superuser_filter = request.GET.get('superuser')
+    active_filter = request.GET.get('active')
+
+    filters = {
+        'staff': staff_filter,
+        'superuser': superuser_filter,
+        'active': active_filter
+    }
+
+    if staff_filter == 'yes':
+        users = users.filter(is_staff=True)
+    elif staff_filter == 'no':
+        users = users.filter(is_staff=False)
+
+    if superuser_filter == 'yes':
+        users = users.filter(is_superuser=True)
+    elif superuser_filter == 'no':
+        users = users.filter(is_superuser=False)
+
+    if active_filter == 'yes':
+        users = users.filter(is_active=True)
+    elif active_filter == 'no':
+        users = users.filter(is_active=False)
+
+    context = {
+        'users': users,
+        'count': users.count(),
+        'filters': filters
+    }
+    return render(request, 'accounts/userlist.html', context)
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+def admin_add_user(request):
+    """Handles adding a new user."""
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match.")
+        elif User.objects.filter(username=username).exists():
+            messages.error(request, "Username already taken.")
+        else:
+            try:
+                # Create the user
+                user = User.objects.create_user(username=username, password=password)
+                messages.success(request, f"User {username} created successfully.")
+                
+                # Button Logic
+                if 'save_add_another' in request.POST:
+                    return redirect('admin_add_user')
+                elif 'save_continue' in request.POST:
+                    return redirect('admin_change_user', user_id=user.id)
+                else:
+                    return redirect('admin_user_list')
+            except Exception as e:
+                messages.error(request, f"Error creating user: {e}")
+
+    return render(request, 'accounts/adduser.html')
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+def admin_change_user(request, user_id):
+    """Handles editing user details and permissions."""
+    target_user = get_object_or_404(User, id=user_id)
+
+    if request.method == 'POST':
+        # 1. Update Basic Info
+        target_user.username = request.POST.get('username')
+        target_user.first_name = request.POST.get('first_name', '')
+        target_user.last_name = request.POST.get('last_name', '')
+        target_user.email = request.POST.get('email', '')
+
+        # 2. Update Permissions (Checkboxes return 'on' if checked, None if not)
+        target_user.is_active = request.POST.get('is_active') == 'on'
+        target_user.is_staff = request.POST.get('is_staff') == 'on'
+        target_user.is_superuser = request.POST.get('is_superuser') == 'on'
+
+        try:
+            target_user.save()
+            messages.success(request, f"User {target_user.username} updated successfully.")
+
+            if 'save_add_another' in request.POST:
+                return redirect('admin_add_user')
+            elif 'save_continue' in request.POST:
+                return redirect('admin_change_user', user_id=target_user.id)
+            else:
+                return redirect('admin_user_list')
+                
+        except Exception as e:
+            messages.error(request, f"Error updating user: {e}")
+
+    return render(request, 'accounts/changeuser.html', {'target_user': target_user})
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+def admin_delete_user(request, user_id):
+    """Deletes a user."""
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        if user == request.user:
+            messages.error(request, "You cannot delete yourself.")
+        else:
+            user.delete()
+            messages.success(request, "User deleted successfully.")
+    return redirect('admin_user_list')
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+def admin_password_change(request):
+    """Allows the admin to change their OWN password."""
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Important: Keeps the user logged in after password change
+            update_session_auth_hash(request, user)
+            messages.success(request, "Your password was successfully updated!")
+            return redirect('admin_password_change')
+        else:
+            messages.error(request, "Please correct the errors below.")
+    return render(request, 'accounts/passwordchange.html')

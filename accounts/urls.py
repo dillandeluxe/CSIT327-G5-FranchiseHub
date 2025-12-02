@@ -57,4 +57,11 @@ urlpatterns = [
     path('favorites/check/<uuid:franchise_id>/', views.check_favorite, name='check_favorite'),
     # Real-time stats endpoint
     path('franchisor/dashboard-stats/', views.dashboard_stats, name='dashboard_stats'),
+    # ✅ CUSTOM ADMIN URLS
+    path('system-admin/', views.admin_index, name='admin_index'),
+    path('system-admin/users/', views.admin_user_list, name='admin_user_list'),
+    path('system-admin/users/add/', views.admin_add_user, name='admin_add_user'),
+    path('system-admin/users/<int:user_id>/change/', views.admin_change_user, name='admin_change_user'),
+    path('system-admin/users/<int:user_id>/delete/', views.admin_delete_user, name='admin_delete_user'),
+    path('system-admin/password_change/', views.admin_password_change, name='admin_password_change'),
 ]
