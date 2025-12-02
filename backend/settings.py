@@ -42,7 +42,8 @@ print(f"DATABASE_URL exists: {'DATABASE_URL' in os.environ}")
 
 # --- Debug/host config ---
 DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
-IS_RENDER = os.getenv('RENDER', '').lower() == 'true'
+# Render automatically sets RENDER env var (any non-empty value means we're on Render)
+IS_RENDER = bool(os.getenv('RENDER'))
 RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip() 
 
 print(f"⚙️ IS_RENDER = {IS_RENDER}")
