@@ -1263,7 +1263,7 @@ def dashboard_stats(request):
     
     # Get franchise counts
     approved_franchises = franchisor.franchises.filter(status='approved').count()
-    total_applications = fromachisor.franchises.values_list('applications', flat=True).count()
+    total_applications = franchisor.franchises.values_list('applications', flat=True).count()
     
     # Calculate active franchisees (unique applicants)
     from django.db.models import Count
