@@ -64,4 +64,6 @@ urlpatterns = [
     path('system-admin/users/<int:user_id>/change/', views.admin_change_user, name='admin_change_user'),
     path('system-admin/users/<int:user_id>/delete/', views.admin_delete_user, name='admin_delete_user'),
     path('system-admin/password_change/', views.admin_password_change, name='admin_password_change'),
+    # ✅ Clear all franchises (admin only)
+    path('admin/clear-franchises/', views.clear_all_franchises, name='clear_all_franchises'),
 ]

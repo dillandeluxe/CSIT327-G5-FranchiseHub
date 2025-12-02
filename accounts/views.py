@@ -1442,3 +1442,28 @@ def admin_password_change(request):
         else:
             messages.error(request, "Please correct the errors below.")
     return render(request, 'accounts/passwordchange.html')
+
+
+@login_required
+@user_passes_test(is_superuser, login_url='login')
+@require_POST
+def clear_all_franchises(request):
+    """Admin-only view to clear all franchises and applications."""
+    try:
+        application_count = FranchiseApplication.objects.count()
+        franchise_count = Franchise.objects.count()
+        
+        # Delete all applications first (due to foreign key)
+        FranchiseApplication.objects.all().delete()
+        
+        # Delete all franchises
+        Franchise.objects.all().delete()
+        
+        messages.success(
+            request, 
+            f"✅ Successfully deleted {franchise_count} franchises and {application_count} applications!"
+        )
+    except Exception as e:
+        messages.error(request, f"❌ Error clearing data: {str(e)}")
+    
+    return redirect('admin_dashboard')
