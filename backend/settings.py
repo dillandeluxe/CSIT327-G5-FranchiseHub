@@ -46,7 +46,13 @@ IS_RENDER = os.getenv('RENDER', '').lower() == 'true'
 RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip() 
 
 print(f"⚙️ IS_RENDER = {IS_RENDER}")
-print(f"⚙️ DEBUG = {DEBUG}") 
+print(f"⚙️ DEBUG = {DEBUG}")
+
+# Force storage backend configuration BEFORE any models are imported
+if IS_RENDER:
+    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
+else:
+    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage' 
 
 # --------------------------------------------------------------------
 # BASE CONFIGURATION
@@ -246,21 +252,16 @@ cloudinary.config(
 # -----------------------------
 # MEDIA FILES (Cloudinary for production, local for development)
 # -----------------------------
+# Note: DEFAULT_FILE_STORAGE already set above, just set MEDIA_ROOT/URL for development
 
-if IS_RENDER:
-    # Production: Cloudinary
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    # Cloudinary will handle MEDIA_URL automatically, don't override it
-else:
-    # Development: Local filesystem
-    DEFAULT_FILE_STORAGE = 'django.core.files.storage.FileSystemStorage'
+if not IS_RENDER:
+    # Development: Local filesystem needs MEDIA settings
     MEDIA_URL = '/media/'
     MEDIA_ROOT = PROJECT_ROOT / 'media'
-
-print(f"DEBUG: DEFAULT_FILE_STORAGE = {DEFAULT_FILE_STORAGE}")
-if not IS_RENDER:
     print(f"DEBUG: MEDIA_ROOT = {MEDIA_ROOT}")
     print(f"DEBUG: MEDIA_ROOT exists = {MEDIA_ROOT.exists()}")
+
+print(f"DEBUG: DEFAULT_FILE_STORAGE = {DEFAULT_FILE_STORAGE}")
 
 # --------------------------------------------------------------------
 # LOGGING - Capture all errors in production
