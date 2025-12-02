@@ -1486,62 +1486,69 @@ def clear_all_franchises(request):
 @login_required
 def download_file(request, file_type, file_id):
     """
-    View/download handler that streams files directly through Django.
-    Uses 'inline' disposition to open in browser instead of forcing download.
+    Document viewer that displays files in a modern template specific to document type.
     """
-    from django.http import FileResponse, HttpResponse
-    import mimetypes
-    
     try:
         file_obj = None
         document_name = "document.pdf"
+        document_category = ""
+        item_name = ""
         
         if file_type == 'franchise_brochure':
             franchise = get_object_or_404(Franchise, id=file_id)
             if franchise.brochure:
                 file_obj = franchise.brochure
-                document_name = f"{franchise.name.replace(' ', '_')}_Brochure.pdf"
+                document_name = "Franchise Brochure"
+                document_category = "Franchise Information"
+                item_name = franchise.name
         elif file_type == 'franchise_business_plan':
             franchise = get_object_or_404(Franchise, id=file_id)
             if franchise.business_plan:
                 file_obj = franchise.business_plan
-                document_name = f"{franchise.name.replace(' ', '_')}_Business_Plan.pdf"
+                document_name = "Business Plan"
+                document_category = "Franchise Documentation"
+                item_name = franchise.name
         elif file_type == 'application_resume':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.resume:
                 file_obj = app.resume
-                document_name = f"{app.full_name.replace(' ', '_')}_Resume.pdf"
+                document_name = "Resume/CV"
+                document_category = "Application Documents"
+                item_name = app.full_name
         elif file_type == 'application_proposal':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.business_proposal:
                 file_obj = app.business_proposal
-                document_name = f"{app.full_name.replace(' ', '_')}_Business_Proposal.pdf"
+                document_name = "Business Proposal"
+                document_category = "Application Documents"
+                item_name = app.full_name
         elif file_type == 'application_financial':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.financial_statement:
                 file_obj = app.financial_statement
-                document_name = f"{app.full_name.replace(' ', '_')}_Financial_Statement.pdf"
+                document_name = "Financial Statement"
+                document_category = "Application Documents"
+                item_name = app.full_name
         
         if not file_obj:
             messages.error(request, "File not found.")
             return redirect('browse')
         
-        # Open the file and stream it
-        file_obj.open()
+        # Get the file URL from Cloudinary
+        file_url = file_obj.url
         
-        # Guess content type
-        content_type, _ = mimetypes.guess_type(document_name)
-        if not content_type:
-            content_type = 'application/octet-stream'
+        # Render the document viewer template
+        context = {
+            'document_name': document_name,
+            'document_category': document_category,
+            'item_name': item_name,
+            'file_url': file_url,
+            'file_type': file_type
+        }
         
-        # Create response with file content
-        response = FileResponse(file_obj, content_type=content_type)
-        # Use 'inline' to open in browser, not force download
-        response['Content-Disposition'] = f'inline; filename="{document_name}"'
-        
-        return response
+        return render(request, 'accounts/document_viewer.html', context)
         
     except Exception as e:
         print(f"❌ Download error: {e}")
-        messages.error(request, f"Error downloading file: {str(e)}")
+        messages.error(request, f"Error loading document: {str(e)}")
         return redirect('browse')

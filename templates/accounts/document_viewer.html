@@ -1,207 +1,266 @@
-{% extends 'base.html' %}
 {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ document_name }} - FranchiseHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block title %}{{ document_name }} - FranchiseHub{% endblock %}
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-{% block extra_css %}
-<style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #1a1a1a;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-    }
-    
-    .viewer-header {
-        background: #2d2d2d;
-        padding: 1rem 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid #404040;
-    }
-    
-    .viewer-title {
-        color: #fff;
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin: 0;
-    }
-    
-    .viewer-actions {
-        display: flex;
-        gap: 1rem;
-    }
-    
-    .btn-viewer {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-size: 0.9rem;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        transition: all 0.2s;
-    }
-    
-    .btn-back {
-        background: #404040;
-        color: #fff;
-    }
-    
-    .btn-back:hover {
-        background: #505050;
-        color: #fff;
-    }
-    
-    .btn-open {
-        background: #ff6b35;
-        color: #fff;
-    }
-    
-    .btn-open:hover {
-        background: #ff8555;
-        color: #fff;
-    }
-    
-    .btn-download {
-        background: #28a745;
-        color: #fff;
-    }
-    
-    .btn-download:hover {
-        background: #218838;
-        color: #fff;
-    }
-    
-    .viewer-container {
-        width: 100%;
-        height: calc(100vh - 70px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        padding: 2rem;
-        box-sizing: border-box;
-        gap: 1rem;
-    }
-    
-    .document-frame {
-        width: 100%;
-        height: 100%;
-        max-width: 1200px;
-        border: 1px solid #404040;
-        border-radius: 8px;
-        background: #fff;
-    }
-    
-    .fallback-message {
-        background: #2d2d2d;
-        padding: 1.5rem;
-        border-radius: 8px;
-        color: #fff;
-        text-align: center;
-        max-width: 600px;
-    }
-    
-    .fallback-message p {
-        margin: 0.5rem 0;
-        color: #ccc;
-    }
-    
-    .direct-link {
-        display: inline-block;
-        margin-top: 1rem;
-        padding: 0.75rem 1.5rem;
-        background: #ff6b35;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 6px;
-        font-weight: 500;
-        transition: all 0.2s;
-    }
-    
-    .direct-link:hover {
-        background: #ff8555;
-        color: #fff;
-    }
-    
-    .error-message {
-        background: #2d2d2d;
-        padding: 2rem;
-        border-radius: 8px;
-        text-align: center;
-        color: #fff;
-        max-width: 500px;
-    }
-    
-    .error-message svg {
-        margin-bottom: 1rem;
-        color: #ff6b35;
-    }
-</style>
-{% endblock %}
+        /* Dynamic header color based on document type */
+        {% if 'franchise' in file_type %}
+        .viewer-header {
+            background: linear-gradient(135deg, #ff6600 0%, #ff8c2b 100%);
+        }
+        {% else %}
+        .viewer-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+        {% endif %}
 
-{% block content %}
-<div class="viewer-header">
-    <h1 class="viewer-title">{{ document_name }}</h1>
-    <div class="viewer-actions">
-        <a href="javascript:history.back()" class="btn-viewer btn-back">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
-            </svg>
-            Back
-        </a>
-        <a href="{{ document_url }}" download="{{ document_name }}" class="btn-viewer btn-download">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
-            </svg>
-            Download
-        </a>
-        <a href="{{ document_url }}" target="_blank" class="btn-viewer btn-open">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-            </svg>
-            Open in New Tab
-        </a>
-    </div>
-</div>
+        .viewer-header {
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 24px 32px;
+        }
 
-<div class="viewer-container">
-    {% if document_url %}
-        <!-- Try to embed the document -->
-        <iframe src="{{ document_url }}" class="document-frame" frameborder="0" onload="this.style.display='block'" onerror="this.style.display='none'"></iframe>
-            <h3 style="margin: 0 0 0.5rem 0;">Document Ready</h3>
-            <p>If the document doesn't appear above, you can open or download it:</p>
-            <a href="{{ document_url }}" target="_blank" class="direct-link" style="background: #ff6b35; margin-right: 0.5rem;">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 0.5rem;">
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-                </svg>
-                Open
-            </a>
-            <a href="{{ document_url }}" download="{{ document_name }}" class="direct-link" style="background: #28a745;">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 0.5rem;">
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .action-btn {
+            padding: 10px 18px;
+            background: rgba(255, 255, 255, 0.95);
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        {% if 'franchise' in file_type %}
+        .action-btn {
+            color: #ff6600;
+        }
+        {% else %}
+        .action-btn {
+            color: #10b981;
+        }
+        {% endif %}
+
+        .action-btn:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .document-info {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .doc-icon-large {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.25);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .doc-details {
+            flex: 1;
+        }
+
+        .doc-category {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .doc-title {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .doc-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .viewer-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .document-frame {
+            width: 100%;
+            max-width: 1400px;
+            height: calc(100vh - 220px);
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .document-embed {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            .viewer-header {
+                padding: 16px;
+            }
+
+            .header-top {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+
+            .document-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .doc-title {
+                font-size: 20px;
+            }
+
+            .doc-subtitle {
+                font-size: 14px;
+            }
+
+            .document-frame {
+                height: calc(100vh - 280px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="viewer-header">
+        <div class="header-top">
+            <div class="header-left">
+                <a href="javascript:history.back()" class="back-btn">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+                    </svg>
+                    Back
+                </a>
+            </div>
+            <a href="{{ file_url }}" download class="action-btn">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
                 </svg>
                 Download
-            </a>ref="{{ document_url }}" target="_blank" class="direct-link">
-                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 0.5rem;">
-                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
-                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
-                </svg>
-                Open Document in New Window
             </a>
         </div>
-    {% else %}
-        <div class="error-message">
-            <svg width="64" height="64" fill="currentColor" viewBox="0 0 20 20">
-                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-            </svg>
-            <h2>Document not available</h2>
-            <p>The requested document could not be found.</p>
+
+        <div class="document-info">
+            <div class="doc-icon-large">
+                {% if file_type == 'franchise_brochure' %}
+                <svg width="32" height="32" fill="white" viewBox="0 0 20 20">
+                    <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/>
+                </svg>
+                {% elif file_type == 'franchise_business_plan' %}
+                <svg width="32" height="32" fill="white" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
+                </svg>
+                {% elif file_type == 'application_resume' %}
+                <svg width="32" height="32" fill="white" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                </svg>
+                {% elif file_type == 'application_proposal' %}
+                <svg width="32" height="32" fill="white" viewBox="0 0 20 20">
+                    <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
+                    <path fill-rule="evenodd" d="M4 5a2 2 0 012-2 3 3 0 003 3h2a3 3 0 003-3 2 2 0 012 2v11a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+                </svg>
+                {% else %}
+                <svg width="32" height="32" fill="white" viewBox="0 0 20 20">
+                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z"/>
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"/>
+                </svg>
+                {% endif %}
+            </div>
+            <div class="doc-details">
+                <div class="doc-category">{{ document_category }}</div>
+                <div class="doc-title">{{ document_name }}</div>
+                <div class="doc-subtitle">{{ item_name }}</div>
+            </div>
         </div>
-    {% endif %}
-</div>
-{% endblock %}
+    </div>
+
+    <div class="viewer-container">
+        <div class="document-frame">
+            <iframe 
+                src="{{ file_url }}"
+                class="document-embed">
+            </iframe>
+        </div>
+    </div>
+</body>
+</html>
