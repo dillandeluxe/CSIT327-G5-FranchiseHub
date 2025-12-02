@@ -366,11 +366,22 @@ def add_franchise_view(request):
         form = FranchiseForm(request.POST, request.FILES)
         location = request.POST.get('location', '').strip()
         
+        # Debug: Log file upload attempt
+        import logging
+        logger = logging.getLogger(__name__)
+        if 'image' in request.FILES:
+            logger.info(f"Image upload detected: {request.FILES['image'].name}")
+        
         if form.is_valid():
             franchise = form.save(commit=False)
             franchise.franchisor = franchisor
             franchise.status = 'pending'
             franchise.save()
+            
+            # Debug: Log saved image URL
+            if franchise.image:
+                logger.info(f"Image saved to: {franchise.image.url}")
+                logger.info(f"Storage backend: {franchise.image.storage.__class__.__name__}")
             
             # ✅ Update franchisor location
             if location and location != franchisor.location:
