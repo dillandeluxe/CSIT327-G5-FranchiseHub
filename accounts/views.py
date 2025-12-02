@@ -1472,58 +1472,39 @@ def clear_all_franchises(request):
 @login_required
 def download_file(request, file_type, file_id):
     """
-    Proxy view to download files from Cloudinary with proper headers.
-    file_type: 'franchise_doc', 'application_doc'
-    file_id: UUID of the franchise or application
+    Proxy view to view files from Cloudinary.
+    Redirects to Cloudinary URL to open file in browser.
     """
-    import urllib.request
-    from django.http import FileResponse, HttpResponse
-    
     try:
         file_url = None
-        filename = None
         
         if file_type == 'franchise_brochure':
             franchise = get_object_or_404(Franchise, id=file_id)
             if franchise.brochure:
                 file_url = franchise.brochure.url
-                filename = f"{franchise.name}_Brochure.pdf"
         elif file_type == 'franchise_business_plan':
             franchise = get_object_or_404(Franchise, id=file_id)
             if franchise.business_plan:
                 file_url = franchise.business_plan.url
-                filename = f"{franchise.name}_Business_Plan.pdf"
         elif file_type == 'application_resume':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.resume:
                 file_url = app.resume.url
-                filename = f"{app.full_name}_Resume.pdf"
         elif file_type == 'application_proposal':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.business_proposal:
                 file_url = app.business_proposal.url
-                filename = f"{app.full_name}_Business_Proposal.pdf"
         elif file_type == 'application_financial':
             app = get_object_or_404(FranchiseApplication, id=file_id)
             if app.financial_statement:
                 file_url = app.financial_statement.url
-                filename = f"{app.full_name}_Financial_Statement.pdf"
         
         if not file_url:
             messages.error(request, "File not found.")
             return redirect('browse')
         
-        # Fetch file from Cloudinary
-        response = urllib.request.urlopen(file_url)
-        content = response.read()
-        
-        # Determine content type
-        content_type = response.headers.get('Content-Type', 'application/octet-stream')
-        
-        # Create response with proper headers for download
-        http_response = HttpResponse(content, content_type=content_type)
-        http_response['Content-Disposition'] = f'attachment; filename="{filename}"'
-        return http_response
+        # Redirect to Cloudinary URL to open in browser
+        return redirect(file_url)
         
     except Exception as e:
         messages.error(request, f"Error downloading file: {str(e)}")
