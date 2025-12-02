@@ -64,6 +64,16 @@
         color: #fff;
     }
     
+    .btn-download {
+        background: #28a745;
+        color: #fff;
+    }
+    
+    .btn-download:hover {
+        background: #218838;
+        color: #fff;
+    }
+    
     .viewer-container {
         width: 100%;
         height: calc(100vh - 70px);
@@ -142,6 +152,12 @@
             </svg>
             Back
         </a>
+        <a href="{{ document_url }}" download="{{ document_name }}" class="btn-viewer btn-download">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+            </svg>
+            Download
+        </a>
         <a href="{{ document_url }}" target="_blank" class="btn-viewer btn-open">
             <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
@@ -156,15 +172,21 @@
     {% if document_url %}
         <!-- Try to embed the document -->
         <iframe src="{{ document_url }}" class="document-frame" frameborder="0" onload="this.style.display='block'" onerror="this.style.display='none'"></iframe>
-        
-        <!-- Fallback message if iframe doesn't load -->
-        <div class="fallback-message">
-            <svg width="48" height="48" fill="currentColor" viewBox="0 0 20 20" style="margin-bottom: 1rem; color: #ff6b35;">
-                <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"/>
-            </svg>
             <h3 style="margin: 0 0 0.5rem 0;">Document Ready</h3>
-            <p>If the document doesn't appear above, click the button below to open it directly:</p>
-            <a href="{{ document_url }}" target="_blank" class="direct-link">
+            <p>If the document doesn't appear above, you can open or download it:</p>
+            <a href="{{ document_url }}" target="_blank" class="direct-link" style="background: #ff6b35; margin-right: 0.5rem;">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
+                    <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
+                </svg>
+                Open
+            </a>
+            <a href="{{ document_url }}" download="{{ document_name }}" class="direct-link" style="background: #28a745;">
+                <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 0.5rem;">
+                    <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+                Download
+            </a>ref="{{ document_url }}" target="_blank" class="direct-link">
                 <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20" style="vertical-align: middle; margin-right: 0.5rem;">
                     <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"/>
                     <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z"/>
