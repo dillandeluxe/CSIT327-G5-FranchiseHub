@@ -45,6 +45,9 @@ DEBUG = os.getenv("DJANGO_DEBUG", "False").lower() == "true"
 IS_RENDER = os.getenv('RENDER', '').lower() == 'true'
 RENDER_EXTERNAL_HOSTNAME = os.getenv('RENDER_EXTERNAL_HOSTNAME', '').strip() 
 
+print(f"⚙️ IS_RENDER = {IS_RENDER}")
+print(f"⚙️ DEBUG = {DEBUG}") 
+
 # --------------------------------------------------------------------
 # BASE CONFIGURATION
 # --------------------------------------------------------------------
