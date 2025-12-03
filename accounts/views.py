@@ -287,10 +287,18 @@ def edit_profile_view(request):
             profile.location = request.POST.get('location', '')
             profile.bio = request.POST.get('bio', '')
             
-            # ✅ Handle profile picture upload - Only update if new file is uploaded
-            if 'profile_picture' in request.FILES:
+            # ✅ Handle profile picture removal
+            if request.POST.get('remove_picture') == 'true':
+                if profile.profile_picture:
+                    profile.profile_picture.delete(save=False)
+                    profile.profile_picture = None
+            # ✅ Handle profile picture upload - Replace old picture if exists
+            elif 'profile_picture' in request.FILES:
+                # Delete old picture before uploading new one
+                if profile.profile_picture:
+                    profile.profile_picture.delete(save=False)
                 profile.profile_picture = request.FILES['profile_picture']
-            # If no new file uploaded, keep existing profile picture
+            # If no new file uploaded and not removing, keep existing profile picture
             
             profile.save()
             

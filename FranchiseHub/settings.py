@@ -376,26 +376,3 @@ class FranchiseApplication(models.Model):
         """Reject the application"""
         self.status = 'Rejected'
         self.save(update_fields=['status'])
-
-# =========================
-#  MEDIA FILES CONFIGURATION
-# =========================
-# ✅ FIXED: Cloudinary Configuration
-import cloudinary
-import cloudinary.uploader
-import cloudinary.api
-
-CLOUDINARY_STORAGE = {
-    'CLOUD_NAME': os.getenv('CLOUDINARY_CLOUD_NAME', 'dkx1x4zpe'),
-    'API_KEY': os.getenv('CLOUDINARY_API_KEY', '176911795492528'), 
-    'API_SECRET': os.getenv('CLOUDINARY_API_SECRET', 'mAbMWwzwE2ynNNYcx2vLxSTzV5s'),
-}
-
-# ✅ FIXED: Use Cloudinary in production, local storage in development
-if 'RENDER' in os.environ:
-    DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-    # Don't set MEDIA_ROOT for Cloudinary
-else:
-    # Local development
-    MEDIA_URL = '/media/'
-    MEDIA_ROOT = BASE_DIR / 'media'
