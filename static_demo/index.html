@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FranchiseHub — Interactive Demo Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Demo Role Switcher Header Bar -->
+  <header class="demo-role-bar">
+    <div class="demo-role-container">
+      <div class="demo-badge">
+        <span class="pulse-dot"></span> Interactive Recruiter Demo Mode
+      </div>
+      <div class="demo-role-nav" role="tablist">
+        <button class="role-btn active" data-role="franchisee">
+          <span>🛍️</span> Franchisee View
+        </button>
+        <button class="role-btn" data-role="franchisor">
+          <span>🏢</span> Franchisor Dashboard
+        </button>
+        <button class="role-btn" data-role="admin">
+          <span>🛡️</span> Admin Panel
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Modern Brand Navbar -->
+  <nav class="modern-navbar">
+    <a href="#" class="brand-logo">
+      <span class="highlight">Franchise</span>Hub
+    </a>
+    <div class="nav-menu">
+      <a href="#browse" class="nav-link active">Browse</a>
+      <a href="#favorites" class="nav-link" id="favNavLink">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"/>
+        </svg>
+        Favorites (<span id="favCount">2</span>)
+      </a>
+      <a href="#applications" class="nav-link" id="myAppsLink">My Applications (<span id="appCount">1</span>)</a>
+      <span class="user-pill" id="userRoleIndicator">Franchisee: Dillan Y.</span>
+    </div>
+  </nav>
+
+  <!-- ================= VIEW 1: FRANCHISEE BROWSE ================= -->
+  <div id="view-franchisee" class="view-panel active">
+    <!-- Hero Header -->
+    <div class="browse-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Find Your Perfect Franchise</h1>
+        <p class="hero-subtitle">Browse verified opportunities from certified franchisors across the Philippines</p>
+      </div>
+    </div>
+
+    <!-- Main Browse Layout -->
+    <div class="browse-wrapper">
+      <div class="browse-container">
+        
+        <!-- Sidebar Filters -->
+        <aside class="filters-sidebar">
+          <div class="filters-header">
+            <h3 class="filters-title">
+              <svg width="18" height="18" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 08 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd"/>
+              </svg>
+              Filter Franchises
+            </h3>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label" for="searchInput">Search Opportunities</label>
+            <input type="text" id="searchInput" class="filter-input" placeholder="e.g. Coffee, Gym, Manila..." />
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label">Industry Category</label>
+            <div class="category-radio-list">
+              <label class="radio-label">
+                <input type="radio" name="category" value="all" checked /> All Categories
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="category" value="Food & Beverage" /> Food &amp; Beverage
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="category" value="Health & Fitness" /> Health &amp; Fitness
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="category" value="Services & Tech" /> Services &amp; Tech
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="category" value="Retail" /> Retail &amp; Grocery
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <label class="filter-label">Max Investment</label>
+            <select id="maxInvestment" class="filter-input">
+              <option value="all">Any Investment Level</option>
+              <option value="500000">Under ₱500,000</option>
+              <option value="1000000">Under ₱1,000,000</option>
+              <option value="2000000">Under ₱2,000,000</option>
+            </select>
+          </div>
+
+          <button id="clearFiltersBtn" class="btn-clear-filters">Reset Filters</button>
+        </aside>
+
+        <!-- Main Content Grid -->
+        <main class="browse-content">
+          <div class="results-header">
+            <h2 class="results-count">
+              Showing <span id="visibleCount">6</span> Verified Opportunities
+            </h2>
+          </div>
+
+          <div class="franchise-grid" id="franchiseGrid">
+            <!-- Rendered dynamically by app.js -->
+          </div>
+        </main>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 2: FRANCHISOR DASHBOARD ================= -->
+  <div id="view-franchisor" class="view-panel">
+    <div class="dashboard-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">Franchisor Partner Portal</h1>
+        <p class="hero-subtitle">Listing management, inbound candidate verification, and branch expansion analytics</p>
+      </div>
+    </div>
+    <div class="dashboard-container">
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-val">3</span>
+          <span class="stat-lbl">Active Listings</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">14</span>
+          <span class="stat-lbl">Total Applicants</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">₱4.8M</span>
+          <span class="stat-lbl">Projected Pipeline</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">98%</span>
+          <span class="stat-lbl">Permit Verification</span>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <h3>Inbound Franchisee Applications</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Applicant</th>
+              <th>Target Franchise</th>
+              <th>Proposed Location</th>
+              <th>Capital Verified</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Mark Dela Cruz</strong></td>
+              <td>Coffee Corner PH</td>
+              <td>Cebu IT Park, Lahug</td>
+              <td>₱650,000 (Bank Cert ✓)</td>
+              <td><span class="tag-status tag-review">Under Review</span></td>
+              <td><button class="btn-table-action" onclick="alert('Viewing Mark Dela Cruz application and business permit...')">Inspect</button></td>
+            </tr>
+            <tr>
+              <td><strong>Sarah Jane Tan</strong></td>
+              <td>Boba Bliss Milk Tea Bar</td>
+              <td>BGC, Taguig</td>
+              <td>₱450,000 (Bank Cert ✓)</td>
+              <td><span class="tag-status tag-approved">Pre-Approved</span></td>
+              <td><button class="btn-table-action" onclick="alert('Application pre-approved. Contract signing scheduled.')">Manage</button></td>
+            </tr>
+            <tr>
+              <td><strong>Enrico Santos</strong></td>
+              <td>TechFix Mobile Hub</td>
+              <td>SM City North EDSA</td>
+              <td>₱500,000 (Pending Tax ✓)</td>
+              <td><span class="tag-status tag-review">Under Review</span></td>
+              <td><button class="btn-table-action" onclick="alert('Viewing Enrico Santos documents...')">Inspect</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= VIEW 3: ADMIN PANEL ================= -->
+  <div id="view-admin" class="view-panel">
+    <div class="dashboard-hero admin-hero">
+      <div class="hero-content">
+        <h1 class="hero-title">FranchiseHub System Administration</h1>
+        <p class="hero-subtitle">Platform compliance, franchisor credential audit, and database overview</p>
+      </div>
+    </div>
+    <div class="dashboard-container">
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-val">128</span>
+          <span class="stat-lbl">Registered Users</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">18</span>
+          <span class="stat-lbl">Franchisors Vetted</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">42</span>
+          <span class="stat-lbl">Branches Opened</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-val">100%</span>
+          <span class="stat-lbl">PostgreSQL Uptime</span>
+        </div>
+      </div>
+
+      <div class="dash-card">
+        <h3>Pending Franchisor Verification Queue</h3>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Business Name</th>
+              <th>DTI / SEC Number</th>
+              <th>IPO Trademark</th>
+              <th>Submitted Date</th>
+              <th>Audit</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Kape Isla Enterprises Inc.</strong></td>
+              <td>SEC #CS202109441</td>
+              <td>IPO #4202100881 ✓</td>
+              <td>Sep 24, 2026</td>
+              <td><span class="tag-status tag-approved">Compliant</span></td>
+            </tr>
+            <tr>
+              <td><strong>QuickBites Cloud Corp.</strong></td>
+              <td>SEC #CS202318492</td>
+              <td>IPO #4202301923 ✓</td>
+              <td>Sep 23, 2026</td>
+              <td><span class="tag-status tag-approved">Compliant</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= DETAIL & APPLY MODAL ================= -->
+  <div class="modal-backdrop" id="detailModal" hidden>
+    <div class="modal-dialog">
+      <button class="modal-close" id="modalCloseBtn">&times;</button>
+      <div class="modal-body" id="modalContent">
+        <!-- Injected via app.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="demoToast" class="demo-toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
