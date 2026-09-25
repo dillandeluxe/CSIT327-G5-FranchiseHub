@@ -285,12 +285,20 @@ window.handleApplySubmit = function(e, id) {
   renderFranchises();
 };
 
-modalClose.addEventListener('click', () => {
+modalClose.addEventListener('click', (e) => {
+  e.preventDefault();
+  e.stopPropagation();
   modal.hidden = true;
 });
 
 modal.addEventListener('click', (e) => {
   if (e.target === modal) modal.hidden = true;
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && !modal.hidden) {
+    modal.hidden = true;
+  }
 });
 
 // Role Switcher
