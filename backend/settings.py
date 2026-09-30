@@ -16,9 +16,9 @@ import cloudinary.api
 # MANUALLY SET PATHS
 # --------------------------------------------------------------------
 # Project root (where manage.py is)
-PROJECT_ROOT = Path.cwd()  # Current directory
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
 # Django project folder
-BASE_DIR = PROJECT_ROOT / "backend"
+BASE_DIR = Path(__file__).resolve().parent
 
 print(f"PROJECT_ROOT: {PROJECT_ROOT}")
 print(f"BASE_DIR: {BASE_DIR}")
@@ -74,10 +74,11 @@ else:
         "127.0.0.1",
         "localhost",
         RENDER_EXTERNAL_HOSTNAME,
+        ".onrender.com",
     ]
 
 # CSRF trusted origins
-default_csrf = []
+default_csrf = ["https://*.onrender.com"]
 if RENDER_EXTERNAL_HOSTNAME:
     default_csrf.append(f"https://{RENDER_EXTERNAL_HOSTNAME}")
 CSRF_TRUSTED_ORIGINS = default_csrf + [
