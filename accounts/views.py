@@ -165,8 +165,107 @@ def logout_view(request):
 # =========================================================================
 
 def home_view(request):
-    """Landing page."""
-    return render(request, 'accounts/home.html')
+    """Landing page showing available franchises."""
+    try:
+        approved_franchises = list(
+            Franchise.objects.filter(is_active=True, status='approved')
+            .select_related('franchisor')
+            .order_by('-created_at')[:6]
+        )
+    except Exception:
+        approved_franchises = []
+
+    # Fallback dummy franchises when database has no approved listings
+    dummy_franchises = [
+        {
+            "id": "dummy-1",
+            "name": "Potato Corner",
+            "category": "Food & Beverage",
+            "formatted_investment": "₱250,000 – ₱500,000",
+            "location": "Metro Manila, PH",
+            "company_name": "Shakey's Pizza Asia Ventures Inc.",
+            "description": "The world's leading brand of flavored French fries with over 1,400 branches worldwide.",
+            "is_dummy": True,
+            "badge": "Popular",
+            "icon": "🍟"
+        },
+        {
+            "id": "dummy-2",
+            "name": "Aura Cafe & Bakery",
+            "category": "Cafe & Coffee",
+            "formatted_investment": "₱350,000 – ₱600,000",
+            "location": "Cebu City, PH",
+            "company_name": "Aura Brew Roasters Ltd.",
+            "description": "Artisanal espresso and pastry concept boasting high customer loyalty and lean staffing.",
+            "is_dummy": True,
+            "badge": "Trending",
+            "icon": "☕"
+        },
+        {
+            "id": "dummy-3",
+            "name": "QuickWash Self-Service Laundry",
+            "category": "Commercial Services",
+            "formatted_investment": "₱450,000 – ₱850,000",
+            "location": "Davao City, PH",
+            "company_name": "QuickClean Tech Systems",
+            "description": "24/7 coin and app-operated laundromat franchise featuring commercial smart washers.",
+            "is_dummy": True,
+            "badge": "High ROI",
+            "icon": "🧺"
+        },
+        {
+            "id": "dummy-4",
+            "name": "FitZone 24/7 Fitness Hub",
+            "category": "Health & Fitness",
+            "formatted_investment": "₱750,000 – ₱1,200,000",
+            "location": "Quezon City, PH",
+            "company_name": "FitZone Global Franchise",
+            "description": "Automated community gym model with automated biometric keycard access and digital training.",
+            "is_dummy": True,
+            "badge": "Turnkey",
+            "icon": "🏋️"
+        },
+        {
+            "id": "dummy-5",
+            "name": "AquaPure 16-Stage Water Station",
+            "category": "Retail & Essential",
+            "formatted_investment": "₱180,000 – ₱300,000",
+            "location": "Cavite, PH",
+            "company_name": "AquaPure Filtration Group",
+            "description": "Essential water refilling station featuring reverse osmosis and alkaline filtration systems.",
+            "is_dummy": True,
+            "badge": "Low Capital",
+            "icon": "💧"
+        },
+        {
+            "id": "dummy-6",
+            "name": "TechFix Express Repair",
+            "category": "Technology & Repair",
+            "formatted_investment": "₱280,000 – ₱480,000",
+            "location": "Pampanga, PH",
+            "company_name": "TechFix Mobility Solutions",
+            "description": "Certified rapid device repair, accessory retail, and gadget diagnostic station.",
+            "is_dummy": True,
+            "badge": "Fast Setup",
+            "icon": "📱"
+        },
+    ]
+
+    franchises_to_display = approved_franchises if approved_franchises else dummy_franchises
+    is_using_dummy = len(approved_franchises) == 0
+
+    try:
+        db_count = Franchise.objects.filter(is_active=True, status='approved').count()
+    except Exception:
+        db_count = 0
+
+    context = {
+        'franchises': franchises_to_display,
+        'is_using_dummy': is_using_dummy,
+        'total_franchises_count': db_count if db_count > 0 else len(dummy_franchises),
+    }
+    return render(request, 'accounts/home.html', context)
+
 
 # ✅ NEW: About page view
 def about_view(request):

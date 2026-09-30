@@ -12,6 +12,8 @@
   <nav class="navbar">
     <a href="{% url 'home' %}" class="logo"><span>Franchise</span>Hub</a>
     <div class="nav-links">
+      <a href="#franchises">Available Franchises</a>
+      <a href="#features">Features</a>
       <a href="{% url 'login' %}">Login</a>
       <a href="{% url 'register' %}" class="get-started">Get Started</a>
     </div>
@@ -30,21 +32,12 @@
         Join thousands of successful partnerships on FranchiseHub.
       </p>
       <div class="hero-cta-group" data-aos="fade-up" data-aos-delay="200">
-        {% if user.is_authenticated %}
-        <a href="{% url 'browse' %}" class="btn-hero-primary">
+        <a href="#franchises" class="btn-hero-primary">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"/>
           </svg>
           Explore Franchises
         </a>
-        {% else %}
-        <a href="{% url 'login' %}" class="btn-hero-primary">
-          <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M3 3a1 1 0 011 1v12a1 1 0 11-2 0V4a1 1 0 011-1zm7.707 3.293a1 1 0 010 1.414L9.414 9H17a1 1 0 110 2H9.414l1.293 1.293a1 1 0 01-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0z" clip-rule="evenodd"/>
-          </svg>
-          Login to Explore
-        </a>
-        {% endif %}
         <a href="#features" class="btn-hero-secondary">
           <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
@@ -55,11 +48,101 @@
     </div>
     <!-- Animated Scroll Indicator -->
     <div class="scroll-indicator" data-aos="fade" data-aos-delay="400">
-      <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-      </svg>
+      <a href="#franchises" style="color: inherit; text-decoration: none;">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+        </svg>
+      </a>
     </div>
   </section>
+
+  <!-- ===== AVAILABLE FRANCHISES SECTION ===== -->
+  <section class="available-franchises-section" id="franchises">
+    <div class="section-container">
+      <div class="section-header" data-aos="fade-up">
+        <div class="section-tag">Featured Business Opportunities</div>
+        <h2 class="section-title">Franchises Available Now</h2>
+        <p class="section-subtitle">
+          Explore vetted, turnkey franchise models actively seeking franchisee partners across prime regional territories.
+        </p>
+      </div>
+
+      <div class="franchises-grid-home" data-aos="fade-up" data-aos-delay="100">
+        {% for franchise in franchises %}
+        <div class="home-franchise-card">
+          <div class="card-thumb-wrap">
+            {% if franchise.is_dummy %}
+              <div class="dummy-icon-badge">{{ franchise.icon }}</div>
+              {% if franchise.badge %}
+                <span class="card-status-pill">{{ franchise.badge }}</span>
+              {% endif %}
+            {% elif franchise.image %}
+              <img src="{{ franchise.image.url }}" alt="{{ franchise.name }}" class="card-thumb-img" loading="lazy">
+              <span class="card-status-pill">Active Brand</span>
+            {% else %}
+              <div class="dummy-icon-badge">🏢</div>
+              <span class="card-status-pill">Verified</span>
+            {% endif %}
+          </div>
+
+          <div class="card-content">
+            <div class="card-meta-row">
+              <span class="category-pill">{{ franchise.category }}</span>
+              <span class="location-badge">
+                <svg width="13" height="13" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                </svg>
+                {% if franchise.is_dummy %}{{ franchise.location }}{% elif franchise.franchisor.location %}{{ franchise.franchisor.location }}{% else %}Philippines{% endif %}
+              </span>
+            </div>
+
+            <h3 class="franchise-title">{{ franchise.name }}</h3>
+            <p class="franchisor-name">by {% if franchise.is_dummy %}{{ franchise.company_name }}{% else %}{{ franchise.franchisor.company_name }}{% endif %}</p>
+            <p class="franchise-desc">
+              {% if franchise.is_dummy %}{{ franchise.description }}{% else %}{{ franchise.description|truncatewords:20 }}{% endif %}
+            </p>
+
+            <div class="card-financials">
+              <div class="financial-label">Estimated Investment</div>
+              <div class="financial-value">
+                {% if franchise.is_dummy %}
+                  {{ franchise.formatted_investment }}
+                {% elif franchise.formatted_investment %}
+                  {{ franchise.formatted_investment }}
+                {% else %}
+                  ₱{{ franchise.investment }}
+                {% endif %}
+              </div>
+            </div>
+
+            <div class="card-actions">
+              {% if user.is_authenticated %}
+                <a href="{% url 'browse' %}" class="btn-card-primary">View Opportunity ↗</a>
+              {% else %}
+                <a href="{% url 'login' %}?next={% url 'browse' %}" class="btn-card-primary">Inquire / Apply ↗</a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="view-all-banner" data-aos="fade-up" data-aos-delay="200">
+        <div class="banner-text">
+          <h3>Ready to start your franchise portfolio?</h3>
+          <p>Sign up to view complete financial disclosures, download brochures, and submit applications directly to franchisors.</p>
+        </div>
+        <div class="banner-cta">
+          {% if user.is_authenticated %}
+            <a href="{% url 'browse' %}" class="btn-banner-action">Browse All Franchises ↗</a>
+          {% else %}
+            <a href="{% url 'register' %}" class="btn-banner-action">Create Free Account ↗</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
 
   <!-- ===== MODERN FEATURES SECTION ===== -->
   <section class="features-modern" id="features">
