@@ -165,17 +165,7 @@ def logout_view(request):
 # =========================================================================
 
 def home_view(request):
-    """Landing page showing available franchises."""
-    try:
-        approved_franchises = list(
-            Franchise.objects.filter(is_active=True, status='approved')
-            .select_related('franchisor')
-            .order_by('-created_at')[:6]
-        )
-    except Exception:
-        approved_franchises = []
-
-    # Fallback dummy franchises when database has no approved listings
+    """Landing page showing curated available franchises with stock photos."""
     dummy_franchises = [
         {
             "id": "dummy-1",
@@ -187,7 +177,8 @@ def home_view(request):
             "description": "The world's leading brand of flavored French fries with over 1,400 branches worldwide.",
             "is_dummy": True,
             "badge": "Popular",
-            "icon": "🍟"
+            "icon": "🍟",
+            "image_url": "https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=800&q=80"
         },
         {
             "id": "dummy-2",
@@ -199,7 +190,8 @@ def home_view(request):
             "description": "Artisanal espresso and pastry concept boasting high customer loyalty and lean staffing.",
             "is_dummy": True,
             "badge": "Trending",
-            "icon": "☕"
+            "icon": "☕",
+            "image_url": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80"
         },
         {
             "id": "dummy-3",
@@ -211,7 +203,8 @@ def home_view(request):
             "description": "24/7 coin and app-operated laundromat franchise featuring commercial smart washers.",
             "is_dummy": True,
             "badge": "High ROI",
-            "icon": "🧺"
+            "icon": "🧺",
+            "image_url": "https://images.unsplash.com/photo-1545173168-9f1947eebb7f?auto=format&fit=crop&w=800&q=80"
         },
         {
             "id": "dummy-4",
@@ -223,7 +216,8 @@ def home_view(request):
             "description": "Automated community gym model with automated biometric keycard access and digital training.",
             "is_dummy": True,
             "badge": "Turnkey",
-            "icon": "🏋️"
+            "icon": "🏋️",
+            "image_url": "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80"
         },
         {
             "id": "dummy-5",
@@ -235,7 +229,8 @@ def home_view(request):
             "description": "Essential water refilling station featuring reverse osmosis and alkaline filtration systems.",
             "is_dummy": True,
             "badge": "Low Capital",
-            "icon": "💧"
+            "icon": "💧",
+            "image_url": "https://images.unsplash.com/photo-1548839140-29a749e1bc4e?auto=format&fit=crop&w=800&q=80"
         },
         {
             "id": "dummy-6",
@@ -247,22 +242,15 @@ def home_view(request):
             "description": "Certified rapid device repair, accessory retail, and gadget diagnostic station.",
             "is_dummy": True,
             "badge": "Fast Setup",
-            "icon": "📱"
+            "icon": "📱",
+            "image_url": "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80"
         },
     ]
 
-    franchises_to_display = approved_franchises if approved_franchises else dummy_franchises
-    is_using_dummy = len(approved_franchises) == 0
-
-    try:
-        db_count = Franchise.objects.filter(is_active=True, status='approved').count()
-    except Exception:
-        db_count = 0
-
     context = {
-        'franchises': franchises_to_display,
-        'is_using_dummy': is_using_dummy,
-        'total_franchises_count': db_count if db_count > 0 else len(dummy_franchises),
+        'franchises': dummy_franchises,
+        'is_using_dummy': True,
+        'total_franchises_count': len(dummy_franchises),
     }
     return render(request, 'accounts/home.html', context)
 
